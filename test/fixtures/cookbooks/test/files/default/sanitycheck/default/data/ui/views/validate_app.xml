@@ -1,0 +1,404 @@
+<view autoCancelInterval="90" isVisible="true" onunloadCancelJobs="true" template="dashboard.html">
+  <label>Validate app</label>
+  <module name="AccountBar" layoutPanel="appHeader" />
+
+  <module name="Message" layoutPanel="messaging">
+    <param name="filter">*</param>
+    <param name="clearOnJobDispatch">False</param>
+    <param name="maxSize">2</param>
+  </module>
+  <module name="Message" layoutPanel="messaging">
+    <param name="filter">splunk.search.job</param>
+    <param name="clearOnJobDispatch">True</param>
+    <param name="maxSize">1</param>
+  </module>
+  <module name="FeedbackLinks" layoutPanel="viewHeader">
+    <param name="section">validate</param>
+    <param name="subSection">app</param>
+  </module>
+  <module name="BreadCrumb" layoutPanel="viewHeader">
+    <param name="options">
+      <list>
+        <param name="view">home</param>
+        <param name="label">Home</param>
+      </list>
+      <list>
+        <param name="label">Validate My Apps</param>
+      </list>
+    </param>
+  </module>
+  
+
+
+
+  <module name="StaticContentSample" layoutPanel="panel_row1_col1" autoRun="True">
+    <param name="text">
+<![CDATA[
+
+Checking for common problems in the selected app.  
+
+<br/><br/>
+
+Green means all clear; yellow and red are flagged for review.  
+Green arrows to the right of each item allow you to drill down into details.
+
+]]>
+
+
+
+</param>
+   </module>
+
+   <module name="EntitySelectLister" layoutPanel="viewHeader" autoRun="True">
+      <param name="entityPath">apps/local</param>
+      <param name="label">App</param>
+      <param name="settingToCreate">app</param>
+      <param name="count">250</param>
+      <param name="selected">Any</param>
+      <param name="searchWhenChanged">True</param>
+      <param name="entityFieldsToDisplay">
+        <list>
+          <param name="multiLabel">%(label)s</param>
+          <param name="multiLabelAlt">%(name)s %(label)s</param>
+          <param name="value">name</param>
+        </list>
+      </param>
+      <param name="staticFieldsToDisplay">
+        <list>
+          <param name="label">Any</param>
+          <param name="value">none</param>
+        </list>
+      </param>
+      <module name="SubmitButton">
+        <param name="allowSoftSubmit">True</param>
+
+    <!--
+UNNECESSARY JOINS AND APPENDS
+EXAMPLES:
+* sourcetype=x | append [ search sourcetype=y ] | append [ search sourcetype=z ]
+* Using subsearches and joins when they should be using stats and lookups.
+* Rampant use of join command.
+* frequent use of join command than lookups, transaction, stats - http://answers.splunk.com/questions/822/simulating-a-sql-join-in-splunk/1717#1717
+* Lots of subsearch bracket syntax in general. Not just in join but also append, or in subsearches. usually a sign that they are not using lookups enough.
+-->
+    <module name="HiddenSearch" layoutPanel="panel_row1_col1">
+      <!--  using a disjunction and then a stats command to glue together the start and end events into a single row representing the job -->
+      <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | fillnull join_count, append_count value=0 | stats count sum(join_count) as j sum(append_count) as a | eval overuse = 100 * (j + a) / (count + 1.0) | eval overuse = round(overuse, 2) | fillnull overuse value=0 | rangemap field=overuse severe=31-99999 high=11-30 low=0-10 default=low ]]></param>
+      <module name="JobProgressIndicator" />
+      <module name="SingleValue">
+        <param name="field">overuse</param>
+        <param name="afterLabel"> percent of saved searches using the 'join' or 'append' search command</param>
+        <param name="classField">range</param>
+      </module>
+      <module name="HiddenSearch">
+        <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | searchstats |  search append_count=* OR join_count=*| eval total = append_count + join_count |  sort - total | fields search  ]]></param>
+        <module name="SubmitButton">
+          <module name="ViewRedirector">
+            <param name="viewTarget">flashtimeline</param>
+            <param name="popup">True</param>
+          </module>
+        </module>
+      </module>
+      <module name="StaticContentSample">
+        <param name="text">The 'join' and 'append' search commands can be very inefficient and are often overused.  Drilldown to find the worst offenders.
+<![CDATA[ <a target=_new href="http://www.splunk.com/wiki/Apps/discover/v1/validate_app#Join-Append">Help</a> ]]>
+</param>
+      </module>
+    </module>
+
+
+  <!--
+ABSURD REGEXES
+* using rex everywhere instead of extracting fields
+* rex abuse ( ... | rex foo "blah blah" | rex bar "blah blah" as a frequently run saved search)
+suggestion: warn for each rex used in more than two saved searches. by calling une
+-->
+    <module name="HiddenSearch" layoutPanel="panel_row1_col1">
+      <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | searchstats | stats count count(rex_count) as rex | eval overuse = round(100.0 * rex / count, 2) | fillnull overuse value=0 | rangemap field=overuse severe=31-99999 high=11-30 low=0-10 default=low ]]></param>
+      <module name="JobProgressIndicator" />
+      <module name="SingleValue">
+        <param name="field">overuse</param>
+        <param name="afterLabel"> percent of saved searches using the 'rex' search command.</param>
+        <param name="classField">range</param>
+      </module>
+      <module name="HiddenSearch">
+        <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | searchstats |  search search_count=* |  sort - rex_count | fields search, rex_count   ]]></param>
+        <module name="SubmitButton">
+          <module name="ViewRedirector">
+            <param name="viewTarget">flashtimeline</param>
+            <param name="popup">True</param>
+          </module>
+        </module>
+      </module>
+      <module name="StaticContentSample">
+        <param name="text">Extensive use of 'rex' can make your searches harder to manage and understand. If a field is often extacted with rex, consider making it an extracted field.   Drilldown to find the worst offenders. <![CDATA[ <a target=_new href="http://www.splunk.com/wiki/Apps/discover/v1/validate_app#Rex">Help</a> ]]> </param>
+      </module>
+    </module>
+
+
+<!--
+LOOKUP TABLE SHENANNIGANS
+* "I want a single IP address to use 12 lookup tables" at search time
+suggestion: warn about searches with more than one lookup
+-->
+    <module name="HiddenSearch" layoutPanel="panel_row1_col1">
+      <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | searchstats | search lookup_count>1 | stats count | rangemap field=count severe=3-99999 high=1-2 low=0-0 default=low  ]]></param>
+      <module name="JobProgressIndicator" />
+      <module name="SingleValue">
+        <param name="field">count</param>
+        <param name="afterLabel"> saved searches each using multiple lookup calls</param>
+        <param name="classField">range</param>
+      </module>
+      <module name="HiddenSearch">
+        <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | searchstats | search lookup_count>1 | sort - lookup_count | fields search, lookup_count    ]]></param>
+        <module name="SubmitButton">
+          <module name="ViewRedirector">
+            <param name="viewTarget">flashtimeline</param>
+            <param name="popup">True</param>
+          </module>
+        </module>
+      </module>
+      <module name="StaticContentSample">
+        <param name="text">Consider consolidating multiple lookups into a single lookup table.   Drilldown to find the worst offenders.
+	  <![CDATA[ <a target=_new href="http://www.splunk.com/wiki/Apps/discover/v1/validate_app#Lookups">Help</a> ]]>
+	</param>
+      </module>
+    </module>
+
+
+  <!--
+SILLY SEARCH TWEAKS
+* * startdaysago=100000
+suggestion: warn about any old 3.X search modifiers
+-->
+    <module name="HiddenSearch" layoutPanel="panel_row1_col1">
+      <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | eval name = _raw | eval _raw = search | search NOT "entity saved/searches" | kv  | search daysago=* OR enddaysago=* OR endhoursago=* OR endminutesago=* OR endmonthsago=* OR endtime=* OR hoursago=* OR maxresults=* OR minutesago=* OR monthsago=* OR readlevel=* OR readlimit=* OR related=* OR searchtimespanminutes=* OR searchtimespanhours=* OR searchtimespandays=* OR searchtimespanmonths=* OR startminutesago=* OR starthoursago=* OR startdaysago=* OR startmonthsago=* OR timeformat=* | stats count | rangemap field=count severe=3-99999 high=1-2 low=0-0 default=low  ]]></param>
+      <module name="JobProgressIndicator" />
+      <module name="SingleValue">
+        <param name="field">count</param>
+        <param name="afterLabel"> saved searches each using old, deprecated 3.X search modifiers</param>
+        <param name="classField">range</param>
+      </module>
+      <module name="HiddenSearch">
+        <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | eval name = _raw | eval _raw = search | search NOT "entity saved/searches" | kv  | search daysago=* OR enddaysago=* OR endhoursago=* OR endminutesago=* OR endmonthsago=* OR endtime=* OR hoursago=* OR maxresults=* OR minutesago=* OR monthsago=* OR readlevel=* OR readlimit=* OR related=* OR searchtimespanminutes=* OR searchtimespanhours=* OR searchtimespandays=* OR searchtimespanmonths=* OR startminutesago=* OR starthoursago=* OR startdaysago=* OR startmonthsago=* OR timeformat=*   ]]></param>
+        <module name="SubmitButton">
+          <module name="ViewRedirector">
+            <param name="viewTarget">flashtimeline</param>
+            <param name="popup">True</param>
+          </module>
+        </module>
+      </module>
+      <module name="StaticContentSample">
+        <param name="text">Consider using 4.X search modifiers.   Drilldown to find the worst offenders.
+	  <![CDATA[ <a target=_new href="http://www.splunk.com/wiki/Apps/discover/v1/validate_app#Deprecated">Help</a> ]]>
+	</param>
+      </module>
+    </module>
+
+
+  <!--
+* Foo | timechart count(_raw) - Specifying the _raw makes it hugely more expensive)
+suggestion: check for count(_raw) and in fact warn on any use of _raw. generally it's the wrong thing.
+     -->
+    <module name="HiddenSearch" layoutPanel="panel_row1_col1">
+      <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | search search="*(_raw)*" NOT search="*entity saved/searches*" | stats count | rangemap field=count severe=1-99999 low=0-0 default=low ]]></param>
+      <module name="JobProgressIndicator" />
+      <module name="SingleValue">
+        <param name="field">count</param>
+        <param name="afterLabel"> saved searches using "count(_raw)" instead of "count"</param>
+        <param name="classField">range</param>
+      </module>
+      <module name="HiddenSearch">
+        <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | search search="*(_raw)*" NOT search="*entity saved/searches*" ]]></param>
+        <module name="SubmitButton">
+          <module name="ViewRedirector">
+            <param name="viewTarget">flashtimeline</param>
+            <param name="popup">True</param>
+          </module>
+        </module>
+      </module>
+      <module name="StaticContentSample">
+        <param name="text">In reporting commands, use 'count' rather than 'count(_raw)', which incurs a huge performance hit with no benefit.   Drilldown to find the worst offenders.
+	  <![CDATA[ <a target=_new href="http://www.splunk.com/wiki/Apps/discover/v1/validate_app#Count">Help</a> ]]>
+	</param>
+      </module>
+    </module>
+
+
+  <!--
+HUGE LISTS
+* Every ip address block in china in an OR list stored in a macro and used literally in many searches.
+* "su root" OR "su - root" NOT AntiVirus NOT "session closed" NOT rcertftp ....
+* eventtype/savedsearch - search = (8.65.64 OR 8.65.65 OR 8.65.66 OR 8.65.67 OR ...)
+* savedsearch - ...| rex field=request "(?P<foo>aa|ab|ac|ad|...)"
+suggestion: warn if savedsearch/macro/eventtype has more than 7(?) ORs, NOTs or bigger than 1k? suggest lookups
+-->
+
+    <module name="HiddenSearch" layoutPanel="panel_row1_col1">
+      <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | searchstats | eval len = length(search) | search OR_count>10 OR len>200 | stats count | rangemap field=count low=0-2 elevated=3-5 high=6-10 severe=11-99999 default=low]]></param>
+      <module name="JobProgressIndicator" />
+      <module name="SingleValue">
+        <param name="field">count</param>
+        <param name="afterLabel"> saved searches with many ORs or very long lists</param>
+        <param name="classField">range</param>
+      </module>
+      <module name="HiddenSearch">
+        <param name="search"><![CDATA[ | entity saved/searches namespace=$app$ | searchstats | eval len = length(search) | search OR_count>10 OR len>200 ]]></param>
+        <module name="SubmitButton">
+          <module name="ViewRedirector">
+            <param name="viewTarget">flashtimeline</param>
+            <param name="popup">True</param>
+          </module>
+        </module>
+      </module>
+      <module name="StaticContentSample">
+        <param name="text">Long searches are hard to maintain.  Sometimes you can shorten these by using lookup tables, while increasing efficiency.    Drilldown to find the worst offenders.
+	  <![CDATA[ <a target=_new href="http://www.splunk.com/wiki/Apps/discover/v1/validate_app#Big-Searches">Help</a> ]]>
+	</param>
+      </module>
+    </module>
+
+
+  
+<!--
+* Every desktop host in a network of thousands of desktop tagged 'user_machine' with searches frequently based on this.
+* pci app for some insane reason used to tag every event somehow with tag="pci".  The expanded search string would sometimes hit memory limits.
+suggestion: get literal search after tag expansion and warn if bigger than N (1K??)
+-->
+    <module name="HiddenSearch" layoutPanel="panel_row1_col1">
+      <param name="search"><![CDATA[ | entity admin/conf-tags namespace=$app$| fields | kv | stats count(*) as * | transpose 1000 | rename "row 1" as count, column as field | sort - count | head 1 | fillnull count value=0 | rangemap field=count low=0-9 elevated=10-19 high=20-49 severe=50-99999 default=low]]></param>
+      <module name="JobProgressIndicator" />
+      <module name="SingleValue">
+        <param name="field">count</param>
+        <param name="afterLabel"> number of values mapped to by the worst offending tag</param>
+        <param name="classField">range</param>
+      </module>
+      <module name="HiddenSearch">
+        <param name="search"><![CDATA[ | entity admin/conf-tags namespace=$app$| fields | kv | stats count(*) as * | transpose 1000 | rename "row 1" as count, column as field | sort - count ]]></param>
+        <module name="SubmitButton">
+          <module name="ViewRedirector">
+            <param name="viewTarget">flashtimeline</param>
+            <param name="popup">True</param>
+          </module>
+        </module>
+      </module>
+      <module name="StaticContentSample">
+        <param name="text">If tags match a huge number of field values they can cause performance problems and hit memory limits.  Drilldown to find the worst offenders.
+	  <![CDATA[ <a target=_new href="http://www.splunk.com/wiki/Apps/discover/v1/validate_app#Common-Tags">Help</a> ]]>
+	</param>
+      </module>
+    </module>
+
+
+<!-- 
+* search filters are bad. For many reasons the best practice now is to index data into different indices.
+-->
+    <module name="HiddenSearch" layoutPanel="panel_row1_col1">
+      <param name="search"><![CDATA[| entity authentication/roles namespace=$app$ | top srchFilter | stats count | eval usessearchfilters=if(count>=1, "True.", "False.") | rangemap field=count low=0-0 severe=1-99999 default=low]]></param>
+      <module name="JobProgressIndicator" />
+      <module name="SingleValue">
+        <param name="field">usessearchfilters</param>
+        <param name="afterLabel"> Are search filters on your roles?</param>
+        <param name="classField">range</param>
+      </module>
+      <module name="HiddenSearch">
+        <param name="search"><![CDATA[ | entity authentication/roles namespace=$app$ | top srchFilter]]></param>
+        <module name="SubmitButton">
+          <module name="ViewRedirector">
+            <param name="viewTarget">flashtimeline</param>
+            <param name="popup">True</param>
+          </module>
+        </module>
+      </module>
+      <module name="StaticContentSample">
+        <param name="text">Using "search filters" is no longer recommended. In 4.X, it is far better to create multiple indexes and set permissions on those indexes by role. Drilldown to find problematic roles.
+	  <![CDATA[ <a target=_new href="http://www.splunk.com/wiki/Apps/discover/v1/validate_app#Filters">Help</a> ]]>
+	</param>
+      </module>
+    </module>
+
+   </module>
+  </module>
+
+</view>
+
+
+
+<!--
+
+**************************
+         TO DO
+**************************
+
+* setting the host key to something that is a concatenation of host + some "tag". 
+  doing the same with the sourcetype ie sourcetype="access_production"  vs sourcetype="access_staging". 
+  Maybe its as simple as splitting known sourcetypes from props.conf on "_", then looking for these substrings 
+  in the sourcetypes in metadata, excluding the known sourcetypes themselves.
+
+**************************
+BAD DISTRIBUTED/HARDWARE CONFIG
+* sending 300+ GB to a single indexer and expecting searches to be fast
+* underestimating hardware (c'mon, this is a Pentium II)
+* So obvious I'm sure you'll get this from a bazillion people. But there are reasonably simple success metrics for
+      o 1 expected indexing throughput, vs disk speed vs number of indexers, cpu, iostats metrics etc.
+      o 2 avg concurrent users/searches, vs max concurrent users/searches vs number of search heads vs cpu/disk speed on those search heads.
+* using lots of forwarders to 2 or more indexers but not using AutoLB?. performance issues will result. AutoLB? will evenly distribute index/sourcetype/host etc.. if you send all the index="foo" stuff to only one indexer you lose the benefits of hardware scaling.
+* Setting up distributed search across servers that are not in the same timezone. Leads to baffling fail with time bucketing. see answers
+suggestion: analyze performance logs and if too slow, make suggestions.
+
+**************************
+* puting EXTRACT stanza in props.conf on forwarders and couldn't figure out why they were not being used.
+* An instance that forwards data to itself but doesn't index anything
+suggestion: punt. not running on forwarder
+
+
+*************************** 
+loading external attributes into _raw before indexing (where external attributes would have been more flexible with look-ups)
+* Making changes to the conf files under default dir
+* Storing files in $SPLUNK_HOME/etc/ so they get packaged in splunk-diag , ex: splunk builds
+* The unix app is enabled with data coming in but the "os" index has been disabled
+
+**************************
+* A windows instance indexing on the c:\ drive that also monitors the c:\ drive
+suggestion: punting. amrit said its harder to make this mistake now that batch uses syncholes
+
+**************************
+ABSURD REGEXES
+* regexes with lots of lookaheads.
+suggestion: go through metrics and warn about rex commands that take a long time. do we have timing info on field extraction times?
+
+**************************
+ABSURD REGEXES
+* extracting every term from every source (as opposed to starting at the end and extracting what they need)
+suggestion: go through rex/props/transforms looking for extracted fields not used in any saved searches, events, macros or dynamic searches
+
+
+**************************
+DOESN'T WORK BECAUSE OF subsearch sessionKey bug. filed for zhang. search: | set diff [search * | dedup source | transpose 1000 | fields column | stats values(column) as fields | transpose 1000] [ entity saved/searches namespace=$app$| searchstats | rename unknown_tokens as fields | fields fields] 
+
+**************************
+* absurdly large regex in transforms/props = ^\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?([^\",?]*)\"?,\"?
+suggestion: warn on regexes bigger than 80 chars?
+
+
+**************************
+SCHEDULED SEARCH SILLINESS / SUMMARY INDEXING
+EXAMPLES: 
+* All time searches scheduled to run every 1, 5, 10 or even 60 minutes.  In fact, any scheduled search over all time or without a timerange is insane.
+* High numbers of scheduled searches on a low-CPU box.  consistently has 10, 20 searches queued
+* running lots of recurring saved searches with overlapping times and result sets.
+* Scheduled search over last 24 hours that runs every 5 minutes - over large dataset - for purposes of alerting
+* building dashboards with adhoc searches rather than scheduled searches and/or summary indexing
+* scheduling searches where earliest=-1h latest=+0s to run every minute
+* scheduling searches that search over all time to run every hour
+* scheduling 100 searches to run every minute
+* a search over the last 24 hours scheduled to run every hour (so dashboards refresh)
+* not using summary indexing
+
+**************************
+suggestion: strong warn on more than one join or append. warn on use
+of any join or append. link / explain how to avoid these by using
+stats/lookups/transactions, etc. flag any use of join&append. the more
+there are, the worse. especially flag if more joins than stats
+
+-->

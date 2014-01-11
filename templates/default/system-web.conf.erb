@@ -1,0 +1,5 @@
+[settings]
+httpport = 443
+enableSplunkWebSSL = <%= @enable_ssl.inspect %>
+privKeyPath = etc/auth/splunkweb/<%= @keyfile%>
+caCertPath = etc/auth/splunkweb/<%= @crtfile %>

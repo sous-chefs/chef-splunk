@@ -1,0 +1,91 @@
+## inherit the default renderer strutural elements
+<%inherit file="//results/EventsViewer_default_renderer.html" />
+
+<%
+import re
+
+%>
+
+## whack away the timestamp and the event actions icon.
+<%def name="event_time(job, event, request, options)"></%def>
+<%def name="event_actions(job, event, request, options)"></%def>
+
+## override
+<%def name="event_raw(job, event, request, options, xslt)">\
+    % if event.raw.toXml() is None:
+<pre class="event">${event.raw | h}</pre>
+    % else:
+        <% 
+
+        # Returns a list of dict objects that don't have overlapping 'start' and 'end' indexes.  Assume that start > end.  If an overlapping list item
+        # exists, the later item is deleted. for start/end pair (i,j), any subsequent pair (m,n) will be removed if i <= m <= j or i <= n <= j.
+        def removeOverlappingBoundaries(boundaryList):
+            if len(boundaryList) < 2: return boundaryList
+            killList = []
+            #print "BOUNDARYLIST:", boundaryList
+
+            for pivot, base in enumerate(boundaryList):
+                for idx, challenge in enumerate(boundaryList[pivot+1:]):
+                    if (base['start'] <= challenge['start'] <= base['end']) or \
+                       (base['start'] <= challenge['end'] <= base['end']):
+                       killList.append(pivot + 1 + idx)
+            return [x for (idx, x) in enumerate(boundaryList) if idx not in killList]
+
+
+
+        def highlight(regex, format, eventtext):
+            
+            changeBoundaries = []
+            # for each match
+            for m in regex.finditer(eventtext):
+                attrvals = m.groupdict()
+                snippet = eventtext[m.start(): m.end()]
+                pos = 1
+                # for each named group
+                for attr, val in attrvals.items():
+                    changeBoundaries.append({ 'start': m.start(pos), 'end': m.end(pos), 'replacement': val})
+                    pos += 1
+                break
+        
+            
+            offset = 0
+            changeBoundaries.sort(lambda x,y: cmp(x['start'],y['start']))
+            
+            for boundary in removeOverlappingBoundaries(changeBoundaries):
+                val = boundary['replacement']
+                newValue = format % val
+                eventtext = eventtext[:boundary['start'] + offset] + newValue + eventtext[boundary['end'] + offset:]
+                offset += len(newValue) - (boundary['end'] - boundary['start'])
+            
+            return eventtext
+
+
+        invalidScript = '''<script type="text/javascript">
+                   var messenger = Splunk.Messenger.System.getInstance();           
+                   messenger.send("error", "splunk.search.customRegexClass", _("Invalid regex: %s"));
+             </script>'''
+
+        transform = event.raw.toXml(xslt) 
+        import re
+        format = '<span class="highlighted">%s</span>'
+
+        # in 4.1 builds the 'request' parameter as passed into the event 
+        # renderer only includes a hardcoded list of arguments, and if 
+        # you pass other things on the querystring they will be ignored. 
+        # I fixed this in 4.2, but to maintain backward compatibility 
+        # with 4.1.X versions, i get the 'regex' param myself from cherrypy's
+        # global request.
+        regex = cherrypy.request.params.get("regex")
+        
+        try:
+           r = re.compile(regex)
+           transform = highlight(r, format, transform)
+
+        except Exception, e:
+           transform += invalidScript % e
+        
+        %>
+<pre class="event">${transform.replace('\n', '<br />') if options['replace_newlines'] else transform}</pre>
+    % endif
+</%def>\
+
