@@ -1,6 +1,8 @@
 ---
 driver:
   name: vagrant
+  customize:
+    memory: 512
 
 provisioner:
   name: chef_zero
@@ -20,6 +22,7 @@ suites:
       - recipe[chef-splunk::default]
       - recipe[test::default]
     attributes:
+      dev_mode: true
       splunk:
         accept_license: true
 
@@ -27,6 +30,7 @@ suites:
     run_list:
       - recipe[chef-splunk::default]
     attributes:
+      dev_mode: true
       splunk:
         is_server: true
         accept_license: true

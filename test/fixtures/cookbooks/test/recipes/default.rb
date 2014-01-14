@@ -1,3 +1,5 @@
+execute 'apt-get update' if platform_family?('debian')
+
 splunk_app 'bistro' do
   splunk_auth 'admin:notarealpassword'
   cookbook_file 'bistro-1.0.2.spl'
