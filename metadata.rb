@@ -6,4 +6,4 @@ description      'Manage Splunk Enterprise or Splunk Universal Forwarder'
 version          '0.1.0'
 
 # for secrets management in setup_auth recipe
-depends 'chef-vault'
+depends 'chef-vault', '>= 1.0.4'
