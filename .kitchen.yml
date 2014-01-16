@@ -44,7 +44,7 @@ suites:
       splunk:
         disabled: true
 
-  - name: upgrade_forwarder
+  - name: upgrade_client
     run_list:
       - recipe[chef-splunk::default]
       - recipe[chef-splunk::upgrade]
