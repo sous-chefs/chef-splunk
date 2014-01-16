@@ -49,6 +49,7 @@ suites:
       - recipe[chef-splunk::default]
       - recipe[chef-splunk::upgrade]
     attributes:
+      dev_mode: true
       splunk:
         accept_license: true
         upgrade_enabled: true
@@ -58,6 +59,7 @@ suites:
       - recipe[chef-splunk::default]
       - recipe[chef-splunk::upgrade]
     attributes:
+      dev_mode: true
       splunk:
         accept_license: true
         upgrade_enabled: true
