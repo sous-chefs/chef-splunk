@@ -104,6 +104,20 @@ SSL in the `setup_ssl` recipe.
   '`self-signed.example.com.crt`', and should be changed to something
   relevant for the local site before use, in a role or wrapper cookbook.
 
+The following attributes are related to upgrades in the `upgrade`
+recipe. **Note** The version is set to 4.3.7 and should be modified to
+suit in a role or wrapper, since we don't know what upgrade versions
+may be relevant. Enabling the upgrade and blindly using the default
+URLs may have undesirable consequences, hence this is not enabled, and
+must be set explicitly elsewhere on the node(s).
+
+* `node['splunk']['upgrade_enabled']`: Controls whether the upgrade is
+  enabled and the `attributes/upgrade.rb` file should be loaded. Set
+  this in a role or wrapper cookbook to perform an upgrade.
+* `node['splunk']['upgrade']`: Sets `server_url` and `forwarder_url`
+  attributes based on platform and architecture. These are only loaded
+  if `upgrade_enabled` is set.
+
 ## Definitions
 
 ### splunk_installer
@@ -234,6 +248,20 @@ will edit the specified user (assuming `admin`), and then write a
 state file to `etc/.setup_admin_password` to indicate in future Chef
 runs that it has set the password. If the password should be changed,
 then that file should be removed.
+
+## upgrade
+
+**Important** Read the upgrade documentation and release notes for any
+  particular Splunk version upgrades before performing an upgrade.
+  Also back up the Splunk directory, configuration, etc.
+
+This recipe can be used to upgrade a splunk installation, for example
+from an existing 4.2.1 to 4.3.7. The default recipe can be used for
+6.0.1 after upgrading earlier versions is completed. Note that the
+attributes file is only loaded w/ the URLs to the splunk packages to
+upgrade if the `node['splunk']['upgrade_enabled']` attribute is set to
+true. We recommend setting the actual URL attributes needed in a
+wrapper cookbook or role.
 
 ## user
 
