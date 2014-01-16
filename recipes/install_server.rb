@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: splunk
-# Recipe:: install_forwarder
+# Recipe:: install_server
 #
 # Author: Joshua Timberman <joshua@getchef.com>
 # Copyright (c) 2014, Chef Software, Inc <legal@getchef.com>
