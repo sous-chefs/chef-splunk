@@ -13,5 +13,8 @@ IfUnlessModifier:
 MethodLength:
   Max: 11
 
+ClassLength:
+  Max: 200
+
 TrivialAccessors:
   ExactNameMatch: true
