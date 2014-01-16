@@ -1,0 +1,47 @@
+#
+# Cookbook Name:: splunk
+# Recipe:: upgrade
+#
+# Author: Joshua Timberman <joshua@getchef.com>
+# Copyright (c) 2014, Chef Software, Inc <legal@getchef.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+service 'splunk_stop' do
+  service_name 'splunk'
+  provider Chef::Provider::Service::Init
+  action :stop
+end
+
+if node['splunk']['is_server']
+  splunk_package = 'splunk'
+  url_type = 'server'
+else
+  splunk_package = 'splunkforwarder'
+  url_type = 'forwarder'
+end
+
+splunk_installer splunk_package do
+  url node['splunk']['upgrade']["#{url_type}_url"]
+end
+
+if node['splunk']['accept_license']
+  execute 'splunk-unattended-upgrade' do
+    command "#{splunk_cmd} start --accept-license --answer-yes"
+  end
+else
+  Chef::Log.fatal('You did not accept the license (set node["splunk"]["accept_license"] to true)')
+  Chef::Log.fatal('Splunk is stopped and cannot be restarted until the license is accepted!')
+  raise
+end

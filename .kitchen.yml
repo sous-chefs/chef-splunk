@@ -43,3 +43,22 @@ suites:
     attributes:
       splunk:
         disabled: true
+
+  - name: upgrade_forwarder
+    run_list:
+      - recipe[chef-splunk::default]
+      - recipe[chef-splunk::upgrade]
+    attributes:
+      splunk:
+        accept_license: true
+        upgrade_enabled: true
+
+  - name: upgrade_server
+    run_list:
+      - recipe[chef-splunk::default]
+      - recipe[chef-splunk::upgrade]
+    attributes:
+      splunk:
+        accept_license: true
+        upgrade_enabled: true
+        is_server: true
