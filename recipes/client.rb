@@ -31,13 +31,22 @@ splunk_servers = search(# ~FC003
   |a, b| a.name <=> b.name
 end
 
-directory "#{node['splunk']['home']}/etc/system/local/directory" do
+# ensure that the splunk service resource is available without cloning
+# the resource (CHEF-3694). this is so the later notification works,
+# especially when using chefspec to run this cookbook's specs.
+begin
+  resources('service[splunk]')
+rescue Chef::Exceptions::ResourceNotFound
+  service 'splunk'
+end
+
+directory "#{splunk_dir}/etc/system/local" do
   recursive true
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
 end
 
-template "#{node['splunk']['home']}/etc/system/local/outputs.conf" do
+template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
   mode 0644
   variables :splunk_servers => splunk_servers

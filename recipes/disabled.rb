@@ -25,18 +25,17 @@ unless node['splunk']['disabled']
 end
 
 service 'splunk' do
-  action :stop
   ignore_failure true
-  only_if { ::File.exists?('/etc/init.d/splunk') }
+  action :stop
 end
 
-%w{splunk splunkforwarder}.each do |pkgs|
+%w{splunk splunkforwarder}.each do |pkg|
   package pkg do
     ignore_failure true
     action :remove
   end
 end
 
-execute "#{node['splunk']['home']}/bin/splunk disable boot-start" do
+execute "#{splunk_dir}/bin/splunk disable boot-start" do
   ignore_failure true
 end
