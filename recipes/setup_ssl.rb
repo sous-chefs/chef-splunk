@@ -23,7 +23,6 @@ unless node['splunk']['ssl_options']['enable_ssl']
   return
 end
 
-
 include_recipe 'chef-vault'
 ssl_options = node['splunk']['ssl_options']
 

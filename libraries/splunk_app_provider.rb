@@ -22,6 +22,7 @@ include Chef::Mixin::ShellOut
 
 # Creates a provider for the splunk_app resource.
 class Chef::Provider::SplunkApp < Chef::Provider::LWRPBase
+  include ChefSplunk::Helpers
   use_inline_resources if defined?(:use_inline_resources)
 
   def whyrun_supported?
@@ -111,42 +112,45 @@ class Chef::Provider::SplunkApp < Chef::Provider::LWRPBase
       end
     end
   end
+end
 
-  private
-
-  def app_dir
-    "#{splunk_dir}/etc/apps/#{new_resource.app_name}"
-  end
-
-  def local_file(source)
-    "#{Chef::Config[:file_cache_path]}/#{Pathname(source).basename.to_s}"
-  end
-
-  def app_enabled?
-    s = shell_out("#{splunk_cmd} display app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}")
-    s.run_command
-    if s.stdout.empty?
-      false
-    else
-      s.stdout.split[2] == 'ENABLED'
+module ChefSplunk
+  # Helper methods used in the provider, above.
+  class Helpers
+    def app_dir
+      "#{splunk_dir}/etc/apps/#{new_resource.app_name}"
     end
-  end
 
-  def app_installed?
-    ::File.exists?("#{app_dir}/default/app.conf")
-  end
-
-  def splunk_service
-    service 'splunk' do
-      action :nothing
-      supports :status => true, :restart => true
-      provider Chef::Provider::Service::Init
+    def local_file(source)
+      "#{Chef::Config[:file_cache_path]}/#{Pathname(source).basename.to_s}"
     end
-  end
 
-  def install_dependencies
-    new_resource.app_dependencies.each do |pkg|
-      package pkg
+    def app_enabled?
+      s = shell_out("#{splunk_cmd} display app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}")
+      s.run_command
+      if s.stdout.empty?
+        false
+      else
+        s.stdout.split[2] == 'ENABLED'
+      end
+    end
+
+    def app_installed?
+      ::File.exists?("#{app_dir}/default/app.conf")
+    end
+
+    def splunk_service
+      service 'splunk' do
+        action :nothing
+        supports :status => true, :restart => true
+        provider Chef::Provider::Service::Init
+      end
+    end
+
+    def install_dependencies
+      new_resource.app_dependencies.each do |pkg|
+        package pkg
+      end
     end
   end
 end

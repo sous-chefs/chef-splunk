@@ -15,7 +15,7 @@ describe 'chef-splunk::client' do
     stub_search(:node, 'splunk_is_server:true AND chef_environment:_default').and_return([splunk_server])
   end
 
-  it 'creates the local system directory' do
+  it 'creates the local system directory' do # ~FC005
     expect(chef_run).to create_directory('/opt/splunkforwarder/etc/system/local').with(
       'recursive' => true,
       'owner' => 'splunk',
