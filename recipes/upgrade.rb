@@ -18,6 +18,13 @@
 # limitations under the License.
 #
 
+unless node['splunk']['upgrade_enabled']
+  Chef::Log.fatal('The chef-splunk::upgrade recipe was added to the node,')
+  Chef::Log.fatal('but the attribute `node["splunk"]["upgrade_enabled"]` was not set.')
+  Chef::Log.fatal('I am bailing here so this node does not upgrade.')
+  raise
+end
+
 service 'splunk_stop' do
   service_name 'splunk'
   provider Chef::Provider::Service::Init
