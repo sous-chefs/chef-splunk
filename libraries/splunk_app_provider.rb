@@ -55,7 +55,7 @@ class Chef::Provider::SplunkApp < Chef::Provider::LWRPBase
           notifies :restart, 'service[splunk]', :immediately
         end
       else
-        Chef::Application.fatal!("Could not find an installation source for splunk_app[#{new_resource.app_name}]")
+        raise("Could not find an installation source for splunk_app[#{new_resource.app_name}]")
       end
 
       dir = app_dir
