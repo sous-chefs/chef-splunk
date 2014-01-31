@@ -74,7 +74,7 @@ class Chef::Provider::SplunkApp < Chef::Provider::LWRPBase
 
       new_resource.templates.each do |t|
         template "#{app_dir}/local/#{t}" do
-          source "#{new_resource.app_name}/#{t}"
+          source "#{new_resource.app_name}/#{t}.erb"
           mode 00644
           notifies :restart, 'service[splunk]'
         end
