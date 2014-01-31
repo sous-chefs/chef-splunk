@@ -22,7 +22,8 @@ include_recipe 'chef-vault'
 splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['auth']
 user, pw = splunk_auth_info.split(':')
 
-execute "#{splunk_cmd} edit user #{user} -password '#{pw}' -role admin -auth admin:changeme" do
+execute "change-admin-user-password-from-default" do
+  command "#{splunk_cmd} edit user #{user} -password '#{pw}' -role admin -auth admin:changeme"
   not_if { ::File.exists?("#{splunk_dir}/etc/.setup_#{user}_password") }
 end
 
