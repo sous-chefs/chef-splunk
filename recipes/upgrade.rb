@@ -27,7 +27,7 @@ end
 
 service 'splunk_stop' do
   service_name 'splunk'
-  suports :status => true
+  supports :status => true
   provider Chef::Provider::Service::Init
   action :stop
 end
