@@ -1,23 +1,28 @@
-Encoding:
-  Enabled: false
-
-LineLength:
-  Max: 300
-
-HashSyntax:
-  EnforcedStyle: hash_rockets
-
-IfUnlessModifier:
-  Enabled: false
-
-MethodLength:
-  Max: 11
+AllCops:
+  Includes:
+    - Berksfile
+    - Gemfile
+    - Rakefile
+    - Thorfile
+    - Guardfile
+  Excludes:
+    - vendor/**
 
 ClassLength:
-  Max: 200
-
-TrivialAccessors:
-  ExactNameMatch: true
-
+  Enabled: false
+Documentation:
+  Enabled: false
+Encoding:
+  Enabled: false
+HashSyntax:
+  Enabled: false
+LineLength:
+  Enabled: false
+MethodLength:
+  Enabled: false
 SignalException:
+  Enabled: false
+TrailingComma:
+  Enabled: false
+WordArray:
   Enabled: false
