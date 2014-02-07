@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 # Assume default use case is a Universal Forwarder (client).
-default['splunk']['accept_licence'] = false
+default['splunk']['accept_license'] = false
 default['splunk']['is_server']      = false
 default['splunk']['receiver_port']  = '9997'
 
