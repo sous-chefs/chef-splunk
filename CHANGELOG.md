@@ -1,6 +1,12 @@
 splunk CHANGELOG
 ================
 
+v1.1.0 (2014-03-19)
+-------------------
+- [COOK-4450] - upgrade to Splunk 6.0.2
+- [COOK-4451] - unbreak test harness
+
+
 v1.0.4
 ------
 - template sources should have .erb explicitly
