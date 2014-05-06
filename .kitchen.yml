@@ -11,6 +11,7 @@ provisioner:
 platforms:
   - name: ubuntu-10.04
   - name: ubuntu-12.04
+  - name: ubuntu-14.04
   - name: centos-6.5
   - name: omnios-r151006c
     driver:
