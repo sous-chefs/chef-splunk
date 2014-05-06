@@ -1,6 +1,11 @@
 splunk CHANGELOG
 ================
 
+v1.2.0 (2014-05-06)
+-------------------
+- [COOK-4621] - upgrade to Splunk 6.0.3 (for heartbleed)
+- add ubuntu 14.04 to test-kitchen
+
 v1.1.0 (2014-03-19)
 -------------------
 - [COOK-4450] - upgrade to Splunk 6.0.2
