@@ -15,13 +15,11 @@
 # limitations under the License.
 #
 require 'pathname'
-require 'chef/provider/lwrp_base'
 require_relative './helpers.rb'
-require 'chef/mixin/shell_out'
-include Chef::Mixin::ShellOut
+require_relative './splunk_base_provider.rb'
 
 # Creates a provider for the splunk_app resource.
-class Chef::Provider::SplunkApp < Chef::Provider::LWRPBase
+class Chef::Provider::SplunkApp < Chef::Provider::SplunkBaseProvider
   use_inline_resources if defined?(:use_inline_resources)
 
   def whyrun_supported?
@@ -134,14 +132,6 @@ class Chef::Provider::SplunkApp < Chef::Provider::LWRPBase
 
   def app_installed?
     ::File.exists?("#{app_dir}/default/app.conf")
-  end
-
-  def splunk_service
-    service 'splunk' do
-      action :nothing
-      supports :status => true, :restart => true
-      provider Chef::Provider::Service::Init
-    end
   end
 
   def install_dependencies
