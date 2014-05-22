@@ -106,6 +106,9 @@ SSL in the `setup_ssl` recipe.
   the data bag item. See __Usage__ for instructions. Defaults to
   '`self-signed.example.com.crt`', and should be changed to something
   relevant for the local site before use, in a role or wrapper cookbook.
+* `node['splunk']['ssl_options']['cert_data']`: Optional certificate data, if
+  not to be downloaded using *chef-vault*. `cert_data` is a hash with key and
+  cert data mapped to their respective names.
 
 The following attributes are related to upgrades in the `upgrade`
 recipe. **Note** The version is set to 4.3.7 and should be modified to
