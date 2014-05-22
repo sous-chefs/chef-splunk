@@ -39,6 +39,18 @@ suites:
         ssl_options:
           enable_ssl: true
 
+  - name: server-with-auth-info
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        is_server: true
+        splunk_auth_info: foo:bar
+        accept_license: true
+        ssl_options:
+          enable_ssl: true
+
   - name: disabled
     run_list:
       - recipe[chef-splunk::default]

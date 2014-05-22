@@ -53,6 +53,9 @@ General attributes:
 * `node['splunk']['receiver_port']`: The port that the receiver
   (server) listens to. This is set to the Splunk Enterprise default,
   9997.
+* `node['splunk']['splunk_auth_info']`: Authentication data, if not to be
+  downloaded using *chef-vault*. The value is a string with `username:password`
+  for logging in to Splunk.
 
 The two URL attributes below are selected by platform and architecture
 by default.

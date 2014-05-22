@@ -64,3 +64,6 @@ when 'omnios'
   default['splunk']['forwarder']['url'] = 'http://download.splunk.com/releases/6.0.3/universalforwarder/solaris/splunkforwarder-6.0.3-204106-SunOS-x86_64.tar.Z'
   default['splunk']['server']['url'] = 'http://download.splunk.com/releases/6.0.3/splunk/solaris/splunk-6.0.3-204106-solaris-10-intel.pkg.Z'
 end
+
+# Splunk auth info (username:password), if not to be loaded from databag
+default['splunk']['splunk_auth_info'] = ''
