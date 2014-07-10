@@ -57,8 +57,7 @@ default['splunk']['input']['host'] = ''
 #   },
 #   ...
 # ]
-
-default['splunk']['input']['port_map'] = {}
+default['splunk']['input']['ports'] = []
 
 # If the `is_server` attribute is set (via an overridable location
 # like a role), then set particular attribute defaults based on the
