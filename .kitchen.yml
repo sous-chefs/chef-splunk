@@ -27,6 +27,20 @@ suites:
       dev_mode: true
       splunk:
         accept_license: true
+        tcpout_server_config_map:
+          sslCommonNameToCheck: sslCommonName
+          sslCertPath: $SPLUNK_HOME/etc/certs/cert.pem
+          sslPassword: password
+          sslRootCAPath: $SPLUNK_HOME/etc/certs/cacert.pem
+          sslVerifyServerCert: false
+        input:
+          host: localhost
+          ports:
+            - port_num: 123123
+              config:
+                connection_host: dns
+                sourcetype: syslog
+                souce: tcp:123123
 
   - name: server
     run_list:
