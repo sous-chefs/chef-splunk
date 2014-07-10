@@ -104,6 +104,17 @@ SSL in the `setup_ssl` recipe.
   '`self-signed.example.com.crt`', and should be changed to something
   relevant for the local site before use, in a role or wrapper cookbook.
 
+The following attributes are related to setting up a splunk forwarder
+with the `client` recipe
+
+* `node['splunk']['tcpout_server_config_map']`: A hash of output options
+that will be added to the tcpout section of the outputs.conf file
+* `node['splunk']['input']['host']`: A string that specifies the default
+host name used in the inputs.conf file.  Note that the inputs.conf file
+is not overwritten if this is not set.
+* `node['splunk']['input']['ports']`: An array of hashes that contain the
+input port configuration necessary to generate the inputs.conf file.
+
 The following attributes are related to upgrades in the `upgrade`
 recipe. **Note** The version is set to 4.3.7 and should be modified to
 suit in a role or wrapper, since we don't know what upgrade versions
@@ -186,6 +197,7 @@ These key value pairs can be used to setup SSL encryption on messages
 forwarded through this client:
 
 ```
+# Note that the ssl CA and certs must exist on the server.
 node['splunk']['tcpout_server_config_map'] = {
   'sslCommonNameToCheck' => 'sslCommonName',
   'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem',
@@ -216,6 +228,7 @@ node['splunk']['input'][ports] =
   ...
 ]
 ```
+
 
 ### default
 
