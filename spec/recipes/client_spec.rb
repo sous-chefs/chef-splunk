@@ -2,7 +2,9 @@ require_relative '../spec_helper'
 
 describe 'chef-splunk::client' do
   let(:chef_run) do
-    ChefSpec::Runner.new.converge(described_recipe)
+    runner = ChefSpec::Runner.new
+    runner.node.set['splunk']['input']['host'] = 'localhost'
+    runner.converge(described_recipe)
   end
 
   before(:each) do
@@ -25,6 +27,10 @@ describe 'chef-splunk::client' do
 
   it 'creates an outputs template in the local system directory' do
     expect(chef_run).to create_template('/opt/splunkforwarder/etc/system/local/outputs.conf')
+  end
+
+  it 'creates an inputs template in the local system directory' do
+    expect(chef_run).to create_template('/opt/splunkforwarder/etc/system/local/inputs.conf')
   end
 
   it 'notifies the splunk service to restart when rendering the outputs template' do
