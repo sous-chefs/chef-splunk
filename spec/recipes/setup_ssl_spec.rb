@@ -21,7 +21,7 @@ describe 'chef-splunk::setup_ssl' do
       end.converge(described_recipe)
     end
 
-    it 'includes chef-vault' do
+    it 'includes chef-vault' do # ~FC005
       expect(chef_run).to include_recipe('chef-vault::default')
     end
 
