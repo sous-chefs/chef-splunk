@@ -39,6 +39,33 @@ suites:
         ssl_options:
           enable_ssl: true
 
+  - name: server-with-auth-info
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        is_server: true
+        splunk_auth_info: foo:bar
+        accept_license: true
+        ssl_options:
+          enable_ssl: true
+
+  - name: server-with-ssl-cert-data
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        is_server: true
+        splunk_auth_info: foo:bar
+        accept_license: true
+        ssl_options:
+          enable_ssl: true
+          keyfile: foo.key
+          crtfile: bar.crt
+          cert_data: { 'foo.key': '-----BEGIN RSA PRIVATE KEY-----\nfoo', 'bar.crt': '-----BEGIN CERTIFICATE-----\nbar' }
+
   - name: disabled
     run_list:
       - recipe[chef-splunk::default]

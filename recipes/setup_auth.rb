@@ -19,7 +19,14 @@
 #
 include_recipe 'chef-vault'
 
-splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['auth']
+if node['splunk']['splunk_auth_info'].empty?
+  # Load auth info from chef-vault
+  splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['auth']
+else
+  # Use pre-defined hash if set, or load from databag
+  splunk_auth_info = node['splunk']['splunk_auth_info']
+end
+
 user, pw = splunk_auth_info.split(':')
 
 execute 'change-admin-user-password-from-default' do
