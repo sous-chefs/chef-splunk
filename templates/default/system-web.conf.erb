@@ -1,5 +1,5 @@
 [settings]
-httpport = 443
+httpport = <%= node['splunk']['web_port'] %>
 enableSplunkWebSSL = <%= @enable_ssl.inspect %>
 privKeyPath = etc/auth/splunkweb/<%= @keyfile%>
 caCertPath = etc/auth/splunkweb/<%= @crtfile %>
