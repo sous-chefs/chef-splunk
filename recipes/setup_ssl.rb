@@ -31,6 +31,15 @@ certs = chef_vault_item(
   ssl_options['data_bag_item']
 )['data']
 
+# ensure that the splunk service resource is available without cloning
+# the resource (CHEF-3694). this is so the later notification works,
+# especially when using chefspec to run this cookbook's specs.
+begin
+  resources('service[splunk]')
+rescue Chef::Exceptions::ResourceNotFound
+  service 'splunk'
+end
+
 template "#{splunk_dir}/etc/system/local/web.conf" do
   source 'system-web.conf.erb'
   variables ssl_options

@@ -13,7 +13,7 @@ describe 'chef-splunk::upgrade' do
     end.converge(described_recipe)
   end
 
-  it 'stops splunk with a special service resource' do
+  it 'stops splunk with a special service resource' do # ~FC005
     expect(chef_run).to stop_service('splunk_stop').with(
       'service_name' => 'splunk'
     )
