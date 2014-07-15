@@ -39,9 +39,7 @@ default['splunk']['ssl_options'] = {
 # like a role), then set particular attribute defaults based on the
 # server, rather than Universal Forwarder. We hardcode the path
 # because we don't want to rely on automagic.
-if node['splunk']['is_server']
-  default['splunk']['user']['home'] = '/opt/splunk'
-end
+default['splunk']['user']['home'] = '/opt/splunk' if node['splunk']['is_server']
 
 case node['platform_family']
 when 'rhel'

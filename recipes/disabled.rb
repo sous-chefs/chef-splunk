@@ -29,7 +29,7 @@ service 'splunk' do
   action :stop
 end
 
-%w{splunk splunkforwarder}.each do |pkg|
+%w(splunk splunkforwarder).each do |pkg|
   package pkg do
     ignore_failure true
     action :remove

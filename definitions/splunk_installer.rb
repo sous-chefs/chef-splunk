@@ -28,14 +28,14 @@ define :splunk_installer, :url => nil do
     action :create_if_missing
   end
 
-  if %w{omnios}.include?(node['platform'])
+  if %w( omnios ).include?(node['platform'])
     pkgopts = [
       "-a #{cache_dir}/#{params[:name]}-nocheck",
       "-r #{cache_dir}/splunk-response"
     ]
 
     execute "uncompress #{cached_package}" do
-      not_if { ::File.exists?("#{cache_dir}/#{package_file.gsub(/\.Z/, '')}") }
+      not_if { ::File.exist?("#{cache_dir}/#{package_file.gsub(/\.Z/, '')}") }
     end
 
     cookbook_file "#{cache_dir}/#{params[:name]}-nocheck" do

@@ -17,23 +17,27 @@
 require 'chef/resource/lwrp_base'
 
 # Creates a splunk_app resource.
-class Chef::Resource::SplunkApp < Chef::Resource::LWRPBase
-  self.resource_name = 'splunk_app'
+class Chef
+  class Resource
+    class SplunkApp < Chef::Resource::LWRPBase
+      self.resource_name = 'splunk_app'
 
-  # Actions correspond to splunk commands pertaining to apps.
-  actions :enable, :disable, :install, :remove
-  default_action :enable
-  state_attrs :enabled, :installed
+      # Actions correspond to splunk commands pertaining to apps.
+      actions :enable, :disable, :install, :remove
+      default_action :enable
+      state_attrs :enabled, :installed
 
-  attribute :app_name, :kind_of => String, :name_attribute => true
-  attribute :remote_file, :kind_of => String, :default => nil
-  attribute :cookbook_file, :kind_of => String, :default => nil
-  attribute :cookbook, :kind_of => String, :default => nil
-  attribute :checksum, :kind_of => String, :default => nil
-  attribute :remote_directory, :kind_of => String, :default => nil
-  attribute :splunk_auth, :kind_of => [String, Array], :required => true
-  attribute :app_dependencies, :kind_of => Array, :default => []
-  attribute :templates, :kind_of => [Array, Hash], :default => []
-  attribute :enabled, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
-  attribute :installed, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
+      attribute :app_name, :kind_of => String, :name_attribute => true
+      attribute :remote_file, :kind_of => String, :default => nil
+      attribute :cookbook_file, :kind_of => String, :default => nil
+      attribute :cookbook, :kind_of => String, :default => nil
+      attribute :checksum, :kind_of => String, :default => nil
+      attribute :remote_directory, :kind_of => String, :default => nil
+      attribute :splunk_auth, :kind_of => [String, Array], :required => true
+      attribute :app_dependencies, :kind_of => Array, :default => []
+      attribute :templates, :kind_of => [Array, Hash], :default => []
+      attribute :enabled, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
+      attribute :installed, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
+    end
+  end
 end
