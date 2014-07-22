@@ -27,6 +27,14 @@ include_recipe 'chef-splunk::setup_auth'
 # above would have failed if there were another issue.
 splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['auth']
 
+# if runasroot is false run the command to modify the splunk init script to
+# run as a non-privileged user otherwise we run as root
+execute 'update-splunk-init-script-to-run-as-splunk-user' do
+  command "#{splunk_cmd} enable boot-start -user #{node['splunk']['user']['username']}"
+  not_if "grep -q /bin/su /etc/init.d/splunk"
+  not_if node['splunk']['server']['runasroot']
+end
+
 execute 'enable-splunk-receiver-port' do
   command "#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth '#{splunk_auth_info}'"
   not_if do
