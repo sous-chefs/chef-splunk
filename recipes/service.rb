@@ -24,15 +24,6 @@ if node['splunk']['accept_license']
   end
 end
 
-# if runasroot is false run the command to modify the splunk init script to
-# run as a non-privileged user otherwise we run as root
-execute 'update-splunk-init-script-to-run-as-splunk-user' do
-  command "#{splunk_cmd} enable boot-start -user #{node['splunk']['user']['username']}"
-  only_if node['splunk']['id_server']
-  not_if "grep -q /bin/su /etc/init.d/splunk"
-  not_if node['splunk']['server']['runasroot']
-end
-
 ruby_block "set \'#{node['splunk']['user']['username']}\' ownership for files in #{splunk_dir}" do
   block do
     FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], "#{splunk_dir}")
