@@ -20,6 +20,12 @@
 
 if node['splunk']['accept_license']
   execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
+    unless node['splunk']['server']['runasroot']
+      command "#{splunk_cmd} enable boot-start --accept-license --answer-yes -user #{node['splunk']['user']['username']}"
+      subscribes :run, 'ruby_block[set \'#{node['splunk']['user']['username']}\' ownership for files in #{splunk_dir}]'
+      not_if 'grep -q /bin/su /etc/init.d/splunk'
+      only_if node['splunk']['is_server']
+    end
     not_if { ::File.exist?('/etc/init.d/splunk') }
   end
 end
@@ -28,8 +34,10 @@ ruby_block "set \'#{node['splunk']['user']['username']}\' ownership for files in
   block do
     FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], "#{splunk_dir}")
   end
+  action :nothing
   not_if node['splunk']['server']['runasroot']
-  only_if { Etc.getpwuid(::File.stat("#{splunk_dir}/etc/licenses/download-trial").uid).name == 'root' }
+  only_if { ::File.stat("#{splunk_dir}/etc/licenses/download-trial").uid.eql?(0) }
+  only_if node['splunk']['is_server']
 end
 
 service 'splunk' do
