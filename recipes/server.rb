@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: splunk
+# cookbook Name:: splunk
 # Recipe:: server
 #
 # Author: Joshua Timberman <joshua@getchef.com>
