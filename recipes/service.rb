@@ -18,27 +18,51 @@
 # limitations under the License.
 #
 
+directory "#{splunk_dir}" do
+  owner node['splunk']['user']['username']
+  group node['splunk']['user']['username']
+  mode 00755
+  action :create
+  not_if { ::File.exists?("#{splunk_dir}") }
+  not_if node['splunk']['server']['runasroot']
+  only_if { node['splunk']['is_server'] }
+end
+
+directory "#{splunk_dir}/var" do
+  owner node['splunk']['user']['username']
+  group node['splunk']['user']['username']
+  mode 00711
+  action :create
+  not_if { ::File.exists?("#{splunk_dir}/var") }
+  not_if node['splunk']['server']['runasroot']
+  only_if { node['splunk']['is_server'] }
+end
+
+directory "#{splunk_dir}/var/log/splunk" do
+  owner node['splunk']['user']['username']
+  group node['splunk']['user']['username']
+  mode 00700
+  action :create
+  recursive true
+  not_if { ::File.exists?("#{splunk_dir}/var/log/splunk") }
+  not_if node['splunk']['server']['runasroot']
+  only_if { node['splunk']['is_server'] }
+end
+
 if node['splunk']['accept_license']
   execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
+    unless node['splunk']['server']['runasroot']
+      command "#{splunk_cmd} enable boot-start --accept-license --answer-yes -user #{node['splunk']['user']['username']}"
+      not_if 'grep -q /bin/su /etc/init.d/splunk'
+      only_if { node['splunk']['is_server'] }
+    end
     not_if { ::File.exist?('/etc/init.d/splunk') }
   end
 end
 
-# if runasroot is false run the command to modify the splunk init script to
-# run as a non-privileged user otherwise we run as root
-execute 'update-splunk-init-script-to-run-as-splunk-user' do
-  command "#{splunk_cmd} enable boot-start -user #{node['splunk']['user']['username']}"
-  only_if node['splunk']['id_server']
-  not_if "grep -q /bin/su /etc/init.d/splunk"
-  not_if node['splunk']['server']['runasroot']
-end
-
-ruby_block "set \'#{node['splunk']['user']['username']}\' ownership for files in #{splunk_dir}" do
-  block do
-    FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], "#{splunk_dir}")
-  end
-  not_if node['splunk']['server']['runasroot']
-  only_if { Etc.getpwuid(::File.stat("#{splunk_dir}/etc/licenses/download-trial").uid).name == 'root' }
+splunk_fix_file_ownership 'splunk' do
+  chownpath splunk_dir
+  triggerdir "#{splunk_dir}/etc/users"
 end
 
 service 'splunk' do
