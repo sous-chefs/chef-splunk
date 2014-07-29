@@ -27,7 +27,7 @@ define(:splunk_fix_file_ownership, :chownpath => nil, :triggerdir => nil) do
     block do
       FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], "#{chownpath}")
     end
-    not_if node['splunk']['server']['runasroot']
+    not_if { node['splunk']['server']['runasroot'] }
     only_if { ::File.stat("#{triggerdir}").uid.eql?(0) }
     only_if { node['splunk']['is_server'] }
   end

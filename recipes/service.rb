@@ -24,7 +24,7 @@ directory "#{splunk_dir}" do
   mode 00755
   action :create
   not_if { ::File.exists?("#{splunk_dir}") }
-  not_if node['splunk']['server']['runasroot']
+  not_if { node['splunk']['server']['runasroot'] }
   only_if { node['splunk']['is_server'] }
 end
 
@@ -34,7 +34,7 @@ directory "#{splunk_dir}/var" do
   mode 00711
   action :create
   not_if { ::File.exists?("#{splunk_dir}/var") }
-  not_if node['splunk']['server']['runasroot']
+  not_if { node['splunk']['server']['runasroot'] }
   only_if { node['splunk']['is_server'] }
 end
 
@@ -45,7 +45,7 @@ directory "#{splunk_dir}/var/log/splunk" do
   action :create
   recursive true
   not_if { ::File.exists?("#{splunk_dir}/var/log/splunk") }
-  not_if node['splunk']['server']['runasroot']
+  not_if { node['splunk']['server']['runasroot'] }
   only_if { node['splunk']['is_server'] }
 end
 
