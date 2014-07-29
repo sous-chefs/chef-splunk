@@ -23,8 +23,6 @@ define(:splunk_fix_file_ownership, :chownpath => nil, :triggerdir => nil) do
   chownpath = params[:chownpath]
   triggerdir = params[:triggerdir]
 
-  Chef::Log.debug("GARRISONDEBUG #{chownpath} #{triggerdir}")
-
   ruby_block "chown_R #{node['splunk']['user']['username']} #{chownpath}" do
     block do
       FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], "#{chownpath}")
