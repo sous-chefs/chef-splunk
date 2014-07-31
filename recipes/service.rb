@@ -18,26 +18,51 @@
 # limitations under the License.
 #
 
+if node['splunk']['is_server'] && !node['splunk']['server']['runasroot'] && !File.exists?("#{splunk_dir}")
+  directory "#{splunk_dir}" do
+    owner node['splunk']['user']['username']
+    group node['splunk']['user']['username']
+    mode 00755
+  end
+
+  directory "#{splunk_dir}/var" do
+    owner node['splunk']['user']['username']
+    group node['splunk']['user']['username']
+    mode 00711
+  end
+
+  directory "#{splunk_dir}/var/log" do
+    owner node['splunk']['user']['username']
+    group node['splunk']['user']['username']
+    mode 00711
+  end
+
+  directory "#{splunk_dir}/var/log/splunk" do
+    owner node['splunk']['user']['username']
+    group node['splunk']['user']['username']
+    mode 00700
+  end
+end
+
 if node['splunk']['accept_license']
   execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
     unless node['splunk']['server']['runasroot']
       command "#{splunk_cmd} enable boot-start --accept-license --answer-yes -user #{node['splunk']['user']['username']}"
-      subscribes :run, 'ruby_block[set \'#{node['splunk']['user']['username']}\' ownership for files in #{splunk_dir}]'
       not_if 'grep -q /bin/su /etc/init.d/splunk'
-      only_if node['splunk']['is_server']
+      only_if { node['splunk']['is_server'] }
     end
     not_if { ::File.exist?('/etc/init.d/splunk') }
   end
 end
 
-ruby_block "set \'#{node['splunk']['user']['username']}\' ownership for files in #{splunk_dir}" do
-  block do
-    FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], "#{splunk_dir}")
+if node['splunk']['is_server']
+  ruby_block "splunk_fix_file_ownership" do
+    block do
+      FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], "#{splunk_dir}")
+    end
+    only_if { ::File.stat("#{splunk_dir}/etc/users").uid.eql?(0) }
+    not_if { node['splunk']['server']['runasroot'] }
   end
-  action :nothing
-  not_if node['splunk']['server']['runasroot']
-  only_if { ::File.stat("#{splunk_dir}/etc/licenses/download-trial").uid.eql?(0) }
-  only_if node['splunk']['is_server']
 end
 
 service 'splunk' do
