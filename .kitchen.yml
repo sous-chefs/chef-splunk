@@ -34,10 +34,13 @@ suites:
     attributes:
       dev_mode: true
       splunk:
+        server: 
+          runasroot: false
         is_server: true
         accept_license: true
         ssl_options:
           enable_ssl: true
+        web_port: 8443
 
   - name: disabled
     run_list:
