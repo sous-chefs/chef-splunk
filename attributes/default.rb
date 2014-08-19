@@ -60,6 +60,6 @@ when 'debian'
     default['splunk']['server']['url'] = 'http://download.splunk.com/releases/6.1.3/splunk/linux/splunk-6.1.3-220630-linux-2.6-intel.deb'
   end
 when 'omnios'
-  default['splunk']['forwarder']['url'] = 'http://download.splunk.com/releases/6.1.3/universalforwarder/solaris/splunkforwarder-6.1.3-220630-SunOS-x86_64.tar.Z'
+  default['splunk']['forwarder']['url'] = 'http://download.splunk.com/releases/6.1.3/universalforwarder/solaris/splunkforwarder-6.1.3-220630-solaris-10-intel.pkg.Z'
   default['splunk']['server']['url'] = 'http://download.splunk.com/releases/6.1.3/splunk/solaris/splunk-6.1.3-220630-solaris-10-intel.pkg.Z'
 end
