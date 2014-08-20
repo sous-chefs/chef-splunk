@@ -28,13 +28,26 @@ suites:
       splunk:
         accept_license: true
 
-  - name: server
+  - name: server-runas-root
     run_list:
       - recipe[chef-splunk::default]
     attributes:
       dev_mode: true
       splunk:
         server: 
+          runasroot: true
+        is_server: true
+        accept_license: true
+        ssl_options:
+          enable_ssl: true
+
+  - name: server-runas-splunk
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
           runasroot: false
         is_server: true
         accept_license: true

@@ -19,7 +19,7 @@
 #
 
 if node['splunk']['is_server'] && !node['splunk']['server']['runasroot'] && !File.exists?("#{splunk_dir}")
-  directory "#{splunk_dir}" do
+  directory splunk_dir do
     owner node['splunk']['user']['username']
     group node['splunk']['user']['username']
     mode 00755
@@ -58,7 +58,7 @@ end
 if node['splunk']['is_server']
   ruby_block "splunk_fix_file_ownership" do
     block do
-      FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], "#{splunk_dir}")
+      FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], splunk_dir)
     end
     only_if { ::File.stat("#{splunk_dir}/etc/users").uid.eql?(0) }
     not_if { node['splunk']['server']['runasroot'] }
