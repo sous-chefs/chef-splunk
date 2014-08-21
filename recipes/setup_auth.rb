@@ -29,7 +29,7 @@ end
 
 file "#{splunk_dir}/etc/.setup_#{user}_password" do
   content 'true\n'
-  owner 'root'
-  group 'root'
+  owner node['splunk']['user']['username']
+  group node['splunk']['user']['username']
   mode 00600
 end
