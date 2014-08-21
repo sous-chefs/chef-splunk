@@ -18,10 +18,55 @@
 # limitations under the License.
 #
 
+if node['splunk']['is_server'] && !node['splunk']['server']['runasroot'] && !File.exists?("#{splunk_dir}")
+  directory splunk_dir do
+    owner node['splunk']['user']['username']
+    group node['splunk']['user']['username']
+    mode 00755
+  end
+
+  directory "#{splunk_dir}/var" do
+    owner node['splunk']['user']['username']
+    group node['splunk']['user']['username']
+    mode 00711
+  end
+
+  directory "#{splunk_dir}/var/log" do
+    owner node['splunk']['user']['username']
+    group node['splunk']['user']['username']
+    mode 00711
+  end
+
+  directory "#{splunk_dir}/var/log/splunk" do
+    owner node['splunk']['user']['username']
+    group node['splunk']['user']['username']
+    mode 00700
+  end
+end
+
 if node['splunk']['accept_license']
   execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
-    not_if { ::File.exist?('/etc/init.d/splunk') }
+    not_if 'grep -q \'\-\-no-prompt \-\-answer-yes\' /etc/init.d/splunk'
   end
+end
+
+if node['splunk']['is_server']
+  ruby_block "splunk_fix_file_ownership" do
+    block do
+      FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], splunk_dir)
+    end
+    only_if { ::File.stat("#{splunk_dir}/etc/users").uid.eql?(0) }
+    not_if { node['splunk']['server']['runasroot'] }
+  end
+end
+
+template "/etc/init.d/splunk" do
+  source "splunk-init.erb"
+  mode 0700
+  variables(
+    :splunkdir => splunk_dir,
+    :runasroot => node['splunk']['server']['runasroot']
+  )
 end
 
 service 'splunk' do
