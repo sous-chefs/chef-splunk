@@ -46,13 +46,7 @@ end
 
 if node['splunk']['accept_license']
   execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
-    #unless node['splunk']['server']['runasroot']
-    #  command "#{splunk_cmd} enable boot-start --accept-license --answer-yes -user #{node['splunk']['user']['username']}"
-    #  not_if 'grep -q /bin/su /etc/init.d/splunk'
-    #  only_if { node['splunk']['is_server'] }
-    #end
     not_if 'grep -q \'\-\-no-prompt \-\-answer-yes\' /etc/init.d/splunk'
-    #not_if { ::File.exist?('/etc/init.d/splunk') }
   end
 end
 
@@ -70,6 +64,7 @@ template "/etc/init.d/splunk" do
   source "splunk-init.erb"
   mode 0700
   variables(
+    :splunkdir => splunk_dir,
     :runasroot => node['splunk']['server']['runasroot']
   )
 end
