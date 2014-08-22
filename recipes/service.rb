@@ -46,7 +46,7 @@ end
 
 if node['splunk']['accept_license']
   execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
-    not_if 'grep -q \'\-\-no-prompt \-\-answer-yes\' /etc/init.d/splunk'
+    not_if "grep -q -- '--no-prompt --answer-yes' /etc/init.d/splunk"
   end
 end
 
