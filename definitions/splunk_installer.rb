@@ -45,6 +45,10 @@ define :splunk_installer, :url => nil do
     file "#{cache_dir}/splunk-response" do
       content 'BASEDIR=/opt'
     end
+
+    execute "usermod -d #{node['splunk']['user']['home']} splunk" do
+      only_if "grep -q /home/splunk /etc/passwd"
+    end
   end
 
   package params[:name] do
