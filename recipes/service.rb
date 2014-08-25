@@ -28,5 +28,4 @@ service 'splunk' do
   supports :status => true, :restart => true
   provider Chef::Provider::Service::Init
   action :start
-  only_if { ::File.exists?('/etc/init.d/splunk') }
 end
