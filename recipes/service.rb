@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-if node['splunk']['is_server'] && !node['splunk']['server']['runasroot'] && !File.exists?("#{splunk_dir}")
+if node['splunk']['is_server'] && !node['splunk']['server']['runasroot'] && !File.exists?(splunk_dir)
   directory splunk_dir do
     owner node['splunk']['user']['username']
     group node['splunk']['user']['username']
@@ -50,14 +50,22 @@ if node['splunk']['accept_license']
   end
 end
 
-if node['splunk']['is_server']
-  ruby_block "splunk_fix_file_ownership" do
-    block do
-      FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], splunk_dir)
+def chown_R_splunk(triggerfile)
+  if node['splunk']['is_server']
+    ruby_block "splunk_fix_file_ownership" do
+      block do
+        FileUtils.chown_R(node['splunk']['user']['username'], node['splunk']['user']['username'], splunk_dir)
+      end
+      only_if { ::File.stat(triggerfile).uid.eql?(0) }
+      not_if { node['splunk']['server']['runasroot'] }
     end
-    only_if { ::File.stat("#{splunk_dir}/etc/users").uid.eql?(0) }
-    not_if { node['splunk']['server']['runasroot'] }
   end
+end
+
+chown_R_splunk("#{splunk_dir}/etc/users")
+postinsttriggerfile = "#{splunk_dir}/etc/.setup_admin_password"
+if File.exists? postinsttriggerfile
+  chown_R_splunk(postinsttriggerfile)
 end
 
 template "/etc/init.d/splunk" do
