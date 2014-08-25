@@ -8,7 +8,6 @@ forwardedindex.0.whitelist = .*
 forwardedindex.1.blacklist = _.*
 forwardedindex.2.whitelist = _audit
 forwardedindex.filter.disable = false
-
 <% unless @config[:tcpout_server_config_map].empty? %>
   <% @config[:tcpout_server_config_map].each_pair do |name, value| %>
 <%= "#{name} = #{value}" %>
