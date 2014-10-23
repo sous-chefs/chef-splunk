@@ -56,6 +56,10 @@ describe 'chef-splunk::install_forwarder' do
       end.converge(described_recipe)
     end
 
+    before(:each) do
+      stub_command('grep -q /home/splunk /etc/passwd').and_return(false)
+    end
+
     it 'caches the package with remote_file' do # ~FC005
       expect(chef_run).to create_remote_file_if_missing('/var/chef/cache/package.pkg.Z')
     end
