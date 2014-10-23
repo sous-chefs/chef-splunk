@@ -196,7 +196,7 @@ write out `etc/system/local/outputs.conf` with the server's IP and the
 `receiver_port` attribute in the Splunk install directory
 (`/opt/splunkforwarder`).
 
-Setting node['splunk']['tcpout_server_config_map'] with key value pairs 
+Setting node['splunk']['tcpout_server_config_map'] with key value pairs
 updates the outputs.conf server configuration with those key value pairs.
 These key value pairs can be used to setup SSL encryption on messages
 forwarded through this client:
@@ -216,12 +216,12 @@ The inputs.conf file can also be managed through this recipe if you want to
 setup a splunk forwarder just set the  default host:
 
 ```
-node['splunk']['input'][host] = 'myhost'
+node['splunk']['input']['host'] = 'myhost'
 ```
 Then set up the port configuration for each input port:
 
 ```
-node['splunk']['input'][ports] =
+node['splunk']['input']['ports'] =
 [
   {
     port_num => 123123,
