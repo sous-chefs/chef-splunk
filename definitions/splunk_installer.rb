@@ -47,7 +47,7 @@ define :splunk_installer, :url => nil do
     end
 
     execute "usermod -d #{node['splunk']['user']['home']} splunk" do
-      only_if "grep -q /home/splunk /etc/passwd"
+      only_if 'grep -q /home/splunk /etc/passwd'
     end
   end
 

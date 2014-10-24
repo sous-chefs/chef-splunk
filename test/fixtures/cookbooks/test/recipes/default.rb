@@ -24,10 +24,12 @@ splunk_app 'bistro-remote-file' do
   remote_file 'https://github.com/ampledata/bistro/archive/1.0.2.tar.gz'
   splunk_auth 'admin:notarealpassword'
   templates ['inputs.conf']
-  if node['platform_family'] == 'omnios'
-  app_dependencies ['ruby-19']
-  else
-  app_dependencies ['ruby']
-  end
+  app_dependencies(
+    if node['platform_family'] == 'omnios'
+      ['ruby-19']
+    else
+      ['ruby']
+    end
+  )
   action :install
 end
