@@ -2,13 +2,11 @@ require_relative '../spec_helper'
 
 describe 'chef-splunk::client' do
   let(:chef_run) do
-    runner = ChefSpec::Runner.new
-    runner.node.set['splunk']['input']['host'] = 'localhost'
-    runner.converge(described_recipe)
+    ChefSpec::Runner.new.converge(described_recipe)
   end
 
   before(:each) do
-    Chef::Recipe.any_instance.stub(:include_recipe)
+    allow_any_instance_of(Chef::Recipe).to receive(:include_recipe).and_return(true)
     splunk_server = Hash.new
     splunk_server['hostname'] = 'spelunker'
     splunk_server['ipaddress'] = '10.10.15.43'
@@ -34,12 +32,19 @@ describe 'chef-splunk::client' do
     expect(resource).to notify('service[splunk]').to(:restart)
   end
 
-  it 'creates an inputs template in the local system directory' do
-    expect(chef_run).to create_template('/opt/splunkforwarder/etc/system/local/inputs.conf')
-  end
+  context 'inputs config has hosts' do
+    before(:each) do
+      chef_run.node.set['splunk']['inputs_conf']['host'] = 'localhost'
+      chef_run.converge(described_recipe)
+    end
 
-  it 'notifies the splunk service to restart when rendering the inputs template' do
-    resource = chef_run.template('/opt/splunkforwarder/etc/system/local/inputs.conf')
-    expect(resource).to notify('service[splunk]').to(:restart)
+    it 'creates an inputs template in the local system directory if it has hosts' do
+      expect(chef_run).to create_template('/opt/splunkforwarder/etc/system/local/inputs.conf')
+    end
+
+    it 'notifies the splunk service to restart when rendering the inputs template' do
+      resource = chef_run.template('/opt/splunkforwarder/etc/system/local/inputs.conf')
+      expect(resource).to notify('service[splunk]').to(:restart)
+    end
   end
 end

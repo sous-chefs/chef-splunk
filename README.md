@@ -112,13 +112,54 @@ SSL in the `setup_ssl` recipe.
 The following attributes are related to setting up a splunk forwarder
 with the `client` recipe
 
-* `node['splunk']['tcpout_server_config_map']`: A hash of output options
-that will be added to the tcpout section of the outputs.conf file
-* `node['splunk']['input']['host']`: A string that specifies the default
-host name used in the inputs.conf file.  Note that the inputs.conf file
-is not overwritten if this is not set.
-* `node['splunk']['input']['ports']`: An array of hashes that contain the
-input port configuration necessary to generate the inputs.conf file.
+`node['splunk']['outputs_conf']` is a hash of configuration values that are used to dynamically populate the `outputs.conf` file's "`tcpout:splunk_indexers_PORT`" configuration section. Each key/value pair in the hash is used as configuration in the file. For example the `attributes/default.rb` has this:
+
+```ruby
+default['splunk']['outputs_conf'] = {
+  'forwardedindex.0.whitelist' => '.*',
+  'forwardedindex.1.blacklist' => '_.*',
+  'forwardedindex.2.whitelist' => '_audit',
+  'forwardedindex.filter.disable' => 'false'
+}
+```
+
+This will result in the following being rendered in `outputs.conf`:
+
+```
+[tcpout:splunk_indexers_9997]
+server=10.0.2.47:9997
+forwardedindex.0.whitelist = .*
+forwardedindex.1.blacklist = _.*
+forwardedindex.2.whitelist = _audit
+forwardedindex.filter.disable = false
+```
+
+The `tcpout:splunk_indexers_9997` section is defined by the search results for Splunk Servers, and the `server` directive is a comma-separated listed of server IPs and the ports. For example, to add an `sslCertPath` directive, define the attribute in your role, wrapper cookbook, etc:
+
+```
+node.default['splunk']['outputs_conf']['sslCertPath'] = '$SPLUNK_HOME/etc/certs/cert.pem'
+```
+
+`node['splunk']['inputs_conf']` is a hash of configuration values that are used to populate the `inputs.conf` file.
+
+* `node['splunk']['inputs_conf']['host']`: A string that specifies the
+default host name used in the inputs.conf file. The inputs.conf file
+is not overwritten if this is not set or is an empty string.
+* `node['splunk']['inputs_conf']['ports']`: An array of hashes that contain
+the input port configuration necessary to generate the inputs.conf
+file.
+
+For example:
+```
+node.default['splunk']['inputs_conf'][ports] = [
+  {
+    port_num => 123123,
+    config => {
+      'sourcetype' => 'syslog'
+    }
+  }
+]
+```
 
 The following attributes are related to upgrades in the `upgrade`
 recipe. **Note** The version is set to 4.3.7 and should be modified to
@@ -216,12 +257,12 @@ The inputs.conf file can also be managed through this recipe if you want to
 setup a splunk forwarder just set the  default host:
 
 ```
-node['splunk']['input']['host'] = 'myhost'
+node['splunk']['inputs_conf']['host'] = 'myhost'
 ```
 Then set up the port configuration for each input port:
 
 ```
-node['splunk']['input']['ports'] =
+node['splunk']['inputs_conf']['ports'] =
 [
   {
     port_num => 123123,

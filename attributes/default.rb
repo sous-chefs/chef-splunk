@@ -37,28 +37,18 @@ default['splunk']['ssl_options'] = {
 }
 
 # Add key value pairs to this to add configuration pairs to the output.conf file
-# e.g.
 # 'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem'
-default['splunk']['tcpout_server_config_map'] = {}
+default['splunk']['outputs_conf'] = {
+  'forwardedindex.0.whitelist' => '.*',
+  'forwardedindex.1.blacklist' => '_.*',
+  'forwardedindex.2.whitelist' => '_audit',
+  'forwardedindex.filter.disable' => 'false'
+}
 
 # Add a host name if you need inputs.conf file to be configured
 # Note: if host is empty the inputs.conf template will not be used.
-default['splunk']['input']['host'] = ''
-
-# Add listening ports and their key value configuration pairs
-# e.g
-# default['splunk']['input'][ports] =
-# [
-#   {
-#     port_num => 123123,
-#     config => {
-#       'sourcetype' => 'syslog',
-#       ...
-#     }
-#   },
-#   ...
-# ]
-default['splunk']['input']['ports'] = []
+default['splunk']['inputs_conf']['host'] = ''
+default['splunk']['inputs_conf']['ports'] = []
 
 # If the `is_server` attribute is set (via an overridable location
 # like a role), then set particular attribute defaults based on the

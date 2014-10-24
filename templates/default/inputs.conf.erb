@@ -1,9 +1,9 @@
 [default]
-host = <%= @config[:host] %>
+host = <%= @inputs_conf['host'] %>
 
-<% @config[:ports].each do |port| %>
+<% @inputs_conf['ports'].each do |port| -%>
 [tcp://:<%= port['port_num'] %>]
-  <% port['config'].each_pair do |name, value| %>
-<%= "#{name} = #{value}" %>
-  <% end %>
-<% end %>
+  <% port['config'].each_pair do |name, value| -%>
+<%= name %> = <%= value %>
+  <% end -%>
+<% end -%>

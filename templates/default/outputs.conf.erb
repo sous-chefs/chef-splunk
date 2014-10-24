@@ -3,13 +3,7 @@ defaultGroup = splunk_indexers_<%= node['splunk']['receiver_port'] %>
 disabled=false
 
 [tcpout:splunk_indexers_<%= node['splunk']['receiver_port'] %>]
-server=<% @config[:splunk_servers].map do |s| -%><%= s['ipaddress'] %>:<%= s['splunk']['receiver_port'] %> <% end.join(', ') -%>
-forwardedindex.0.whitelist = .*
-forwardedindex.1.blacklist = _.*
-forwardedindex.2.whitelist = _audit
-forwardedindex.filter.disable = false
-<% unless @config[:tcpout_server_config_map].empty? %>
-  <% @config[:tcpout_server_config_map].each_pair do |name, value| %>
-<%= "#{name} = #{value}" %>
-  <% end %>
-<% end %>
+server=<% @splunk_servers.map do |s| -%><%= s['ipaddress'] %>:<%= s['splunk']['receiver_port'] %> <% end.join(', ') -%>
+<% @outputs_conf.each_pair do |name, value| -%>
+<%= name %> = <%= value %>
+<% end -%>

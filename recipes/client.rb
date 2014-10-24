@@ -49,16 +49,16 @@ end
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
   mode 0644
-  variables :config => { :splunk_servers => splunk_servers, :tcpout_server_config_map => node['splunk']['tcpout_server_config_map'] }
+  variables :splunk_servers => splunk_servers, :outputs_conf => node['splunk']['outputs_conf']
   notifies :restart, 'service[splunk]'
 end
 
 template "#{splunk_dir}/etc/system/local/inputs.conf" do
   source 'inputs.conf.erb'
   mode 0644
-  variables :config => { :host => node['splunk']['input']['host'], :ports => node['splunk']['input']['ports'] }
+  variables :inputs_conf => node['splunk']['inputs_conf']
   notifies :restart, 'service[splunk]'
-  not_if { node['splunk']['input']['host'].empty? }
+  not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
 end
 
 include_recipe 'chef-splunk::service'
