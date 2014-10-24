@@ -36,6 +36,20 @@ default['splunk']['ssl_options'] = {
   'crtfile' => 'self-signed.example.com.crt'
 }
 
+# Add key value pairs to this to add configuration pairs to the output.conf file
+# 'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem'
+default['splunk']['outputs_conf'] = {
+  'forwardedindex.0.whitelist' => '.*',
+  'forwardedindex.1.blacklist' => '_.*',
+  'forwardedindex.2.whitelist' => '_audit',
+  'forwardedindex.filter.disable' => 'false'
+}
+
+# Add a host name if you need inputs.conf file to be configured
+# Note: if host is empty the inputs.conf template will not be used.
+default['splunk']['inputs_conf']['host'] = ''
+default['splunk']['inputs_conf']['ports'] = []
+
 # If the `is_server` attribute is set (via an overridable location
 # like a role), then set particular attribute defaults based on the
 # server, rather than Universal Forwarder. We hardcode the path
