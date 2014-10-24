@@ -24,7 +24,9 @@ describe 'outputs config should be configured per node attributes' do
     # attributes for dynamic definition
     its(:content) { should match(/sslCertPath = \$SPLUNK_HOME\/etc\/certs\/cert.pem/) }
     its(:content) { should match(/sslCommonNameToCheck = sslCommonName/) }
-    its(:content) { should match(/sslPassword = \$1\$ywpDOD6X9qkw/) }
+    # it won't be the plaintext 'password' per the attribute, and may
+    # differ due to salt, just make sure it looks passwordish.
+    its(:content) { should match(/sslPassword = \$1/) }
     its(:content) { should match(/sslRootCAPath = \$SPLUNK_HOME\/etc\/certs\/cacert.pem/) }
     its(:content) { should match(/sslVerifyServerCert = false/) }
   end
