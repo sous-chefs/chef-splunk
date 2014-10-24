@@ -109,6 +109,17 @@ SSL in the `setup_ssl` recipe.
   '`self-signed.example.com.crt`', and should be changed to something
   relevant for the local site before use, in a role or wrapper cookbook.
 
+The following attributes are related to setting up a splunk forwarder
+with the `client` recipe
+
+* `node['splunk']['tcpout_server_config_map']`: A hash of output options
+that will be added to the tcpout section of the outputs.conf file
+* `node['splunk']['input']['host']`: A string that specifies the default
+host name used in the inputs.conf file.  Note that the inputs.conf file
+is not overwritten if this is not set.
+* `node['splunk']['input']['ports']`: An array of hashes that contain the
+input port configuration necessary to generate the inputs.conf file.
+
 The following attributes are related to upgrades in the `upgrade`
 recipe. **Note** The version is set to 4.3.7 and should be modified to
 suit in a role or wrapper, since we don't know what upgrade versions
@@ -184,6 +195,45 @@ node with `splunk_is_server:true` in the same `chef_environment` and
 write out `etc/system/local/outputs.conf` with the server's IP and the
 `receiver_port` attribute in the Splunk install directory
 (`/opt/splunkforwarder`).
+
+Setting node['splunk']['tcpout_server_config_map'] with key value pairs 
+updates the outputs.conf server configuration with those key value pairs.
+These key value pairs can be used to setup SSL encryption on messages
+forwarded through this client:
+
+```
+# Note that the ssl CA and certs must exist on the server.
+node['splunk']['tcpout_server_config_map'] = {
+  'sslCommonNameToCheck' => 'sslCommonName',
+  'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem',
+  'sslPassword' => 'password'
+  'sslRootCAPath' => '$SPLUNK_HOME/etc/certs/cacert.pem'
+  'sslVerifyServerCert' => false
+}
+```
+
+The inputs.conf file can also be managed through this recipe if you want to
+setup a splunk forwarder just set the  default host:
+
+```
+node['splunk']['input'][host] = 'myhost'
+```
+Then set up the port configuration for each input port:
+
+```
+node['splunk']['input'][ports] =
+[
+  {
+    port_num => 123123,
+    config => {
+      'sourcetype' => 'syslog',
+      ...
+    }
+  },
+  ...
+]
+```
+
 
 ### default
 
