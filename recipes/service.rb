@@ -50,22 +50,30 @@ if node['splunk']['is_server']
 end
 
 if node['splunk']['accept_license']
+  # ftr = first time run file created by a splunk install
   execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
-    not_if "grep -q -- '--no-prompt --answer-yes' /etc/init.d/splunk"
+    only_if { File.exists?"#{splunk_dir}/ftr" }
   end
 end
 
-def chown_r_splunk(triggerfile, user)
-  ruby_block 'splunk_fix_file_ownership' do
-    block do
-      FileUtils.chown_R(user, user, splunk_dir)
+# If we run as splunk user do a recursive chown to that user for all splunk
+# files if a few specific files are root owned.
+ruby_block "splunk_fix_file_ownership" do
+  block do
+    checkowner = Array.new
+    checkowner << "#{splunk_dir}/etc/users"
+    checkowner << "#{splunk_dir}/etc/myinstall/splunkd.xml"
+    checkowner << "#{splunk_dir}/"
+    checkowner.each do |dir|
+      if File.exists?dir
+        if File.stat(dir).uid.eql?(0)
+          FileUtils.chown_R(myuser, myuser, splunk_dir)
+        end
+      end
     end
-    only_if { ::File.stat(triggerfile).uid.eql?(0) }
-  end if node['splunk']['is_server']
+  end
+  not_if node['splunk']['server']['runasroot']
 end
-
-chown_r_splunk("#{splunk_dir}/etc/users", myuser)
-chown_r_splunk(splunk_dir, myuser)
 
 template '/etc/init.d/splunk' do
   source 'splunk-init.erb'
