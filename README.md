@@ -151,7 +151,7 @@ file.
 
 For example:
 ```
-node.default['splunk']['inputs_conf'][ports] = [
+node.default['splunk']['inputs_conf']['ports'] = [
   {
     port_num => 123123,
     config => {
