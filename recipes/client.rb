@@ -64,7 +64,7 @@ end
 template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
   source 'limits.conf.erb'
   mode 0644
-  variables :ratelimit_kbps => node['splunk']['client']['ratelimit_kilobytessec']
+  variables :ratelimit_kbps => node['splunk']['ratelimit_kilobytessec']
   notifies :restart, 'service[splunk]'
 end
 
