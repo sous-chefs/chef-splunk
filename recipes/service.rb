@@ -72,7 +72,7 @@ ruby_block "splunk_fix_file_ownership" do
       end
     end
   end
-  not_if node['splunk']['server']['runasroot']
+  not_if { node['splunk']['server']['runasroot'] }
 end
 
 template '/etc/init.d/splunk' do
