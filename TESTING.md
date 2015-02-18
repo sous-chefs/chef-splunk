@@ -1,7 +1,7 @@
 This cookbook uses a variety of testing components:
 
 - Unit tests: [ChefSpec](https://github.com/acrmp/chefspec)
-- Integration tests: [Test Kitchen](https://github.com/opscode/test-kitchen)
+- Integration tests: [Test Kitchen](https://github.com/chef/test-kitchen)
 - Chef Style lints: [Foodcritic](https://github.com/acrmp/foodcritic)
 - Ruby Style lints: [Rubocop](https://github.com/bbatsov/rubocop)
 
@@ -25,7 +25,7 @@ Once installed, you must install the `vagrant-berkshelf` plugin:
 # Development
 
 1. Clone the git repository from GitHub:
-- `$ git clone git@github.com:opscode-cookbooks/COOKBOOK.git`
+- `$ git clone git@github.com:chef-cookbooks/COOKBOOK.git`
 2. Install the dependencies using bundler:
 - `$ bundle install`
 3. Create a branch for your changes:
@@ -42,4 +42,4 @@ Once installed, you must install the `vagrant-berkshelf` plugin:
 9. Mark the JIRA ticket as "Fix Provided"
 
 For more information, see
-[Chef's Contribution Guidelines](https://wiki.opscode.com/display/chef/How+to+Contribute).
+[Chef's Contribution Guidelines](https://wiki.chef.io/display/chef/How+to+Contribute).
