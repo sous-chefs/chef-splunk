@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe 'chef-splunk::upgrade' do
   let(:chef_run) do
-    ChefSpec::Runner.new(
+    ChefSpec::ServerRunner.new(
       :step_into => ['splunk_installer'],
       :platform => 'ubuntu',
       :version => '12.04'
@@ -20,7 +20,7 @@ describe 'chef-splunk::upgrade' do
   end
 
   it 'downloads the package to install' do
-    expect(chef_run).to create_remote_file_if_missing('/var/chef/cache/package437.deb')
+    expect(chef_run).to create_remote_file_if_missing("#{Chef::Config[:file_cache_path]}/package437.deb")
   end
 
   it 'installs the package with splunk_installer' do

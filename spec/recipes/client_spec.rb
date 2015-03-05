@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe 'chef-splunk::client' do
   let(:chef_run) do
-    ChefSpec::Runner.new.converge(described_recipe)
+    ChefSpec::ServerRunner.new.converge(described_recipe)
   end
 
   before(:each) do

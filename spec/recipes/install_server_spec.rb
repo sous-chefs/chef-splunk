@@ -3,7 +3,7 @@ require_relative '../spec_helper'
 describe 'chef-splunk::install_server' do
   context 'debian family' do
     let(:chef_run) do
-      ChefSpec::Runner.new(
+      ChefSpec::ServerRunner.new(
         :step_into => ['splunk_installer'],
         :platform => 'ubuntu',
         :version => '12.04'
@@ -13,19 +13,19 @@ describe 'chef-splunk::install_server' do
     end
 
     it 'caches the package with remote_file' do
-      expect(chef_run).to create_remote_file_if_missing('/var/chef/cache/package.deb')
+      expect(chef_run).to create_remote_file_if_missing("#{Chef::Config[:file_cache_path]}/package.deb")
     end
 
     it 'installs the package with the downloaded file' do
       expect(chef_run).to install_package('splunk').with(
-        'source' => '/var/chef/cache/package.deb'
+        'source' => "#{Chef::Config[:file_cache_path]}/package.deb"
       )
     end
   end
 
   context 'redhat family' do
     let(:chef_run) do
-      ChefSpec::Runner.new(
+      ChefSpec::ServerRunner.new(
         :step_into => ['splunk_installer'],
         :platform => 'centos',
         :version => '6.4'
@@ -35,19 +35,19 @@ describe 'chef-splunk::install_server' do
     end
 
     it 'caches the package with remote_file' do
-      expect(chef_run).to create_remote_file_if_missing('/var/chef/cache/package.rpm')
+      expect(chef_run).to create_remote_file_if_missing("#{Chef::Config[:file_cache_path]}/package.rpm")
     end
 
     it 'installs the package with the downloaded file' do
       expect(chef_run).to install_package('splunk').with(
-        'source' => '/var/chef/cache/package.rpm'
+        'source' => "#{Chef::Config[:file_cache_path]}/package.rpm"
       )
     end
   end
 
   context 'omnios family' do
     let(:chef_run) do
-      ChefSpec::Runner.new(
+      ChefSpec::ServerRunner.new(
         :step_into => ['splunk_installer'],
         :platform => 'omnios',
         :version => '151002'
@@ -61,27 +61,27 @@ describe 'chef-splunk::install_server' do
     end
 
     it 'caches the package with remote_file' do # ~FC005
-      expect(chef_run).to create_remote_file_if_missing('/var/chef/cache/package.pkg.Z')
+      expect(chef_run).to create_remote_file_if_missing("#{Chef::Config[:file_cache_path]}/package.pkg.Z")
     end
 
     it 'uncompresses the package file' do
-      expect(chef_run).to run_execute('uncompress /var/chef/cache/package.pkg.Z')
+      expect(chef_run).to run_execute("uncompress #{Chef::Config[:file_cache_path]}/package.pkg.Z")
     end
 
     it 'writes out the nocheck file' do
-      expect(chef_run).to create_cookbook_file('/var/chef/cache/splunk-nocheck')
+      expect(chef_run).to create_cookbook_file("#{Chef::Config[:file_cache_path]}/splunk-nocheck")
     end
 
     it 'writes out the response file' do
-      expect(chef_run).to create_file('/var/chef/cache/splunk-response').with(
+      expect(chef_run).to create_file("#{Chef::Config[:file_cache_path]}/splunk-response").with(
         'content' => 'BASEDIR=/opt'
       )
     end
 
     it 'installs the package with the downloaded file' do
       expect(chef_run).to install_package('splunk').with(
-        'source' => '/var/chef/cache/package.pkg',
-        'options' => '-a /var/chef/cache/splunk-nocheck -r /var/chef/cache/splunk-response'
+        'source' => "#{Chef::Config[:file_cache_path]}/package.pkg",
+        'options' => "-a #{Chef::Config[:file_cache_path]}/splunk-nocheck -r #{Chef::Config[:file_cache_path]}/splunk-response"
       )
     end
   end
