@@ -29,14 +29,3 @@ RSpec::Core::RakeTask.new(:spec)
 desc 'Run all tests'
 task :test => [:lint, :spec, :rubocop]
 task :default => :test
-
-begin
-  require 'kitchen/rake_tasks'
-  Kitchen::RakeTasks.new
-
-  desc 'Alias for kitchen:all'
-  task :integration => 'kitchen:all'
-  task :test_all => [:test, :integration]
-rescue LoadError
-  puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
-end
