@@ -31,6 +31,10 @@ splunk_servers = search( # ~FC003
   |a, b| a.name <=> b.name
 end
 
+if splunk_servers.empty?
+  splunk_servers = node['splunk']['splunk_servers']
+end
+
 # ensure that the splunk service resource is available without cloning
 # the resource (CHEF-3694). this is so the later notification works,
 # especially when using chefspec to run this cookbook's specs.
@@ -49,16 +53,15 @@ end
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
   mode 0644
-  variables :splunk_servers => splunk_servers, :outputs_conf => node['splunk']['outputs_conf']
+  variables :splunk_servers => splunk_servers
   notifies :restart, 'service[splunk]'
 end
 
 template "#{splunk_dir}/etc/system/local/inputs.conf" do
   source 'inputs.conf.erb'
   mode 0644
-  variables :inputs_conf => node['splunk']['inputs_conf']
   notifies :restart, 'service[splunk]'
-  not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
+  not_if { node['splunk']['inputs_conf']['inputs'].empty? || node['splunk']['inputs_conf']['host'].nil? }
 end
 
 template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
@@ -69,4 +72,4 @@ template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" d
 end
 
 include_recipe 'chef-splunk::service'
-include_recipe 'chef-splunk::setup_auth'
+#include_recipe 'chef-splunk::setup_auth'
