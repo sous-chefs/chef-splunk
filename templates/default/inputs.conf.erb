@@ -10,7 +10,7 @@ host = <%= @inputs_conf['host'] %>
 
 <% @input_conf['inputs'].sort.each do |inputname| -%>
 [<%= inputname -%>]
-  <% @input_hash[inputname].sort.each do |key,value| -%>
+<% @input_conf['inputs'][inputname].sort.each do |key,value| -%>
   <%= key -%> = <%= value %>
   <% end %>
 <% end %>
