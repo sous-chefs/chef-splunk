@@ -69,4 +69,7 @@ template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" d
 end
 
 include_recipe 'chef-splunk::service'
-include_recipe 'chef-splunk::setup_auth'
+
+if node['splunk']['change_splunk_auth']
+  include_recipe 'chef-splunk::setup_auth'
+end

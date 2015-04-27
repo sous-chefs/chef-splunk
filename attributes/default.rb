@@ -21,6 +21,7 @@ default['splunk']['receiver_port']  = '9997'
 default['splunk']['web_port']       = '443'
 default['splunk']['ratelimit_kilobytessec'] = '2048'
 
+default['splunk']['change_splunk_auth'] = true
 default['splunk']['user'] = {
   'username' => 'splunk',
   'comment'  => 'Splunk Server',
