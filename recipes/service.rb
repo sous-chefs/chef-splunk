@@ -80,7 +80,8 @@ template '/etc/init.d/splunk' do
   mode 0700
   variables(
     :splunkdir => splunk_dir,
-    :runasroot => node['splunk']['server']['runasroot']
+    :runasroot => node['splunk']['server']['runasroot'],
+    :splunkuser => myuser
   )
 end
 

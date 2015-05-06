@@ -21,7 +21,7 @@ splunk_start() {
   <% if @runasroot %>
   "<%= @splunkdir %>/bin/splunk" start --no-prompt --answer-yes
   <% else %>
-  /bin/su - splunk -c "\"<%= @splunkdir %>/bin/splunk\" start --no-prompt --answer-yes"
+  /bin/su - <%= @splunkuser %> -c "\"<%= @splunkdir %>/bin/splunk\" start --no-prompt --answer-yes"
   <% end %>
   RETVAL=$?
 }
@@ -30,7 +30,7 @@ splunk_stop() {
   <% if @runasroot %>
   "<%= @splunkdir %>/bin/splunk" stop 
   <% else %>
-  /bin/su - splunk -c "\"<%= @splunkdir %>/bin/splunk\" stop "
+  /bin/su - <%= @splunkuser %> -c "\"<%= @splunkdir %>/bin/splunk\" stop "
   <% end %>
   RETVAL=$?
 }
@@ -39,7 +39,7 @@ splunk_restart() {
   <% if @runasroot %>
   "<%= @splunkdir %>/bin/splunk" restart 
   <% else %>
-  /bin/su - splunk -c "\"<%= @splunkdir %>/bin/splunk\" restart "
+  /bin/su - <%= @splunkuser %> -c "\"<%= @splunkdir %>/bin/splunk\" restart "
   <% end %>
   RETVAL=$?
 }
@@ -48,7 +48,7 @@ splunk_status() {
   <% if @runasroot %>
   "<%= @splunkdir %>/bin/splunk" status 
   <% else %>
-  /bin/su - splunk -c "\"<%= @splunkdir %>/bin/splunk\" status "
+  /bin/su - <%= @splunkuser %> -c "\"<%= @splunkdir %>/bin/splunk\" status "
   <% end %>
   RETVAL=$?
 }

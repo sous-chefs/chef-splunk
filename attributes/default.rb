@@ -26,7 +26,8 @@ default['splunk']['user'] = {
   'comment'  => 'Splunk Server',
   'home'     => '/opt/splunkforwarder',
   'shell'    => '/bin/bash',
-  'uid'      => 396
+  'uid'      => 396,
+  'gid'      => 396
 }
 
 default['splunk']['ssl_options'] = {

@@ -19,7 +19,7 @@
 #
 
 group node['splunk']['user']['username'] do
-  gid node['splunk']['user']['uid'].to_i # CHEF-4927
+  gid node['splunk']['user']['gid'].to_i # CHEF-4927
   system true if %w(linux).include?(node['os'])
 end
 
