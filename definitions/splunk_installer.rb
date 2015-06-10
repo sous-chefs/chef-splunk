@@ -51,16 +51,14 @@ define :splunk_installer, :url => nil do
     end
   end
 
-  package params[:name] do
+  local_package_resource = case node['platform_family']
+                           when 'rhel'   then :rpm_package
+                           when 'debian' then :dpkg_package
+                           when 'omnios' then :solaris_package
+                           end
+
+  declare_resource local_package_resource, params[:name] do
     source cached_package.gsub(/\.Z/, '')
-    case node['platform_family']
-    when 'rhel'
-      provider Chef::Provider::Package::Rpm
-    when 'debian'
-      provider Chef::Provider::Package::Dpkg
-    when 'omnios'
-      provider Chef::Provider::Package::Solaris
-      options pkgopts.join(' ')
-    end
+    options pkgopts.join(' ') if platform?('omnios')
   end
 end
