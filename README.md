@@ -384,6 +384,9 @@ named `vault`, with an item `splunk_CHEF-ENVIRONMENT`, where
 Enterprise server will be assigned. If environments are not used, use
 `_default`. For example in a Chef Repository (not in a cookbook):
 
+Users may configure the auth vault and item name via the `auth_options` hash 
+in the default attributes. 
+
     % cat data_bags/vault/splunk__default.json
     {
       "id": "splunk__default",

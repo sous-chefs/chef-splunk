@@ -37,6 +37,12 @@ default['splunk']['ssl_options'] = {
   'crtfile' => 'self-signed.example.com.crt'
 }
 
+# nil data_bag_item key uses default of splunk_'node.chef_environment'
+default['splunk']['auth_options'] = {
+  'data_bag' => 'vault',
+  'data_bag_item' => nil
+}
+
 # Add key value pairs to this to add configuration pairs to the output.conf file
 # 'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem'
 default['splunk']['outputs_conf'] = {
