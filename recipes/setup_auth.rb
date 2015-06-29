@@ -17,9 +17,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe 'chef-vault'
 
-splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['auth']
+chef_gem 'chef-vault'
+  compile_time true if respond_to?(:compile_time)
+  version '1.0.4'
+end
+require 'chef-vault'
+
+auth_options = node['splunk']['auth_options']
+ 
+splunk_auth_info = chef_vault_item(
+  auth_options['data_bag'],
+  auth_options['data_bag_item'] || "splunk_#{node.chef_environment}")['auth']
+
 user, pw = splunk_auth_info.split(':')
 
 execute 'change-admin-user-password-from-default' do
