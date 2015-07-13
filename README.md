@@ -111,7 +111,8 @@ SSL in the `setup_ssl` recipe.
   '`self-signed.example.com.crt`', and should be changed to something
   relevant for the local site before use, in a role or wrapper cookbook.
 
-The following attributes are related to setting up Splunk server with indexer clustering:
+The following attributes are related to setting up a Splunk server with indexer
+clustering in the `setup_clustering` recipe:
 
 * `node['splunk']['clustering']`: A hash of indexer clustering configurations
   used in the `setup_clustering` recipe
