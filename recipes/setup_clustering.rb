@@ -23,14 +23,25 @@ unless node['splunk']['clustering']['enable']
   return
 end
 
+# ensure that the splunk service resource is available without cloning
+# the resource (CHEF-3694). this is so the later notification works,
+# especially when using chefspec to run this cookbook's specs.
+begin
+  resources('service[splunk]')
+rescue Chef::Exceptions::ResourceNotFound
+  service 'splunk'
+end
+
 include_recipe 'chef-vault'
 
-passwords = chef_vault_item(:vault, "splunk_#{node.chef_environment}")
+passwords = chef_vault_item('vault', "splunk_#{node.chef_environment}")
 splunk_auth_info = passwords['auth']
 
 cluster_secret = passwords['secret']
 cluster_params = node['splunk']['clustering']
 cluster_mode = cluster_params['mode']
+
+Chef::Log.info("Current node clustering mode: #{cluster_mode}")
 
 cluster_master = search( # ~FC003
   :node,
@@ -38,18 +49,16 @@ cluster_master = search( # ~FC003
 splunk_clustering_enable:true AND \
 splunk_clustering_mode:master AND \
 chef_environment:#{node.chef_environment}"
-).first
+).first unless cluster_mode == 'master'
 
 case cluster_mode
 when 'master'
-  splunk_cmd_params = "\
- -mode master\
+  splunk_cmd_params = "-mode master\
  -replication_factor #{cluster_params['replication_factor']}\
  -search_factor #{cluster_params['search_factor']}"
 when 'slave', 'searchhead'
-  splunk_cmd_params = "\
- -mode #{cluster_mode}\
- -master_uri https://#{cluster_master['ipaddress']}:8089\
+  splunk_cmd_params = "-mode #{cluster_mode}\
+ -master_uri https://#{cluster_master['fqdn'] || cluster_master['ipaddress']}:8089\
  -replication_port #{cluster_params['replication_port']}"
 else
   Chef::Log.fatal("You have set an incorrect clustering mode: #{cluster_mode}")
@@ -58,8 +67,6 @@ else
 end
 
 splunk_cmd_params << " -secret #{cluster_secret}" if cluster_secret
-
-Chef::Log.info("Current node clustering mode: #{cluster_mode}")
 
 execute 'setup-indexer-cluster' do
   command "#{splunk_cmd} edit cluster-config #{splunk_cmd_params} -auth '#{splunk_auth_info}'"
