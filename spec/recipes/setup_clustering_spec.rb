@@ -3,7 +3,6 @@ require_relative '../spec_helper'
 describe 'chef-splunk::setup_clustering' do
   let(:secrets) do
     {
-      'id' => 'splunk__default',
       'auth' => 'admin:notarealpassword',
       'secret' => 'notarealsecret'
     }
@@ -19,17 +18,12 @@ describe 'chef-splunk::setup_clustering' do
     end
   end
 
-  before(:each) do
-    # Force fallback to regular data bag in chef-vault's helper method chef_vault_item()
-    allow(Chef::DataBag).to receive(:load).with('vault').and_return({})
-    # Return above secrets data when requested by setup_clustering
-    allow(Chef::DataBagItem).to receive(:load).with('vault', 'splunk__default').and_return(secrets)
-  end
-
   context 'default server settings' do
     let(:chef_run) do
-      ChefSpec::ServerRunner.new do |node|
+      ChefSpec::ServerRunner.new do |node, server|
         node.set['splunk']['is_server'] = true
+        # Populate mock vault data bag to the server
+        server.create_data_bag('vault', { 'splunk__default' => secrets })
       end.converge(described_recipe)
     end
 
@@ -40,10 +34,12 @@ describe 'chef-splunk::setup_clustering' do
 
   context 'invalid cluster mode settings' do
     let(:chef_run) do
-      ChefSpec::ServerRunner.new do |node|
+      ChefSpec::ServerRunner.new do |node, server|
         node.set['splunk']['is_server'] = true
         node.set['splunk']['clustering']['enable'] = true
         node.set['splunk']['clustering']['mode'] = 'foo'
+        # Populate mock vault data bag to the server
+        server.create_data_bag('vault', { 'splunk__default' => secrets })
       end.converge(described_recipe)
     end
 
@@ -59,10 +55,12 @@ describe 'chef-splunk::setup_clustering' do
 
   context 'indexer cluster master settings' do
     let(:chef_run) do
-      ChefSpec::ServerRunner.new do |node|
+      ChefSpec::ServerRunner.new do |node, server|
         node.set['splunk']['is_server'] = true
         node.set['splunk']['clustering']['enable'] = true
         node.set['splunk']['clustering']['mode'] = 'master'
+        # Populate mock vault data bag to the server
+        server.create_data_bag('vault', { 'splunk__default' => secrets })
       end.converge(described_recipe)
     end
 
@@ -85,12 +83,14 @@ describe 'chef-splunk::setup_clustering' do
 
   context 'indexer cluster master with custom settings' do
     let(:chef_run) do
-      ChefSpec::ServerRunner.new do |node|
+      ChefSpec::ServerRunner.new do |node, server|
         node.set['splunk']['is_server'] = true
         node.set['splunk']['clustering']['enable'] = true
         node.set['splunk']['clustering']['mode'] = 'master'
         node.set['splunk']['clustering']['replication_factor'] = 5
         node.set['splunk']['clustering']['search_factor'] = 3
+        # Populate mock vault data bag to the server
+        server.create_data_bag('vault', { 'splunk__default' => secrets })
       end.converge(described_recipe)
     end
 
@@ -117,8 +117,10 @@ describe 'chef-splunk::setup_clustering' do
         node.set['splunk']['is_server'] = true
         node.set['splunk']['clustering']['enable'] = true
         node.set['splunk']['clustering']['mode'] = 'searchhead'
-        # Publich mock cluster master node to the server for testing
+        # Publish mock cluster master node to the server
         server.create_node(cluster_master_node)
+        # Populate mock vault data bag to the server
+        server.create_data_bag('vault', { 'splunk__default' => secrets })
       end.converge(described_recipe)
     end
 
