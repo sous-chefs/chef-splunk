@@ -38,6 +38,25 @@ describe 'chef-splunk::setup_clustering' do
     end
   end
 
+  context 'invalid cluster mode settings' do
+    let(:chef_run) do
+      ChefSpec::ServerRunner.new do |node|
+        node.set['splunk']['is_server'] = true
+        node.set['splunk']['clustering']['enable'] = true
+        node.set['splunk']['clustering']['mode'] = 'foo'
+      end.converge(described_recipe)
+    end
+
+    # BUG: Chefspec does not suppress the error message despite raise_error
+    # it 'raises an error' do
+    #   expect(chef_run).to raise_error
+    # end
+
+    # it 'does not run edit cluster-config' do
+    #   expect(chef_run).to_not run_execute('setup-indexer-cluster')
+    # end
+  end
+
   context 'indexer cluster master settings' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node|
@@ -47,7 +66,7 @@ describe 'chef-splunk::setup_clustering' do
       end.converge(described_recipe)
     end
 
-    it 'includes chef-vault' do # ~FC005
+    it 'includes chef-vault' do
       expect(chef_run).to include_recipe('chef-vault::default')
     end
 
@@ -55,6 +74,34 @@ describe 'chef-splunk::setup_clustering' do
       expect(chef_run).to run_execute('setup-indexer-cluster').with(
         'command' => "/opt/splunk/bin/splunk edit cluster-config -mode master\
  -replication_factor 3 -search_factor 2 -secret #{secrets['secret']} -auth '#{secrets['auth']}'"
+      )
+      expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
+    end
+
+    it 'writes a file marker to ensure convergence' do
+      expect(chef_run).to render_file('/opt/splunk/etc/.setup_cluster_master').with_content('true\n')
+    end
+  end
+
+  context 'indexer cluster master with custom settings' do
+    let(:chef_run) do
+      ChefSpec::ServerRunner.new do |node|
+        node.set['splunk']['is_server'] = true
+        node.set['splunk']['clustering']['enable'] = true
+        node.set['splunk']['clustering']['mode'] = 'master'
+        node.set['splunk']['clustering']['replication_factor'] = 5
+        node.set['splunk']['clustering']['search_factor'] = 3
+      end.converge(described_recipe)
+    end
+
+    it 'includes chef-vault' do
+      expect(chef_run).to include_recipe('chef-vault::default')
+    end
+
+    it 'runs edit cluster-config with correct parameters' do
+      expect(chef_run).to run_execute('setup-indexer-cluster').with(
+        'command' => "/opt/splunk/bin/splunk edit cluster-config -mode master\
+ -replication_factor 5 -search_factor 3 -secret #{secrets['secret']} -auth '#{secrets['auth']}'"
       )
       expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
     end
