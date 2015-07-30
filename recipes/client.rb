@@ -35,6 +35,13 @@ else
   end
 end
 
+servers_hash = []
+for s in splunk_servers
+  servers_hash.push({'ipaddress' => s, 'port' => node['splunk']['receiver_port']})
+end
+
+node.set['splunk']['output_groups']['default']['servers'] = servers_hash
+
 # ensure that the splunk service resource is available without cloning
 # the resource (CHEF-3694). this is so the later notification works,
 # especially when using chefspec to run this cookbook's specs.
@@ -53,7 +60,7 @@ end
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
   mode 0644
-  variables :splunk_servers => splunk_servers, :outputs_conf => node['splunk']['outputs_conf']
+  variables :outputs => node['splunk']['output_groups']
   notifies :restart, 'service[splunk]'
 end
 
