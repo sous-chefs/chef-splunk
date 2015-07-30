@@ -17,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-unless node['splunk']['clustering']['enable']
+unless node['splunk']['clustering']['enabled']
   Chef::Log.debug('The chef-splunk::setup_clustering recipe was added to the node,')
   Chef::Log.debug('but the attribute to enable clustering was not set.')
   return
@@ -41,14 +41,14 @@ cluster_secret = passwords['secret']
 cluster_params = node['splunk']['clustering']
 cluster_mode = cluster_params['mode']
 
-Chef::Log.info("Current node clustering mode: #{cluster_mode}")
+Chef::Log.debug("Current node clustering mode: #{cluster_mode}")
 
 cluster_master = search( # ~FC003
   :node,
   "\
-splunk_clustering_enable:true AND \
-splunk_clustering_mode:master AND \
-chef_environment:#{node.chef_environment}"
+  splunk_clustering_enabled:true AND \
+  splunk_clustering_mode:master AND \
+  chef_environment:#{node.chef_environment}"
 ).first unless cluster_mode == 'master'
 
 case cluster_mode

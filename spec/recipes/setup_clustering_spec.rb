@@ -13,7 +13,7 @@ describe 'chef-splunk::setup_clustering' do
       node.automatic['fqdn'] = 'cm.cluster.example.com'
       node.automatic['ipaddress'] = '192.168.0.10'
       node.set['splunk']['is_server'] = true
-      node.set['splunk']['clustering']['enable'] = true
+      node.set['splunk']['clustering']['enabled'] = true
       node.set['splunk']['clustering']['mode'] = 'master'
     end
   end
@@ -36,7 +36,7 @@ describe 'chef-splunk::setup_clustering' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
         node.set['splunk']['is_server'] = true
-        node.set['splunk']['clustering']['enable'] = true
+        node.set['splunk']['clustering']['enabled'] = true
         node.set['splunk']['clustering']['mode'] = 'foo'
         # Populate mock vault data bag to the server
         server.create_data_bag('vault', { 'splunk__default' => secrets })
@@ -57,7 +57,7 @@ describe 'chef-splunk::setup_clustering' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
         node.set['splunk']['is_server'] = true
-        node.set['splunk']['clustering']['enable'] = true
+        node.set['splunk']['clustering']['enabled'] = true
         node.set['splunk']['clustering']['mode'] = 'master'
         # Populate mock vault data bag to the server
         server.create_data_bag('vault', { 'splunk__default' => secrets })
@@ -85,7 +85,7 @@ describe 'chef-splunk::setup_clustering' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
         node.set['splunk']['is_server'] = true
-        node.set['splunk']['clustering']['enable'] = true
+        node.set['splunk']['clustering']['enabled'] = true
         node.set['splunk']['clustering']['mode'] = 'master'
         node.set['splunk']['clustering']['replication_factor'] = 5
         node.set['splunk']['clustering']['search_factor'] = 3
@@ -115,7 +115,7 @@ describe 'chef-splunk::setup_clustering' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
         node.set['splunk']['is_server'] = true
-        node.set['splunk']['clustering']['enable'] = true
+        node.set['splunk']['clustering']['enabled'] = true
         node.set['splunk']['clustering']['mode'] = 'searchhead'
         # Publish mock cluster master node to the server
         server.create_node(cluster_master_node)

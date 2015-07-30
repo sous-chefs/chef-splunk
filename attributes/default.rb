@@ -38,7 +38,7 @@ default['splunk']['ssl_options'] = {
 }
 
 default['splunk']['clustering'] = {
-  'enable' => false,
+  'enabled' => false,
   'mode' => 'master', # master|slave|searchhead
   'replication_factor' => 3,
   'search_factor' => 2,

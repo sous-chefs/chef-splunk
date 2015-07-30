@@ -45,6 +45,6 @@ if node['splunk']['ssl_options']['enable_ssl']
   include_recipe 'chef-splunk::setup_ssl'
 end
 
-if node['splunk']['clustering']['enable']
+if node['splunk']['clustering']['enabled']
   include_recipe 'chef-splunk::setup_clustering'
 end
