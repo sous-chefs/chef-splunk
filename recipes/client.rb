@@ -37,7 +37,7 @@ end
 
 servers_hash = []
 for s in splunk_servers
-  servers_hash.push({'ipaddress' => s, 'port' => node['splunk']['receiver_port']})
+  servers_hash.push({'ipaddress' => s['ipaddress'], 'port' => s['splunk']['receiver_port']})
 end
 
 node.set['splunk']['output_groups']['default']['servers'] = servers_hash
