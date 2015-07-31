@@ -39,10 +39,16 @@ default['splunk']['ssl_options'] = {
 
 default['splunk']['clustering'] = {
   'enabled' => false,
+  'num_sites' => 1,   # multisite is true if num_sites > 1
   'mode' => 'master', # master|slave|searchhead
+  'replication_port' => 9887,
+  # Following two params only valid if num_sites = 1 (multisite is false)
   'replication_factor' => 3,
   'search_factor' => 2,
-  'replication_port' => 9887
+  # Following three params only valid if num_sites > 1 (multisite is true)
+  'site' => 1,
+  'site_replication_factor' => 'origin:2,total:3',
+  'site_search_factor' => 'origin:1,total:2'
 }
 
 # Add key value pairs to this to add configuration pairs to the output.conf file
