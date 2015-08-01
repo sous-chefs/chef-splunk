@@ -37,6 +37,14 @@ default['splunk']['ssl_options'] = {
   'crtfile' => 'self-signed.example.com.crt'
 }
 
+default['splunk']['clustering'] = {
+  'enabled' => false,
+  'mode' => 'master', # master|slave|searchhead
+  'replication_factor' => 3,
+  'search_factor' => 2,
+  'replication_port' => 9887
+}
+
 # Add key value pairs to this to add configuration pairs to the output.conf file
 # 'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem'
 default['splunk']['outputs_conf'] = {

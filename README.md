@@ -2,7 +2,8 @@ splunk Cookbook
 ===============
 
 This cookbook manages a Splunk Universal Forwarder (client) or a
-Splunk Enterprise (server) installation.
+Splunk Enterprise (server) installation, including a Splunk clustered
+environment.
 
 The Splunk default user is admin and the password is changeme. See the
 `setup_auth` recipe below for more information about how to manage
@@ -109,6 +110,27 @@ SSL in the `setup_ssl` recipe.
   the data bag item. See __Usage__ for instructions. Defaults to
   '`self-signed.example.com.crt`', and should be changed to something
   relevant for the local site before use, in a role or wrapper cookbook.
+
+The following attributes are related to setting up a Splunk server with indexer
+clustering in the `setup_clustering` recipe:
+
+* `node['splunk']['clustering']`: A hash of indexer clustering configurations
+  used in the `setup_clustering` recipe
+* `node['splunk']['clustering']['enable']`: Whether to enable indexer clustering,
+  must be set to `true` to use the `setup_clustering` recipe. Defaults to `false`,
+  must be a boolean literal `true` or `false`.
+* `node['splunk']['clustering']['mode']`: The clustering mode of the node within
+  the indexer cluster. Must be set using string literal 'master',
+  'slave', or 'searchhead'.
+* `node['splunk']['clustering']['replication_factor']`: The replication factor
+  of the indexer cluster. Defaults to 3, must be a positive integer. Only valid
+  when `node['splunk']['clustering']['mode']='master'`.
+* `node['splunk']['clustering']['search_factor']`: The search factor
+  of the indexer cluster. Only valid when `node['splunk']['clustering']['mode']='master'`.
+  Defaults to 2, must be a positive integer.
+* `node['splunk']['clustering']['replication_port']`: The replication port
+  of the cluster peer member. Only valid when `node['splunk']['clustering']['mode']='slave'`.
+  Defaults to 9887.
 
 The following attributes are related to setting up a splunk forwarder
 with the `client` recipe
@@ -317,7 +339,10 @@ clients. The recipe sets the attribute `node['splunk']['is_server']`
 to true, and is included from the `default` recipe if the attribute is
 true as well. The recipes can be used on their own composed in a
 wrapper cookbook or role, too. This recipe will include the `user`,
-`install_server`, `service`, and `setup_auth` recipes.
+`install_server`, `service`, and `setup_auth` recipes. It will also
+conditionally include the `setup_ssl` and `setup_clustering` recipes
+if enabled via the corresponding node attributes, as defined
+in __Attributes__ above.
 
 It will also enable Splunk Enterprise as an indexer, listening on the
 `node['splunk']['receiver_port']`.
@@ -345,6 +370,30 @@ will edit the specified user (assuming `admin`), and then write a
 state file to `etc/.setup_admin_password` to indicate in future Chef
 runs that it has set the password. If the password should be changed,
 then that file should be removed.
+
+## setup_clustering
+
+This recipe sets up Splunk indexer clustering based on the node's
+clustering mode or `node['splunk']['clustering']['mode']`. The attribute
+`node['splunk']['clustering']['enable']` must be set to true in order to
+run this recipe. Similar to `setup_auth`, this recipes loads
+the same encrypted data bag with the Splunk `secret` key (to be shared among
+cluster members), using the [chef-vault cookbook](http://ckbk.it/chef-vault)
+helper method, `chef_vault_item`. See __Usage__ for how to set this up. The
+recipe will edit the cluster configuration, and then write a state file to
+`etc/.setup_cluster_{master|slave|searchhead}` to indicate in future Chef
+runs that it has set the node's indexer clustering configuration. If cluster
+configuration should be changed, then that file should be removed.
+
+It will also search a Chef Server for a Splunk Enterprise (server)
+node of type cluster master, that is with `splunk_clustering_enable:true` and
+`splunk_clustering_mode:master` in the same `chef_environment` and
+use that server's IP when configuring a cluster search head or a cluster
+peer node to communicate with the cluster master (Refer to `master_uri` attribute
+of clustering stanza in `etc/system/local/server.conf`). 
+
+Indexer clustering is used to achieve some data availability & recovery. To learn
+more about Splunk indexer clustering, refer to [Splunk Docs](http://docs.splunk.com/Documentation/Splunk/latest/Indexer/Aboutclusters).
 
 ## upgrade
 
@@ -375,9 +424,9 @@ this is a conflicting UID/GID, then modify the attribute as required.
 
 ### Data Bag Items
 
-#### Admin User Authentication
+#### Splunk Secrets & Admin User Authentication
 
-Splunk admin user authentication information should be stored in a
+Splunk secret key and admin user authentication information should be stored in a
 data bag item that is encrypted using Chef Vault. Create a data bag
 named `vault`, with an item `splunk_CHEF-ENVIRONMENT`, where
 `CHEF-ENVIRONMENT` is the `node.chef_environment` that the Splunk
@@ -387,7 +436,8 @@ Enterprise server will be assigned. If environments are not used, use
     % cat data_bags/vault/splunk__default.json
     {
       "id": "splunk__default",
-      "auth": "admin:notarealpassword"
+      "auth": "admin:notarealpassword",
+      "secret": "notarealsecret"
     }
 
 Or with an environment, '`production`':
@@ -395,7 +445,8 @@ Or with an environment, '`production`':
     % cat data_bags/vault/splunk_production.json
     {
       "id": "splunk_production",
-      "auth": "admin:notarealpassword"
+      "auth": "admin:notarealpassword",
+      "secret": "notarealsecret"
     }
 
 Then, upload the data bag item to the Chef Server using the
