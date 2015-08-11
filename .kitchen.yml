@@ -105,3 +105,15 @@ suites:
         accept_license: true
         upgrade_enabled: true
         is_server: true
+
+  - name: server_lwrps
+    run_list:
+      - recipe[chef-splunk::default]
+      - recipe[test::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        accept_license: true
+        is_server: true
