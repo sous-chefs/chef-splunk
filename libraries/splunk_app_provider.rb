@@ -68,12 +68,13 @@ class Chef
           end
         end
 
-        if new_resource.templates
-          directory "#{app_dir}/local" do
-            recursive true
-            mode 00755
-          end
+        directory "#{app_dir}/local" do
+          recursive true
+          mode 00755
+          owner node['splunk']['user']['username'] unless node['splunk']['server']['runasroot']
+        end
 
+        if new_resource.templates
           new_resource.templates.each do |t|
             template "#{app_dir}/local/#{t}" do
               source "#{new_resource.app_name}/#{t}.erb"
