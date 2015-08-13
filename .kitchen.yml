@@ -117,3 +117,15 @@ suites:
           runasroot: false
         accept_license: true
         is_server: true
+
+  - name: client_lwrps
+    run_list:
+      - recipe[chef-splunk::default]
+      - recipe[test::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        accept_license: true
+        is_server: false
