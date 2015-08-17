@@ -26,9 +26,10 @@ define :splunk_installer, :url => nil do
   remote_file cached_package do
     source params[:url]
     action :create_if_missing
+    not_if { node['splunk']['repo_install'] }
   end
 
-  if %w( omnios ).include?(node['platform'])
+  if node['platform'].eql?('omnios')
     pkgopts = [
       "-a #{cache_dir}/#{params[:name]}-nocheck",
       "-r #{cache_dir}/splunk-response"
@@ -58,7 +59,7 @@ define :splunk_installer, :url => nil do
                            end
 
   declare_resource local_package_resource, params[:name] do
-    source cached_package.gsub(/\.Z/, '')
+    source cached_package.gsub(/\.Z/, '') unless node['splunk']['repo_install']
     options pkgopts.join(' ') if platform?('omnios')
   end
 end
