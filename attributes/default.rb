@@ -60,6 +60,8 @@ default['splunk']['user']['home'] = '/opt/splunk' if node['splunk']['is_server']
 
 default['splunk']['server']['runasroot'] = true
 
+default['splunk']['repo_install'] = false
+
 case node['platform_family']
 when 'rhel'
   if node['kernel']['machine'] == 'x86_64'
