@@ -30,6 +30,14 @@ splunk_servers = search(
   a.name <=> b.name
 end
 
+if splunk_servers.empty?
+  splunk_servers = node['splunk']['splunk_servers']
+end
+
+if splunk_servers.empty?
+  splunk_servers = node['splunk']['splunk_servers']
+end
+
 # ensure that the splunk service resource is available without cloning
 # the resource (CHEF-3694). this is so the later notification works,
 # especially when using chefspec to run this cookbook's specs.
