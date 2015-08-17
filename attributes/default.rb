@@ -68,6 +68,8 @@ default['splunk']['user']['home'] = '/opt/splunk' if node['splunk']['is_server']
 
 default['splunk']['server']['runasroot'] = true
 
+default['splunk']['splunk_servers'] = []
+
 case node['platform_family']
 when 'rhel', 'fedora'
   if node['kernel']['machine'] == 'x86_64'
