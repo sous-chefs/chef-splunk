@@ -58,6 +58,7 @@ default['splunk']['outputs_conf'] = {
 # Note: if host is empty the inputs.conf template will not be used.
 default['splunk']['inputs_conf']['host'] = ''
 default['splunk']['inputs_conf']['ports'] = []
+default['splunk']['inputs_conf']['inputs'] = []
 
 # If the `is_server` attribute is set (via an overridable location
 # like a role), then set particular attribute defaults based on the
@@ -66,6 +67,9 @@ default['splunk']['inputs_conf']['ports'] = []
 default['splunk']['user']['home'] = '/opt/splunk' if node['splunk']['is_server']
 
 default['splunk']['server']['runasroot'] = true
+
+default['splunk']['setup_auth'] = true
+default['splunk']['repo_install'] = false
 
 case node['platform_family']
 when 'rhel'
