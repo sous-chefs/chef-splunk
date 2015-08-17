@@ -1,9 +1,9 @@
 [default]
-host = <%= @inputs_conf['host'] %>
+host = <%= @node['splunk']['inputs_conf']['host'] %>
+<% @node['splunk']['inputs_conf']['inputs'].each do |input| -%>
 
-<% @inputs_conf['ports'].each do |port| -%>
-[tcp://:<%= port['port_num'] %>]
-  <% port['config'].each_pair do |name, value| -%>
+[<%= input['inputname'] -%>]
+  <% input['config'].each_pair do |name, value| -%>
 <%= name %> = <%= value %>
   <% end -%>
 <% end -%>

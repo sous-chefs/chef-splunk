@@ -59,6 +59,7 @@ default['splunk']['outputs_conf'] = {
 # Note: if host is empty the inputs.conf template will not be used.
 default['splunk']['inputs_conf']['host'] = ''
 default['splunk']['inputs_conf']['ports'] = []
+default['splunk']['inputs_conf']['inputs'] = []
 
 # If the `is_server` attribute is set (via an overridable location
 # like a role), then set particular attribute defaults based on the

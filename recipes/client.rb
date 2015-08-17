@@ -49,7 +49,7 @@ end
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
   mode 0644
-  variables splunk_servers: splunk_servers, outputs_conf: node['splunk']['outputs_conf']
+  variables :splunk_servers => splunk_servers
   notifies :restart, 'service[splunk]'
 end
 
@@ -58,7 +58,7 @@ template "#{splunk_dir}/etc/system/local/inputs.conf" do
   mode 0644
   variables inputs_conf: node['splunk']['inputs_conf']
   notifies :restart, 'service[splunk]'
-  not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
+  not_if { node['splunk']['inputs_conf']['inputs'].empty? || node['splunk']['inputs_conf']['host'].nil? }
 end
 
 template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
