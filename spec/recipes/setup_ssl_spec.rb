@@ -20,7 +20,7 @@ describe 'chef-splunk::setup_ssl' do
         node.set['splunk']['is_server'] = true
         node.set['dev_mode'] = true
         # Populate mock certs data into Chef server
-        server.create_data_bag('vault', { 'splunk_certificates' => certs })
+        server.create_data_bag('vault', certs)
       end.converge(described_recipe)
     end
 
@@ -53,7 +53,7 @@ describe 'chef-splunk::setup_ssl' do
         node.set['dev_mode'] = true
         node.set['splunk']['web_port'] = '7777'
         # Populate mock certs data into Chef server
-        server.create_data_bag('vault', { 'splunk_certificates' => certs })
+        server.create_data_bag('vault', certs)
       end.converge(described_recipe)
     end
 
