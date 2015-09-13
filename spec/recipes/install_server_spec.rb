@@ -17,7 +17,7 @@ describe 'chef-splunk::install_server' do
     end
 
     it 'installs the package with the downloaded file' do
-      expect(chef_run).to install_package('splunk').with(
+      expect(chef_run).to install_dpkg_package('splunk').with(
         'source' => "#{Chef::Config[:file_cache_path]}/package.deb"
       )
     end
@@ -39,7 +39,7 @@ describe 'chef-splunk::install_server' do
     end
 
     it 'installs the package with the downloaded file' do
-      expect(chef_run).to install_package('splunk').with(
+      expect(chef_run).to install_rpm_package('splunk').with(
         'source' => "#{Chef::Config[:file_cache_path]}/package.rpm"
       )
     end
@@ -79,7 +79,7 @@ describe 'chef-splunk::install_server' do
     end
 
     it 'installs the package with the downloaded file' do
-      expect(chef_run).to install_package('splunk').with(
+      expect(chef_run).to install_solaris_package('splunk').with(
         'source' => "#{Chef::Config[:file_cache_path]}/package.pkg",
         'options' => "-a #{Chef::Config[:file_cache_path]}/splunk-nocheck -r #{Chef::Config[:file_cache_path]}/splunk-response"
       )

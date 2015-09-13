@@ -24,7 +24,7 @@ describe 'chef-splunk::upgrade' do
   end
 
   it 'installs the package with splunk_installer' do
-    expect(chef_run).to install_package('splunkforwarder')
+    expect(chef_run).to install_dpkg_package('splunkforwarder')
   end
 
   it 'runs an unattended upgrade (starts splunk)' do
