@@ -24,6 +24,9 @@ include Chef::Mixin::ShellOut
 class Chef
   class Provider
     class SplunkApp < Chef::Provider::LWRPBase
+
+      provides :splunk_app
+
       use_inline_resources if defined?(:use_inline_resources)
 
       def whyrun_supported?
