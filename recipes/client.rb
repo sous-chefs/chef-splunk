@@ -24,12 +24,23 @@
 include_recipe 'chef-splunk::user'
 include_recipe 'chef-splunk::install_forwarder'
 
-splunk_servers = search( # ~FC003
-  :node,
-  "splunk_is_server:true AND chef_environment:#{node.chef_environment}"
-).sort! do
-  |a, b| a.name <=> b.name
+if node['splunk']['splunk_servers']
+  splunk_servers = node['splunk']['splunk_servers']
+else
+  splunk_servers = search( # ~FC003
+    :node,
+    "splunk_is_server:true AND chef_environment:#{node.chef_environment}"
+  ).sort! do
+    |a, b| a.name <=> b.name
+  end
 end
+
+servers_hash = []
+for s in splunk_servers
+  servers_hash.push({'ipaddress' => s['ipaddress'], 'port' => s['splunk']['receiver_port']})
+end
+
+node.set['splunk']['output_groups']['default']['servers'] = servers_hash
 
 # ensure that the splunk service resource is available without cloning
 # the resource (CHEF-3694). this is so the later notification works,
@@ -49,7 +60,7 @@ end
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
   mode 0644
-  variables :splunk_servers => splunk_servers, :outputs_conf => node['splunk']['outputs_conf']
+  variables :outputs => node['splunk']['output_groups']
   notifies :restart, 'service[splunk]'
 end
 
@@ -69,4 +80,4 @@ template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" d
 end
 
 include_recipe 'chef-splunk::service'
-include_recipe 'chef-splunk::setup_auth'
+#include_recipe 'chef-splunk::setup_auth'
