@@ -27,8 +27,8 @@ include_recipe 'chef-splunk::install_forwarder'
 splunk_servers = search( # ~FC003
   :node,
   "splunk_is_server:true AND chef_environment:#{node.chef_environment}"
-).sort! do
-  |a, b| a.name <=> b.name
+).sort! do |a, b|
+  a.name <=> b.name
 end
 
 # ensure that the splunk service resource is available without cloning

@@ -52,20 +52,20 @@ end
 if node['splunk']['accept_license']
   # ftr = first time run file created by a splunk install
   execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
-    only_if { File.exists?"#{splunk_dir}/ftr" }
+    only_if { File.exist? "#{splunk_dir}/ftr" }
   end
 end
 
 # If we run as splunk user do a recursive chown to that user for all splunk
 # files if a few specific files are root owned.
-ruby_block "splunk_fix_file_ownership" do
+ruby_block 'splunk_fix_file_ownership' do
   block do
-    checkowner = Array.new
+    checkowner = []
     checkowner << "#{splunk_dir}/etc/users"
     checkowner << "#{splunk_dir}/etc/myinstall/splunkd.xml"
     checkowner << "#{splunk_dir}/"
     checkowner.each do |dir|
-      if File.exists?dir
+      if File.exist? dir
         if File.stat(dir).uid.eql?(0)
           FileUtils.chown_R(myuser, myuser, splunk_dir)
         end

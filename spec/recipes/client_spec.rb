@@ -7,10 +7,10 @@ describe 'chef-splunk::client' do
 
   before(:each) do
     allow_any_instance_of(Chef::Recipe).to receive(:include_recipe).and_return(true)
-    splunk_server = Hash.new
+    splunk_server = {}
     splunk_server['hostname'] = 'spelunker'
     splunk_server['ipaddress'] = '10.10.15.43'
-    splunk_server['splunk'] = Hash.new
+    splunk_server['splunk'] = {}
     splunk_server['splunk']['receiver_port'] = '1648'
     stub_search(:node, 'splunk_is_server:true AND chef_environment:_default').and_return([splunk_server])
   end
