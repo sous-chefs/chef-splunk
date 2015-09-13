@@ -61,6 +61,14 @@ template "#{splunk_dir}/etc/system/local/inputs.conf" do
   not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
 end
 
+template "#{splunk_dir}/etc/system/local/web.conf" do
+  source 'web.conf.erb'
+  mode 0644
+  variables :mgmt_host_port => node['splunk']['mgmt_host_port']
+  notifies :restart, 'service[splunk]'
+  not_if { node['splunk']['mgmt_host_port'].nil? }
+end
+
 template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
   source 'limits.conf.erb'
   mode 0644
