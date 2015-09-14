@@ -58,8 +58,8 @@ when 'master'
     available_sites = (1..cluster_params['num_sites']).to_a.map { |i| 'site' + i.to_s }.join(',')
     splunk_cmd_params <<
       " -multisite=true -available_sites #{available_sites} -site #{cluster_params['site']}" \
-      " -replication_factor #{cluster_params['site_replication_factor']}" \
-      " -search_factor #{cluster_params['site_search_factor']}"
+      " -site_replication_factor #{cluster_params['site_replication_factor']}" \
+      " -site_search_factor #{cluster_params['site_search_factor']}"
   else
     splunk_cmd_params <<
       " -replication_factor #{cluster_params['replication_factor']}" \
