@@ -48,14 +48,9 @@ describe 'chef-splunk::setup_clustering' do
       end.converge(described_recipe)
     end
 
-    # BUG: Chefspec does not suppress the error message despite raise_error
-    # it 'raises an error' do
-    #   expect(chef_run).to raise_error
-    # end
-
-    # it 'does not run edit cluster-config' do
-    #   expect(chef_run).to_not run_execute('setup-indexer-cluster')
-    # end
+    it 'raises an error' do
+      expect{ chef_run }.to raise_error(RuntimeError)
+    end
   end
 
   context 'indexer cluster master settings' do
