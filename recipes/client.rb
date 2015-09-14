@@ -27,8 +27,8 @@ include_recipe 'chef-splunk::install_forwarder'
 splunk_servers = search( # ~FC003
   :node,
   "splunk_is_server:true AND chef_environment:#{node.chef_environment}"
-).sort! do
-  |a, b| a.name <=> b.name
+).sort! do |a, b|
+  a.name <=> b.name
 end
 
 # ensure that the splunk service resource is available without cloning
@@ -69,4 +69,4 @@ template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" d
 end
 
 include_recipe 'chef-splunk::service'
-include_recipe 'chef-splunk::setup_auth'
+include_recipe 'chef-splunk::setup_auth' if node['splunk']['setup_auth']

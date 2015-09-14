@@ -1,6 +1,18 @@
 splunk CHANGELOG
 ================
 
+v1.4.0 (2015-09-13)
+-------------------
+
+Also known as the "it's about time!" release
+
+- support for splunk universal client running as a server
+- update splunk install version to 6.2.1
+- added attribute for rate limiting maxKBps throughput
+- Add recipe to setup indexer cluster
+- use `declare_resource` method to setup the right local-file package resource for `splunk_installer` definition
+- lots of fixes for specs and tests
+
 v1.3.0 (2014-10-24)
 -------------------
 
