@@ -23,43 +23,48 @@ define :splunk_installer, :url => nil do
   package_file = splunk_file(params[:url])
   cached_package = ::File.join(cache_dir, package_file)
 
-  remote_file cached_package do
-    source params[:url]
-    action :create_if_missing
-    not_if { node['splunk']['repo_install'] }
-  end
-
-  if node['platform'].eql?('omnios')
-    pkgopts = [
-      "-a #{cache_dir}/#{params[:name]}-nocheck",
-      "-r #{cache_dir}/splunk-response"
-    ]
-
-    execute "uncompress #{cached_package}" do
-      not_if { ::File.exist?("#{cache_dir}/#{package_file.gsub(/\.Z/, '')}") }
+  unless node['splunk']['repo_install']
+    remote_file cached_package do
+      source params[:url]
+      action :create_if_missing
     end
 
-    cookbook_file "#{cache_dir}/#{params[:name]}-nocheck" do
-      source 'splunk-nocheck'
+    if node['platform'].eql?('omnios')
+      pkgopts = [
+          "-a #{cache_dir}/#{params[:name]}-nocheck",
+          "-r #{cache_dir}/splunk-response"
+      ]
+
+      execute "uncompress #{cached_package}" do
+        not_if { ::File.exist?("#{cache_dir}/#{package_file.gsub(/\.Z/, '')}") }
+      end
+
+      cookbook_file "#{cache_dir}/#{params[:name]}-nocheck" do
+        source 'splunk-nocheck'
+      end
+
+      file "#{cache_dir}/splunk-response" do
+        content 'BASEDIR=/opt'
+      end
+
+      execute "usermod -d #{node['splunk']['user']['home']} splunk" do
+        only_if 'grep -q /home/splunk /etc/passwd'
+      end
     end
 
-    file "#{cache_dir}/splunk-response" do
-      content 'BASEDIR=/opt'
+    local_package_resource = case node['platform_family']
+                               when 'rhel'   then :rpm_package
+                               when 'debian' then :dpkg_package
+                               when 'omnios' then :solaris_package
+                             end
+
+    declare_resource local_package_resource, params[:name] do
+      source cached_package.gsub(/\.Z/, '')
+      options pkgopts.join(' ') if platform?('omnios')
     end
-
-    execute "usermod -d #{node['splunk']['user']['home']} splunk" do
-      only_if 'grep -q /home/splunk /etc/passwd'
+  else
+    package 'splunkforwarder' do
+      action :upgrade
     end
-  end
-
-  local_package_resource = case node['platform_family']
-                           when 'rhel'   then :rpm_package
-                           when 'debian' then :dpkg_package
-                           when 'omnios' then :solaris_package
-                           end
-
-  declare_resource local_package_resource, params[:name] do
-    source cached_package.gsub(/\.Z/, '') unless node['splunk']['repo_install']
-    options pkgopts.join(' ') if platform?('omnios')
   end
 end
