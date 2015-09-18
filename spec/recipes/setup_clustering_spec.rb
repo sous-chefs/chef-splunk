@@ -1,5 +1,22 @@
 require_relative '../spec_helper'
 
+shared_examples "a successful run" do |command|
+  it 'includes chef-vault' do
+    expect(chef_run).to include_recipe('chef-vault::default')
+  end
+
+  it 'runs edit cluster-config with correct parameters' do
+    expect(chef_run).to run_execute('setup-indexer-cluster').with(
+      'command' => command + " -secret #{secrets['splunk__default']['secret']} -auth '#{secrets['splunk__default']['auth']}'"
+    )
+    expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
+  end
+
+  it 'writes a file marker to ensure convergence' do
+    expect(chef_run).to render_file('/opt/splunk/etc/.setup_clustering').with_content('true\n')
+  end
+end
+
 describe 'chef-splunk::setup_clustering' do
   let(:secrets) do
     {
@@ -65,21 +82,8 @@ describe 'chef-splunk::setup_clustering' do
       end.converge(described_recipe)
     end
 
-    it 'includes chef-vault' do
-      expect(chef_run).to include_recipe('chef-vault::default')
-    end
-
-    it 'runs edit cluster-config with correct parameters' do
-      expect(chef_run).to run_execute('setup-indexer-cluster').with(
-        'command' => "/opt/splunk/bin/splunk edit cluster-config -mode master\
- -replication_factor 3 -search_factor 2 -secret #{secrets['splunk__default']['secret']} -auth '#{secrets['splunk__default']['auth']}'"
-      )
-      expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
-    end
-
-    it 'writes a file marker to ensure convergence' do
-      expect(chef_run).to render_file('/opt/splunk/etc/.setup_cluster_master').with_content('true\n')
-    end
+    it_performs "a successful run", "/opt/splunk/bin/splunk edit cluster-config -mode master\
+ -replication_factor 3 -search_factor 2"
   end
 
   context 'default indexer cluster master settings (with num_sites=2)' do
@@ -95,23 +99,9 @@ describe 'chef-splunk::setup_clustering' do
       end.converge(described_recipe)
     end
 
-    it 'includes chef-vault' do
-      expect(chef_run).to include_recipe('chef-vault::default')
-    end
-
-    it 'runs edit cluster-config with correct parameters' do
-      expect(chef_run).to run_execute('setup-indexer-cluster').with(
-        'command' => "/opt/splunk/bin/splunk edit cluster-config -mode master\
+    it_performs "a successful run", "/opt/splunk/bin/splunk edit cluster-config -mode master\
  -multisite true -available_sites site1,site2 -site site1\
- -site_replication_factor origin:2,total:3 -site_search_factor origin:1,total:2\
- -secret #{secrets['splunk__default']['secret']} -auth '#{secrets['splunk__default']['auth']}'"
-      )
-      expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
-    end
-
-    it 'writes a file marker to ensure convergence' do
-      expect(chef_run).to render_file('/opt/splunk/etc/.setup_cluster_master').with_content('true\n')
-    end
+ -site_replication_factor origin:2,total:3 -site_search_factor origin:1,total:2"
   end
 
   context 'custom indexer cluster master settings (single-site)' do
@@ -128,21 +118,8 @@ describe 'chef-splunk::setup_clustering' do
       end.converge(described_recipe)
     end
 
-    it 'includes chef-vault' do
-      expect(chef_run).to include_recipe('chef-vault::default')
-    end
-
-    it 'runs edit cluster-config with correct parameters' do
-      expect(chef_run).to run_execute('setup-indexer-cluster').with(
-        'command' => "/opt/splunk/bin/splunk edit cluster-config -mode master\
- -replication_factor 5 -search_factor 3 -secret #{secrets['splunk__default']['secret']} -auth '#{secrets['splunk__default']['auth']}'"
-      )
-      expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
-    end
-
-    it 'writes a file marker to ensure convergence' do
-      expect(chef_run).to render_file('/opt/splunk/etc/.setup_cluster_master').with_content('true\n')
-    end
+    it_performs "a successful run", "/opt/splunk/bin/splunk edit cluster-config -mode master\
+ -replication_factor 5 -search_factor 3"
   end
 
   context 'custom indexer cluster master settings (with num_sites=3)' do
@@ -161,23 +138,9 @@ describe 'chef-splunk::setup_clustering' do
       end.converge(described_recipe)
     end
 
-    it 'includes chef-vault' do
-      expect(chef_run).to include_recipe('chef-vault::default')
-    end
-
-    it 'runs edit cluster-config with correct parameters' do
-      expect(chef_run).to run_execute('setup-indexer-cluster').with(
-        'command' => "/opt/splunk/bin/splunk edit cluster-config -mode master\
+    it_performs "a successful run", "/opt/splunk/bin/splunk edit cluster-config -mode master\
  -multisite true -available_sites site1,site2,site3 -site site2\
- -site_replication_factor origin:2,site1:1,site2:1,total:4 -site_search_factor origin:1,site1:1,site2:1,total:3\
- -secret #{secrets['splunk__default']['secret']} -auth '#{secrets['splunk__default']['auth']}'"
-      )
-      expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
-    end
-
-    it 'writes a file marker to ensure convergence' do
-      expect(chef_run).to render_file('/opt/splunk/etc/.setup_cluster_master').with_content('true\n')
-    end
+ -site_replication_factor origin:2,site1:1,site2:1,total:4 -site_search_factor origin:1,site1:1,site2:1,total:3"
   end
 
   context 'default indexer cluster search head settings (single-site)' do
@@ -194,22 +157,8 @@ describe 'chef-splunk::setup_clustering' do
       end.converge(described_recipe)
     end
 
-    it 'includes chef-vault' do
-      expect(chef_run).to include_recipe('chef-vault::default')
-    end
-
-    it 'runs edit cluster-config with correct parameters' do
-      expect(chef_run).to run_execute('setup-indexer-cluster').with(
-        'command' => "/opt/splunk/bin/splunk edit cluster-config -mode searchhead\
- -master_uri https://cm.cluster.example.com:8089 -replication_port 9887\
- -secret #{secrets['splunk__default']['secret']} -auth '#{secrets['splunk__default']['auth']}'"
-      )
-      expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
-    end
-
-    it 'writes a file marker to ensure convergence' do
-      expect(chef_run).to render_file('/opt/splunk/etc/.setup_cluster_searchhead').with_content('true\n')
-    end
+    it_performs "a successful run", "/opt/splunk/bin/splunk edit cluster-config -mode searchhead\
+ -master_uri https://cm.cluster.example.com:8089 -replication_port 9887"
   end
 
   context 'default indexer cluster search head settings (with num_sites=2)' do
@@ -229,22 +178,7 @@ describe 'chef-splunk::setup_clustering' do
       end.converge(described_recipe)
     end
 
-    it 'includes chef-vault' do
-      expect(chef_run).to include_recipe('chef-vault::default')
-    end
-
-    it 'runs edit cluster-config with correct parameters' do
-      expect(chef_run).to run_execute('setup-indexer-cluster').with(
-        'command' => "/opt/splunk/bin/splunk edit cluster-config -mode searchhead\
- -site site2\
- -master_uri https://cm.cluster.example.com:8089 -replication_port 9887\
- -secret #{secrets['splunk__default']['secret']} -auth '#{secrets['splunk__default']['auth']}'"
-      )
-      expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
-    end
-
-    it 'writes a file marker to ensure convergence' do
-      expect(chef_run).to render_file('/opt/splunk/etc/.setup_cluster_searchhead').with_content('true\n')
-    end
+    it_performs "a successful run", "/opt/splunk/bin/splunk edit cluster-config -mode searchhead\
+ -site site2 -master_uri https://cm.cluster.example.com:8089 -replication_port 9887"
   end
 end

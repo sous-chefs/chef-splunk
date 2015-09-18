@@ -81,11 +81,11 @@ splunk_cmd_params << " -secret #{cluster_secret}" if cluster_secret
 
 execute 'setup-indexer-cluster' do
   command "#{splunk_cmd} edit cluster-config #{splunk_cmd_params} -auth '#{splunk_auth_info}'"
-  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_cluster_#{cluster_mode}") }
+  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_clustering") }
   notifies :restart, 'service[splunk]'
 end
 
-file "#{splunk_dir}/etc/.setup_cluster_#{cluster_mode}" do
+file "#{splunk_dir}/etc/.setup_clustering" do
   content 'true\n'
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
