@@ -56,6 +56,9 @@ General attributes:
 * `node['splunk']['receiver_port']`: The port that the receiver
   (server) listens to. This is set to the Splunk Enterprise default,
   9997.
+* `node['splunk']['mgmt_port']`: The port that splunkd service
+  listens to, aka the management port. This is set to the Splunk
+  Enterprise default, 8089.
 * `node['splunk']['web_port']`: The port that the splunkweb service
   listens to. This is set to the default for HTTPS, 443, as it is
   configured by the `setup_ssl` recipe.

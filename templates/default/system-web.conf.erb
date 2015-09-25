@@ -1,5 +1,6 @@
 [settings]
 httpport = <%= node['splunk']['web_port'] %>
+mgmtHostPort = 127.0.0.1:<%= node['splunk']['mgmt_port'] %>
 enableSplunkWebSSL = <%= @enable_ssl.inspect %>
 privKeyPath = etc/auth/splunkweb/<%= @keyfile%>
 caCertPath = etc/auth/splunkweb/<%= @crtfile %>
