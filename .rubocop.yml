@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - vendor/**/*
+    - Guardfile
 
 AlignParameters:
   Enabled: false
@@ -23,6 +24,8 @@ Metrics/AbcSize:
 PerceivedComplexity:
   Enabled: false
 SingleSpaceBeforeFirstArg:
+  Enabled: false
+Style/ClassAndModuleChildren:
   Enabled: false
 Style/FileName:
   Enabled: false
