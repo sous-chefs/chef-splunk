@@ -15,8 +15,8 @@ end
 desc 'Run Foodcritic lint checks'
 FoodCritic::Rake::LintTask.new(:lint) do |t|
   t.options = {
-    :fail_tags => ['any'],
-    :tags => [
+    fail_tags: ['any'],
+    tags: [
       '~FC003',
       '~FC015'
     ]
@@ -27,5 +27,5 @@ desc 'Run ChefSpec examples'
 RSpec::Core::RakeTask.new(:spec)
 
 desc 'Run all tests'
-task :test => [:lint, :spec, :rubocop]
-task :default => :test
+task test: [:lint, :spec, :rubocop]
+task default: :test

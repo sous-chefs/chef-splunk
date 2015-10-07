@@ -8,7 +8,7 @@ describe 'chef-splunk::disabled' do
       end.converge(described_recipe)
     end
 
-    it 'stops the splunk service' do  # ~FC005
+    it 'stops the splunk service' do # ~FC005
       expect(chef_run).to stop_service('splunk')
     end
 
