@@ -23,9 +23,24 @@ include_recipe 'chef-splunk::install_server'
 include_recipe 'chef-splunk::service'
 include_recipe 'chef-splunk::setup_auth'
 
+# ensure that the splunk service resource is available without cloning
+# the resource (CHEF-3694). this is so the later notification works,
+# especially when using chefspec to run this cookbook's specs.
+begin
+  resources('service[splunk]')
+rescue Chef::Exceptions::ResourceNotFound
+  service 'splunk'
+end
+
 # We can rely on loading the chef_vault_item here, as `setup_auth`
 # above would have failed if there were another issue.
 splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['auth']
+
+execute 'update-splunk-mgmt-port' do
+  command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{splunk_auth_info}'"
+  not_if "#{splunk_cmd} show splunkd-port -auth '#{splunk_auth_info}' | grep ': #{node['splunk']['mgmt_port']}'"
+  notifies :restart, 'service[splunk]'
+end
 
 execute 'enable-splunk-receiver-port' do
   command "#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth '#{splunk_auth_info}'"
