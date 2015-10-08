@@ -69,7 +69,7 @@ when 'slave', 'searchhead'
   splunk_cmd_params = "-mode #{cluster_mode}"
   splunk_cmd_params << " -site #{cluster_params['site']}" if is_multisite
   splunk_cmd_params <<
-    " -master_uri https://#{cluster_master['fqdn'] || cluster_master['ipaddress']}:#{cluster_master['splunk']['mgmt_port']}" \
+    " -master_uri https://#{cluster_master['ipaddress'] || cluster_master['fqdn']}:#{cluster_master['splunk']['mgmt_port']}" \
     " -replication_port #{cluster_params['replication_port']}"
 else
   Chef::Log.fatal("You have set an incorrect clustering mode: #{cluster_mode}")

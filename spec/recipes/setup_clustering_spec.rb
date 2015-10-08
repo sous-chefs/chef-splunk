@@ -110,6 +110,7 @@ describe 'chef-splunk::setup_clustering' do
         node.automatic['ipaddress'] = '192.168.0.10'
         node.set['dev_mode'] = true
         node.set['splunk']['is_server'] = true
+        node.set['splunk']['mgmt_port'] = '8089'
         node.set['splunk']['clustering']['enabled'] = true
         node.set['splunk']['clustering']['mode'] = 'master'
       end      
@@ -117,7 +118,7 @@ describe 'chef-splunk::setup_clustering' do
     end  
 
     context 'default settings (single-site)' do
-      it_performs "a successful run", "-mode searchhead -master_uri https://cm.cluster.example.com:8089 -replication_port 9887"
+      it_performs "a successful run", "-mode searchhead -master_uri https://192.168.0.10:8089 -replication_port 9887"
     end
 
     context 'multisite clustering with default settings' do
@@ -126,7 +127,7 @@ describe 'chef-splunk::setup_clustering' do
         chef_run_init.node.set['splunk']['clustering']['site'] = 'site2'
       end
 
-      it_performs "a successful run", "-mode searchhead -site site2 -master_uri https://cm.cluster.example.com:8089 -replication_port 9887"
+      it_performs "a successful run", "-mode searchhead -site site2 -master_uri https://192.168.0.10:8089 -replication_port 9887"
     end
   end
 end
