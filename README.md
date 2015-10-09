@@ -1,6 +1,9 @@
 splunk Cookbook
 ===============
 
+[![Build Status](https://travis-ci.org/chef-cookbooks/chef-splunk.svg?branch=master)](https://travis-ci.org/chef-cookbooks/chef-splunk)
+[![Cookbook Version](https://img.shields.io/cookbook/v/chef-splunk.svg)](https://supermarket.chef.io/cookbooks/chef-splunk)
+
 This cookbook manages a Splunk Universal Forwarder (client) or a
 Splunk Enterprise (server) installation, including a Splunk clustered
 environment.
@@ -27,7 +30,7 @@ This cookbook may work on other platforms or platform versions with or
 without modification.
 
 * Debian 7
-* Ubuntu 10.04, 12.04
+* Ubuntu 12.04, 14.04
 * CentOS 6
 * OmniOS r151008
 

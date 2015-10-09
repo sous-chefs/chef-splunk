@@ -4,9 +4,9 @@ describe 'chef-splunk::install_forwarder' do
   context 'debian family' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new(
-        :step_into => ['splunk_installer'],
-        :platform => 'ubuntu',
-        :version => '12.04'
+        step_into: ['splunk_installer'],
+        platform: 'ubuntu',
+        version: '12.04'
       ) do |node|
         node.set['splunk']['forwarder']['url'] = 'http://splunk.example.com/forwarder/package.deb'
       end.converge(described_recipe)
@@ -26,9 +26,9 @@ describe 'chef-splunk::install_forwarder' do
   context 'redhat family' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new(
-        :step_into => ['splunk_installer'],
-        :platform => 'centos',
-        :version => '6.4'
+        step_into: ['splunk_installer'],
+        platform: 'centos',
+        version: '6.4'
       ) do |node|
         node.set['splunk']['forwarder']['url'] = 'http://splunk.example.com/forwarder/package.rpm'
       end.converge(described_recipe)
@@ -48,9 +48,9 @@ describe 'chef-splunk::install_forwarder' do
   context 'omnios family' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new(
-        :step_into => ['splunk_installer'],
-        :platform => 'omnios',
-        :version => '151002'
+        step_into: ['splunk_installer'],
+        platform: 'omnios',
+        version: '151002'
       ) do |node|
         node.set['splunk']['forwarder']['url'] = 'http://splunk.example.com/forwarder/package.pkg.Z'
       end.converge(described_recipe)

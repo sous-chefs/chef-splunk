@@ -79,13 +79,13 @@ template '/etc/init.d/splunk' do
   source 'splunk-init.erb'
   mode 0700
   variables(
-    :splunkdir => splunk_dir,
-    :runasroot => node['splunk']['server']['runasroot']
+    splunkdir: splunk_dir,
+    runasroot: node['splunk']['server']['runasroot']
   )
 end
 
 service 'splunk' do
-  supports :status => true, :restart => true
+  supports status: true, restart: true
   provider Chef::Provider::Service::Init
   action :start
 end

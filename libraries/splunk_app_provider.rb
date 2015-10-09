@@ -24,10 +24,9 @@ include Chef::Mixin::ShellOut
 class Chef
   class Provider
     class SplunkApp < Chef::Provider::LWRPBase
-
       provides :splunk_app
 
-      use_inline_resources if defined?(:use_inline_resources)
+      use_inline_resources
 
       def whyrun_supported?
         true
@@ -60,7 +59,7 @@ class Chef
               notifies :restart, 'service[splunk]', :immediately
             end
           else
-            raise("Could not find an installation source for splunk_app[#{new_resource.app_name}]")
+            fail("Could not find an installation source for splunk_app[#{new_resource.app_name}]")
           end
 
           dir = app_dir
@@ -145,7 +144,7 @@ class Chef
       def splunk_service
         service 'splunk' do
           action :nothing
-          supports :status => true, :restart => true
+          supports status: true, restart: true
           provider Chef::Provider::Service::Init
         end
       end
