@@ -1,5 +1,5 @@
-splunk Cookbook
-===============
+chef-splunk Cookbook
+====================
 
 [![Build Status](https://travis-ci.org/chef-cookbooks/chef-splunk.svg?branch=master)](https://travis-ci.org/chef-cookbooks/chef-splunk)
 [![Cookbook Version](https://img.shields.io/cookbook/v/chef-splunk.svg)](https://supermarket.chef.io/cookbooks/chef-splunk)
