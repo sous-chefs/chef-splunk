@@ -21,7 +21,7 @@ cookbook doesn't support installing from networked package managers
 
 ## Scope
 
-This cookbook was created by the Chef Ops team for manging Splunk forwarders in our internal infrastructure. It's being offered here in the hopes that others may find it useful. It will not work for anyone and the intention is not to make this cookbook cover every scenario. We would like to keep the scope limited and not expand the codebase to every possible use case.
+This cookbook was created by the Chef Ops team for managing Splunk in our internal infrastructure. It's being offered here in the hopes that others may find it useful. It will not work for anyone and the intention is not to make this cookbook cover every scenario. We would like to keep the scope limited and not expand the codebase to every possible use case.
 
 ## Requirements
 
