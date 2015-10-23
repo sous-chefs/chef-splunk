@@ -65,10 +65,9 @@ ruby_block 'splunk_fix_file_ownership' do
     checkowner << "#{splunk_dir}/etc/myinstall/splunkd.xml"
     checkowner << "#{splunk_dir}/"
     checkowner.each do |dir|
-      if File.exist? dir
-        if File.stat(dir).uid.eql?(0)
-          FileUtils.chown_R(myuser, myuser, splunk_dir)
-        end
+      next unless File.exist? dir
+      if File.stat(dir).uid.eql?(0)
+        FileUtils.chown_R(myuser, myuser, splunk_dir)
       end
     end
   end
