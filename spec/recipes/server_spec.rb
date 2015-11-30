@@ -31,7 +31,7 @@ describe 'chef-splunk::server' do
 
   context 'default settings' do
     before(:each) do
-      stub_command("/opt/splunk/bin/splunk show splunkd-port -auth '#{secrets['splunk__default']['auth']}' | grep ': 8089'").and_return("Splunkd port: 8089") 
+      stub_command("/opt/splunk/bin/splunk show splunkd-port -auth '#{secrets['splunk__default']['auth']}' | grep ': 8089'").and_return('Splunkd port: 8089')
     end
 
     it 'does not update splunkd management port' do
@@ -47,7 +47,7 @@ describe 'chef-splunk::server' do
 
   context 'custom management port' do
     before(:each) do
-      stub_command("/opt/splunk/bin/splunk show splunkd-port -auth '#{secrets['splunk__default']['auth']}' | grep ': 9089'").and_return(false) 
+      stub_command("/opt/splunk/bin/splunk show splunkd-port -auth '#{secrets['splunk__default']['auth']}' | grep ': 9089'").and_return(false)
       chef_run_init.node.set['splunk']['mgmt_port'] = '9089'
     end
 

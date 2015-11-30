@@ -1,13 +1,13 @@
 require_relative '../spec_helper'
 
-shared_examples "a successful run" do |params|
+shared_examples 'a successful run' do |params|
   it 'includes chef-vault' do
     expect(chef_run).to include_recipe('chef-vault::default')
   end
 
   it 'runs edit cluster-config with correct parameters' do
     expect(chef_run).to run_execute('setup-indexer-cluster').with(
-      'command' => "/opt/splunk/bin/splunk edit cluster-config " + 
+      'command' => '/opt/splunk/bin/splunk edit cluster-config ' +
                     params + " -secret #{secrets['splunk__default']['secret']} -auth '#{secrets['splunk__default']['auth']}'"
     )
     expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
@@ -55,7 +55,7 @@ describe 'chef-splunk::setup_clustering' do
     end
 
     it 'raises an error' do
-      expect{ chef_run }.to raise_error(RuntimeError)
+      expect { chef_run }.to raise_error(RuntimeError)
     end
   end
 
@@ -66,7 +66,7 @@ describe 'chef-splunk::setup_clustering' do
     end
 
     context 'default settings (single-site)' do
-      it_performs "a successful run", "-mode master -replication_factor 3 -search_factor 2"
+      it_performs 'a successful run', '-mode master -replication_factor 3 -search_factor 2'
     end
 
     context 'multisite clustering with default settings' do
@@ -74,7 +74,7 @@ describe 'chef-splunk::setup_clustering' do
         chef_run_init.node.set['splunk']['clustering']['num_sites'] = 2
       end
 
-      it_performs "a successful run", "-mode master -multisite true -available_sites site1,site2 -site site1\
+      it_performs 'a successful run', "-mode master -multisite true -available_sites site1,site2 -site site1\
  -site_replication_factor origin:2,total:3 -site_search_factor origin:1,total:2"
     end
 
@@ -84,7 +84,7 @@ describe 'chef-splunk::setup_clustering' do
         chef_run_init.node.set['splunk']['clustering']['search_factor'] = 3
       end
 
-      it_performs "a successful run", "-mode master -replication_factor 5 -search_factor 3"
+      it_performs 'a successful run', '-mode master -replication_factor 5 -search_factor 3'
     end
 
     context 'multisite clustering with custom settings' do
@@ -92,10 +92,10 @@ describe 'chef-splunk::setup_clustering' do
         chef_run_init.node.set['splunk']['clustering']['num_sites'] = 3
         chef_run_init.node.set['splunk']['clustering']['site'] = 'site2'
         chef_run_init.node.set['splunk']['clustering']['site_replication_factor'] = 'origin:2,site1:1,site2:1,total:4'
-        chef_run_init.node.set['splunk']['clustering']['site_search_factor'] = 'origin:1,site1:1,site2:1,total:3'      
+        chef_run_init.node.set['splunk']['clustering']['site_search_factor'] = 'origin:1,site1:1,site2:1,total:3'
       end
 
-      it_performs "a successful run", "-mode master -multisite true -available_sites site1,site2,site3 -site site2\
+      it_performs 'a successful run', "-mode master -multisite true -available_sites site1,site2,site3 -site site2\
  -site_replication_factor origin:2,site1:1,site2:1,total:4 -site_search_factor origin:1,site1:1,site2:1,total:3"
     end
   end
@@ -113,12 +113,12 @@ describe 'chef-splunk::setup_clustering' do
         node.set['splunk']['mgmt_port'] = '8089'
         node.set['splunk']['clustering']['enabled'] = true
         node.set['splunk']['clustering']['mode'] = 'master'
-      end      
+      end
       chef_run_init.create_node(cluster_master_node)
-    end  
+    end
 
     context 'default settings (single-site)' do
-      it_performs "a successful run", "-mode searchhead -master_uri https://192.168.0.10:8089 -replication_port 9887"
+      it_performs 'a successful run', '-mode searchhead -master_uri https://192.168.0.10:8089 -replication_port 9887'
     end
 
     context 'multisite clustering with default settings' do
@@ -127,7 +127,7 @@ describe 'chef-splunk::setup_clustering' do
         chef_run_init.node.set['splunk']['clustering']['site'] = 'site2'
       end
 
-      it_performs "a successful run", "-mode searchhead -site site2 -master_uri https://192.168.0.10:8089 -replication_port 9887"
+      it_performs 'a successful run', '-mode searchhead -site site2 -master_uri https://192.168.0.10:8089 -replication_port 9887'
     end
   end
 end
