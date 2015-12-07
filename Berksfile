@@ -4,4 +4,5 @@ metadata
 
 group :integration do
   cookbook 'test', path: './test/fixtures/cookbooks/test'
+  cookbook 'apt', version: '~> 2.9'
 end
