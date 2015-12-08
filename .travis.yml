@@ -13,7 +13,7 @@ install: echo "skip bundle install"
 
 branches:
   only:
-    - kitchen-travis
+    - master
 
 services: docker
 
