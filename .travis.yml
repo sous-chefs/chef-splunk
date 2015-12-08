@@ -1,4 +1,4 @@
-# Use Travis's cointainer based infrastructure
+# Use Travis's legacy infrastructure
 sudo: required
 
 addons:
