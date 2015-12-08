@@ -6,6 +6,10 @@ driver:
   # privileged is required otherwise the container doesn't boot right
   privileged: true
 
+driver_config:
+  volume:
+    - /data/splunk-test:/opt/splunk/var/lib
+
 provisioner:
   data_bags_path: "test/fixtures/data_bags"
 
