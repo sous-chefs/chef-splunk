@@ -35,7 +35,7 @@ before_script:
   # workaround for "unusable filesystem" error in splunk
   # https://answers.splunk.com/answers/9035/can-i-run-splunk-on-btrfs.html#answer-152672
   - sudo dd if=/dev/zero of=/opt/splunk-var-blockfile bs=4096 count=10240
-  - sudo mkfs.ext4 /opt/splunk-var-blockfile
+  - sudo mkfs.ext4 -F /opt/splunk-var-blockfile
   - sudo mount /opt/splunk-var-blockfile /opt/splunk/var
 script:
   - /opt/chefdk/embedded/bin/chef --version
