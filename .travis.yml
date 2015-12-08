@@ -20,11 +20,9 @@ services: docker
 env:
   matrix:
     - INSTANCE=server-runas-splunk-ubuntu-1404
-    - INSTANCE=client-runas-splunk-ubuntu-1404
+    - INSTANCE=client-inputs-outputs-ubuntu-1404
     - INSTANCE=server-runas-splunk-centos-7
-    - INSTANCE=client-runas-splunk-centos-7
-    - INSTANCE=fpm-test-ubuntu-1404
-    - INSTANCE=fpm-test-centos-7
+    - INSTANCE=client-inputs-outputs-centos-7
 
 # Ensure we make ChefDK's Ruby the default
 before_script:
