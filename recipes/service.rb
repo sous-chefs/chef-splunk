@@ -74,28 +74,37 @@ ruby_block 'splunk_fix_file_ownership' do
   not_if { node['splunk']['server']['runasroot'] }
 end
 
-template '/etc/init.d/splunk' do
-  source 'splunk-init.erb'
-  mode 0700
-  variables(
-    splunkdir: splunk_dir,
-    runasroot: node['splunk']['server']['runasroot']
-  )
-  only_if { node['init_package'] == 'init' }
+if node['init_package'] == 'init' do
+  template '/etc/init.d/splunk' do
+    source 'splunk-init.erb'
+    mode 0700
+    variables(
+      splunkdir: splunk_dir,
+      runasroot: node['splunk']['server']['runasroot']
+    )
+    only_if { node['init_package'] == 'init' }
+  end
+
+  service 'splunk' do
+    supports status: true, restart: true
+    provider Chef::Provider::Service::Init
+    action :start
+  end
 end
 
-template '/usr/lib/systemd/system/splunk.service' do
-  source 'splunk-systemd.erb'
-  mode 0700
-  variables(
-    splunkdir: splunk_dir,
-    runasroot: node['splunk']['server']['runasroot']
-  )
-  only_if { node['init_package'] == 'systemd' }
-end
+if node['init_package'] == 'systemd' do
+  template '/usr/lib/systemd/system/splunk.service' do
+    source 'splunk-systemd.erb'
+    mode 0700
+    variables(
+      splunkdir: splunk_dir,
+      runasroot: node['splunk']['server']['runasroot']
+    )
+  end
 
-service 'splunk' do
-  supports status: true, restart: true
-  provider Chef::Provider::Service::Init
-  action :start
+  service 'splunk' do
+    supports status: true, restart: true
+    provider Chef::Provider::Service::Systemd
+    action :start
+  end
 end
