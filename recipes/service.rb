@@ -74,7 +74,7 @@ ruby_block 'splunk_fix_file_ownership' do
   not_if { node['splunk']['server']['runasroot'] }
 end
 
-if node['init_package'] == 'init' do
+if node['init_package'] == 'init'
   template '/etc/init.d/splunk' do
     source 'splunk-init.erb'
     mode 0700
@@ -92,7 +92,7 @@ if node['init_package'] == 'init' do
   end
 end
 
-if node['init_package'] == 'systemd' do
+if node['init_package'] == 'systemd'
   template '/usr/lib/systemd/system/splunk.service' do
     source 'splunk-systemd.erb'
     mode 0700
