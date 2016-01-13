@@ -1,0 +1,17 @@
+# systemd service file for splunk
+
+[Unit]
+Description=Splunk
+After=syslog.target
+
+[Service]
+Type=forking
+<% if ! @runasroot %>
+User=splunk
+<% end %>
+ExecStart=<%= @splunkdir %>/splunk start --no-prompt --answer-yes
+ExecStop=<%= @splunkdir %>/splunk stop
+PIDFile=<%= @splunkdir %>/var/run/splunk/splunk.pid
+
+[Install]
+WantedBy=multi-user.target
