@@ -81,7 +81,7 @@ template '/etc/init.d/splunk' do
     splunkdir: splunk_dir,
     runasroot: node['splunk']['server']['runasroot']
   )
-  only_if node['init_package'] == 'init'
+  only_if { node['init_package'] == 'init' }
 end
 
 template '/usr/lib/systemd/system/splunk.service' do
@@ -91,7 +91,7 @@ template '/usr/lib/systemd/system/splunk.service' do
     splunkdir: splunk_dir,
     runasroot: node['splunk']['server']['runasroot']
   )
-  only_if node['init_package'] == 'systemd'
+  only_if { node['init_package'] == 'systemd' }
 end
 
 service 'splunk' do
