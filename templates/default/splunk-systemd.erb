@@ -9,8 +9,8 @@ Type=forking
 <% if ! @runasroot %>
 User=splunk
 <% end %>
-ExecStart=<%= @splunkdir %>/splunk start --no-prompt --answer-yes
-ExecStop=<%= @splunkdir %>/splunk stop
+ExecStart=<%= @splunkdir %>/bin/splunk start --no-prompt --answer-yes
+ExecStop=<%= @splunkdir %>/bin/splunk stop
 PIDFile=<%= @splunkdir %>/var/run/splunk/splunk.pid
 
 [Install]
