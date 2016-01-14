@@ -105,6 +105,6 @@ if node['init_package'] == 'systemd'
   service 'splunk' do
     supports status: true, restart: true
     provider Chef::Provider::Service::Systemd
-    action :start
+    action [ :enable, :start ]
   end
 end
