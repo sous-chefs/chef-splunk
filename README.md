@@ -68,6 +68,12 @@ General attributes:
   listens to. This is set to the default for HTTPS, 443, as it is
   configured by the `setup_ssl` recipe.
 * `node['splunk']['ratelimit_kilobytessec']`: The default splunk rate limiting rate can now easily be changed with an attribute.  Default is 2048KBytes/sec.
+* `node['splunk']['version']`: The version of Splunk to install.
+* `node['splunk']['build']`: The build version of the Splunk version.
+  Splunk packages are named by both their version and build numbers; for
+  example the RPM for Splunk 6.2.1 is `splunk-6.2.1-245427-linux-2.6-x86_64.rpm`
+  where `6.2.1` is the `node['splunk']['version']` and `245427` is the
+  `node['splunk']['build']`. 
 
 The two URL attributes below are selected by platform and architecture
 by default.
