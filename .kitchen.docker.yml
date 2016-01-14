@@ -1,0 +1,139 @@
+settings:
+  parallel: true
+
+driver:
+  name: docker
+  # privileged is required otherwise the container doesn't boot right
+  privileged: true
+
+driver_config:
+  volume:
+    - /data/splunk-test:/opt/splunk/var/lib
+
+provisioner:
+  data_bags_path: "test/fixtures/data_bags"
+
+platforms:
+- name: centos-6
+  driver:
+    image: centos:6
+    platform: rhel
+    run_command: /sbin/init
+    provision_command:
+      - /usr/bin/yum install -y initscripts net-tools wget
+- name: centos-7
+  driver:
+    image: centos:7
+    platform: rhel
+    run_command: /usr/lib/systemd/systemd
+    provision_command:
+      - /bin/yum install -y initscripts net-tools wget
+- name: ubuntu-12.04
+  driver:
+    image: ubuntu-upstart:12.04
+    platform: ubuntu
+    disable_upstart: false
+    run_command: /sbin/init
+    provision_command:
+      - /usr/bin/apt-get update
+      - /usr/bin/apt-get install apt-transport-https net-tools -y
+- name: ubuntu-14.04
+  driver:
+    image: ubuntu-upstart:14.04
+    platform: ubuntu
+    disable_upstart: false
+    run_command: /sbin/init
+    provision_command:
+      - /usr/bin/apt-get update
+      - /usr/bin/apt-get install apt-transport-https net-tools -y
+
+suites:
+  - name: client
+    run_list:
+      - recipe[chef-splunk::default]
+      - recipe[test::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        accept_license: true
+
+  - name: client-inputs-outputs
+    run_list:
+      - recipe[chef-splunk::default]
+      - recipe[test::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        accept_license: true
+        outputs_conf:
+          sslCommonNameToCheck: sslCommonName
+          sslCertPath: $SPLUNK_HOME/etc/certs/cert.pem
+          sslPassword: password
+          sslRootCAPath: $SPLUNK_HOME/etc/certs/cacert.pem
+          sslVerifyServerCert: false
+        inputs_conf:
+          host: localhost
+          ports:
+            - port_num: 123123
+              config:
+                connection_host: dns
+                sourcetype: syslog
+                source: tcp:123123
+
+  - name: server-runas-root
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: true
+        is_server: true
+        accept_license: true
+        ssl_options:
+          enable_ssl: true
+
+  - name: server-runas-splunk
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        is_server: true
+        accept_license: true
+        ssl_options:
+          enable_ssl: true
+        web_port: 8443
+
+  - name: disabled
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      splunk:
+        disabled: true
+
+  - name: server_lwrps
+    run_list:
+      - recipe[chef-splunk::default]
+      - recipe[test::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        accept_license: true
+        is_server: true
+
+  - name: client_lwrps
+    run_list:
+      - recipe[chef-splunk::default]
+      - recipe[test::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        accept_license: true
+        is_server: false
