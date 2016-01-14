@@ -11,7 +11,7 @@ User=splunk
 <% end %>
 ExecStart=<%= @splunkdir %>/bin/splunk start --no-prompt --answer-yes
 ExecStop=<%= @splunkdir %>/bin/splunk stop
-PIDFile=<%= @splunkdir %>/var/run/splunk/splunk.pid
+PIDFile=<%= @splunkdir %>/var/run/splunk/splunkd.pid
 
 [Install]
 WantedBy=multi-user.target
