@@ -2,15 +2,17 @@
 
 [Unit]
 Description=Splunk
-After=syslog.target
+After=network.target
 
 [Service]
-Type=simple
+Type=forking
+RemainAfterExit=yes
 <% if ! @runasroot %>
 User=splunk
 <% end %>
 ExecStart=<%= @splunkdir %>/bin/splunk start --no-prompt --answer-yes
 ExecStop=<%= @splunkdir %>/bin/splunk stop
+ExecReload=<%= @splunkdir %>/bin/splunk restart
 PIDFile=<%= @splunkdir %>/var/run/splunk/splunkd.pid
 
 [Install]
