@@ -5,7 +5,7 @@ Description=Splunk
 After=syslog.target
 
 [Service]
-Type=forking
+Type=simple
 <% if ! @runasroot %>
 User=splunk
 <% end %>
