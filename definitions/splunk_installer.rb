@@ -52,9 +52,9 @@ define :splunk_installer, url: nil do
   end
 
   local_package_resource = case node['platform_family']
-                           when 'rhel'   then :rpm_package
-                           when 'debian' then :dpkg_package
-                           when 'omnios' then :solaris_package
+                           when 'rhel', 'fedora'  then :rpm_package
+                           when 'debian'          then :dpkg_package
+                           when 'omnios'          then :solaris_package
                            end
 
   declare_resource local_package_resource, params[:name] do

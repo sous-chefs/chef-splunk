@@ -69,7 +69,7 @@ default['splunk']['user']['home'] = '/opt/splunk' if node['splunk']['is_server']
 default['splunk']['server']['runasroot'] = true
 
 case node['platform_family']
-when 'rhel'
+when 'rhel', 'fedora'
   if node['kernel']['machine'] == 'x86_64'
     default['splunk']['forwarder']['url'] = 'http://download.splunk.com/releases/6.2.1/universalforwarder/linux/splunkforwarder-6.2.1-245427-linux-2.6-x86_64.rpm'
     default['splunk']['server']['url'] = 'http://download.splunk.com/releases/6.2.1/splunk/linux/splunk-6.2.1-245427-linux-2.6-x86_64.rpm'
