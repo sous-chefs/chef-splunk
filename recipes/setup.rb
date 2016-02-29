@@ -28,8 +28,8 @@ else
   splunk_servers = search( # ~FC003
     :node,
     "splunk_is_server:true AND chef_environment:#{node.chef_environment}"
-  ).sort! do |a, b|
-    a.name <=> b.name
+  ).sort! do
+    |a, b| a.name <=> b.name
   end
 end
 
@@ -58,7 +58,7 @@ end
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
   mode 0644
-  variables :outputs => node['splunk']['output_groups']
+  variables outputs: node['splunk']['output_groups']
   notifies :restart, 'service[splunk]'
 end
 
