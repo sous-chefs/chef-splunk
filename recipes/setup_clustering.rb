@@ -63,7 +63,7 @@ when 'slave', 'searchhead'
 else
   Chef::Log.fatal("You have set an incorrect clustering mode: #{cluster_mode}")
   Chef::Log.fatal("Set `node['splunk']['clustering']['mode']` to master|slave|searchhead, and try again.")
-  fail
+  raise
 end
 
 splunk_cmd_params << " -secret #{cluster_secret}" if cluster_secret

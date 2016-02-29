@@ -70,18 +70,17 @@ default['splunk']['server']['runasroot'] = true
 
 default['splunk']['output_groups'] = {
   'default' => {
-      'servers' => [{
-          'ipaddress' => '127.0.0.1',
-          'port' => node['splunk']['receiver_port'],
-        }],
-     'attributes' => {
-          'forwardedindex.0.whitelist' => '.*',
-          'forwardedindex.1.blacklist' => '_.*',
-          'forwardedindex.2.whitelist' => '_audit',
-          'forwardedindex.filter.disable' => 'false'
-        }
-
-    },
+    'servers' => [{
+      'ipaddress' => '127.0.0.1',
+      'port' => node['splunk']['receiver_port']
+    }],
+    'attributes' => {
+      'forwardedindex.0.whitelist' => '.*',
+      'forwardedindex.1.blacklist' => '_.*',
+      'forwardedindex.2.whitelist' => '_audit',
+      'forwardedindex.filter.disable' => 'false'
+    }
+  }
 }
 
 case node['platform_family']

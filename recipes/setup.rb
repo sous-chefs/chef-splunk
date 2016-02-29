@@ -58,7 +58,7 @@ end
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
   mode 0644
-  variables splunk_servers: splunk_servers, outputs_conf: node['splunk']['outputs_conf']
+  variables :outputs => node['splunk']['output_groups']
   notifies :restart, 'service[splunk]'
 end
 
