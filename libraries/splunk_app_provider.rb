@@ -59,7 +59,7 @@ class Chef
               notifies :restart, 'service[splunk]', :immediately
             end
           else
-            fail("Could not find an installation source for splunk_app[#{new_resource.app_name}]")
+            raise "Could not find an installation source for splunk_app[#{new_resource.app_name}]"
           end
 
           dir = app_dir
