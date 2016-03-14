@@ -35,14 +35,11 @@ def splunk_dir
   forwarderpath = '/opt/splunkforwarder'
   enterprisepath = '/opt/splunk'
   if node['splunk']['is_intermediate'] == true
-    path = forwarderpath
-    return path
+    forwarderpath
   elsif node['splunk']['is_server'] == true
-    path = enterprisepath
-    return path
+    enterprisepath
   else
-    path = forwarderpath
-    return path
+    forwarderpath
   end
 end
 
