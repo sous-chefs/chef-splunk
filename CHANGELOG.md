@@ -21,7 +21,7 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 Also known as the "it's about time!" release
 
-- support for splunk universal client grunning as a server
+- support for splunk universal client running as a server
 - update splunk install version to 6.2.1
 - added attribute for rate limiting maxKBps throughput
 - Add recipe to setup indexer cluster
