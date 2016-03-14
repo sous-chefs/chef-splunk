@@ -1,31 +1,43 @@
-require 'foodcritic'
-require 'foodcritic/rake_task'
 require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
+require 'foodcritic'
+require 'kitchen'
 
-desc 'Run RuboCop on the lib directory'
-RuboCop::RakeTask.new(:rubocop) do |task|
-  task.patterns = ['lib/**/*.rb']
-  # only show the files with failures
-  task.formatters = ['files']
-  # don't abort rake on failure
-  task.fail_on_error = false
+require_relative 'tasks/maintainers'
+
+# Style tests. Rubocop and Foodcritic
+namespace :style do
+  desc 'Run Ruby style checks'
+  RuboCop::RakeTask.new(:ruby)
+
+  desc 'Run Chef style checks'
+  FoodCritic::Rake::LintTask.new(:chef) do |t|
+    t.options = {
+      fail_tags: ['any']
+    }
+  end
 end
 
-desc 'Run Foodcritic lint checks'
-FoodCritic::Rake::LintTask.new(:lint) do |t|
-  t.options = {
-    fail_tags: ['any'],
-    tags: [
-      '~FC003',
-      '~FC015'
-    ]
-  }
-end
+desc 'Run all style checks'
+task style: ['style:chef', 'style:ruby']
 
+# Rspec and ChefSpec
 desc 'Run ChefSpec examples'
 RSpec::Core::RakeTask.new(:spec)
 
-desc 'Run all tests'
-task test: [:lint, :spec, :rubocop]
-task default: :test
+# Integration tests. Kitchen.ci
+namespace :integration do
+  desc 'Run Test Kitchen with Vagrant'
+  task :vagrant do
+    Kitchen.logger = Kitchen.default_file_logger
+    Kitchen::Config.new.instances.each do |instance|
+      instance.test(:always)
+    end
+  end
+end
+
+desc 'Run all tests on Travis'
+task travis: ['style', 'spec', 'integration:cloud']
+
+# Default
+task default: %w(style spec)
