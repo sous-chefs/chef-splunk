@@ -57,9 +57,9 @@ module Splunk
 
     rc4key = ::IO.read(secret_file).strip![0..15]
     xorkey = 'DEFAULTSA'.unpack('c*')
-    xorkey += xorkey while xorkey.length < pwd.length
+    xorkey += xorkey while xorkey.size < pwd.size
 
-    pwd = pwd.zip(xorkey).collect { |c1, c2| c1 ^ c2 }.pack('c*') + "\0"
+    pwd = pwd.zip(xorkey).map { |c1, c2| c1 ^ c2 }.pack('c*') + "\0"
     pwd = Splunk::RC4.new(rc4key).encrypt(pwd)
     '$1$' + Base64.encode64(pwd).strip!
   end
