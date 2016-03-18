@@ -25,7 +25,7 @@ module Splunk
   # RC4 implementation taken from https://github.com/caiges/Ruby-RC4
   class RC4
     def initialize(str)
-      fail SyntaxError, 'RC4: Key supplied is blank' if str.eql?('')
+      raise SyntaxError, 'RC4: Key supplied is blank' if str.eql?('')
       initialize_state(str)
       @q1 = 0
       @q2 = 0
@@ -44,13 +44,13 @@ module Splunk
       text
     end
 
-    alias_method :decrypt!, :encrypt!
+    alias :decrypt! :encrypt!
 
     def encrypt(text)
       encrypt!(text.dup)
     end
 
-    alias_method :decrypt, :encrypt
+    alias :decrypt :encrypt
 
     private
 
