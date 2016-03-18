@@ -44,13 +44,13 @@ module Splunk
       text
     end
 
-    alias :decrypt! :encrypt!
+    alias decrypt! encrypt!
 
     def encrypt(text)
       encrypt!(text.dup)
     end
 
-    alias :decrypt :encrypt
+    alias decrypt encrypt
 
     private
 
