@@ -49,20 +49,21 @@ rescue Chef::Exceptions::ResourceNotFound
   service 'splunk'
 end
 
-directory "#{splunk_dir}/etc/system/local" do
+base_config_dir = "#{splunk_dir}/etc/#{node['splunk']['splunk_config_path']}"
+directory base_config_dir do
   recursive true
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
 end
 
-template "#{splunk_dir}/etc/system/local/outputs.conf" do
+template "#{base_config_dir}/outputs.conf" do
   source 'outputs.conf.erb'
   mode 0644
   variables outputs: node['splunk']['output_groups']
   notifies :restart, 'service[splunk]'
 end
 
-template "#{splunk_dir}/etc/system/local/inputs.conf" do
+template "#{base_config_dir}/inputs.conf" do
   source 'inputs.conf.erb'
   mode 0644
   variables inputs_conf: node['splunk']['inputs_conf']
@@ -70,7 +71,7 @@ template "#{splunk_dir}/etc/system/local/inputs.conf" do
   not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
 end
 
-template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
+template "#{base_config_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
   source 'limits.conf.erb'
   mode 0644
   variables ratelimit_kbps: node['splunk']['ratelimit_kilobytessec']
