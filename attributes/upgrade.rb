@@ -16,7 +16,7 @@
 #
 if node['splunk']['upgrade_enabled']
   case node['platform_family']
-  when 'rhel'
+  when 'rhel', 'fedora'
     if node['kernel']['machine'] == 'x86_64'
       default['splunk']['upgrade']['server_url'] = 'http://download.splunk.com/releases/4.3.7/splunk/linux/splunk-4.3.7-181874-linux-2.6-x86_64.rpm'
       default['splunk']['upgrade']['forwarder_url'] = 'http://download.splunk.com/releases/4.3.7/universalforwarder/linux/splunkforwarder-4.3.7-181874-linux-2.6-x86_64.rpm'

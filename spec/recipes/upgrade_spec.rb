@@ -3,9 +3,9 @@ require_relative '../spec_helper'
 describe 'chef-splunk::upgrade' do
   let(:chef_run) do
     ChefSpec::ServerRunner.new(
-      :step_into => ['splunk_installer'],
-      :platform => 'ubuntu',
-      :version => '12.04'
+      step_into: ['splunk_installer'],
+      platform: 'ubuntu',
+      version: '12.04'
     ) do |node|
       node.set['splunk']['upgrade_enabled'] = true
       node.set['splunk']['accept_license'] = true
@@ -24,7 +24,7 @@ describe 'chef-splunk::upgrade' do
   end
 
   it 'installs the package with splunk_installer' do
-    expect(chef_run).to install_package('splunkforwarder')
+    expect(chef_run).to install_dpkg_package('splunkforwarder')
   end
 
   it 'runs an unattended upgrade (starts splunk)' do

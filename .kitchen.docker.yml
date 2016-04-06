@@ -1,26 +1,51 @@
+settings:
+  parallel: true
+
 driver:
-  name: vagrant
-  customize:
-    memory: 512
+  name: docker
+  # privileged is required otherwise the container doesn't boot right
+  privileged: true
+
+driver_config:
+  volume:
+    - /data/splunk-test:/opt/splunk/var/lib
 
 provisioner:
-  name: chef_zero
   data_bags_path: "test/fixtures/data_bags"
 
 platforms:
-  - name: centos-6.7
-  - name: centos-7.1
-  - name: debian-7.8
-    run_list: apt::default
-  - name: debian-8.1
-    run_list: apt::default
-  - name: fedora-21
-  - name: ubuntu-12.04
-  - name: ubuntu-14.04
-  - name: omnios-r151006c
-    driver:
-      box: omnios-r151006c
-      box_url: http://omnios.omniti.com/media/OmniOS_r151006c-r1.box
+- name: centos-6
+  driver:
+    image: centos:6
+    platform: rhel
+    run_command: /sbin/init
+    provision_command:
+      - /usr/bin/yum install -y initscripts net-tools wget
+- name: centos-7
+  driver:
+    image: centos:7
+    platform: rhel
+    run_command: /usr/lib/systemd/systemd
+    provision_command:
+      - /bin/yum install -y initscripts net-tools wget
+- name: ubuntu-12.04
+  driver:
+    image: ubuntu-upstart:12.04
+    platform: ubuntu
+    disable_upstart: false
+    run_command: /sbin/init
+    provision_command:
+      - /usr/bin/apt-get update
+      - /usr/bin/apt-get install apt-transport-https net-tools -y
+- name: ubuntu-14.04
+  driver:
+    image: ubuntu-upstart:14.04
+    platform: ubuntu
+    disable_upstart: false
+    run_command: /sbin/init
+    provision_command:
+      - /usr/bin/apt-get update
+      - /usr/bin/apt-get install apt-transport-https net-tools -y
 
 suites:
   - name: client
@@ -88,27 +113,6 @@ suites:
     attributes:
       splunk:
         disabled: true
-
-  - name: upgrade_client
-    run_list:
-      - recipe[chef-splunk::default]
-      - recipe[chef-splunk::upgrade]
-    attributes:
-      dev_mode: true
-      splunk:
-        accept_license: true
-        upgrade_enabled: true
-
-  - name: upgrade_server
-    run_list:
-      - recipe[chef-splunk::default]
-      - recipe[chef-splunk::upgrade]
-    attributes:
-      dev_mode: true
-      splunk:
-        accept_license: true
-        upgrade_enabled: true
-        is_server: true
 
   - name: server_lwrps
     run_list:

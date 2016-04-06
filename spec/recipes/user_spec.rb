@@ -4,8 +4,8 @@ describe 'chef-splunk::user' do
   context 'os linux' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new(
-        :platform => 'ubuntu',
-        :version => '12.04'
+        platform: 'ubuntu',
+        version: '12.04'
       ).converge(described_recipe)
     end
 
@@ -21,8 +21,8 @@ describe 'chef-splunk::user' do
   context 'os non-linux' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new(
-        :platform => 'omnios',
-        :version => '151002'
+        platform: 'omnios',
+        version: '151002'
       ).converge(described_recipe)
     end
 

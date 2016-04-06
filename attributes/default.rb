@@ -21,6 +21,7 @@ default['splunk']['receiver_port']  = '9997'
 default['splunk']['web_port']       = '443'
 default['splunk']['ratelimit_kilobytessec'] = '2048'
 
+default['splunk']['setup_auth'] = true
 default['splunk']['user'] = {
   'username' => 'splunk',
   'comment'  => 'Splunk Server',
@@ -35,6 +36,14 @@ default['splunk']['ssl_options'] = {
   'data_bag_item' => 'splunk_certificates',
   'keyfile' => 'self-signed.example.com.key',
   'crtfile' => 'self-signed.example.com.crt'
+}
+
+default['splunk']['clustering'] = {
+  'enabled' => false,
+  'mode' => 'master', # master|slave|searchhead
+  'replication_factor' => 3,
+  'search_factor' => 2,
+  'replication_port' => 9887
 }
 
 # Add key value pairs to this to add configuration pairs to the output.conf file
@@ -55,22 +64,21 @@ default['splunk']['server']['runasroot'] = true
 
 default['splunk']['output_groups'] = {
   'default' => {
-      'servers' => [{
-          'ipaddress' => '127.0.0.1',
-          'port' => node['splunk']['receiver_port'],
-        }],
-     'attributes' => {
-          'forwardedindex.0.whitelist' => '.*',
-          'forwardedindex.1.blacklist' => '_.*',
-          'forwardedindex.2.whitelist' => '_audit',
-          'forwardedindex.filter.disable' => 'false'
-        }
-
-    },
+    'servers' => [{
+      'ipaddress' => '127.0.0.1',
+      'port' => node['splunk']['receiver_port']
+    }],
+    'attributes' => {
+      'forwardedindex.0.whitelist' => '.*',
+      'forwardedindex.1.blacklist' => '_.*',
+      'forwardedindex.2.whitelist' => '_audit',
+      'forwardedindex.filter.disable' => 'false'
+    }
+  }
 }
 
 case node['platform_family']
-when 'rhel'
+when 'rhel', 'fedora'
   if node['kernel']['machine'] == 'x86_64'
     default['splunk']['forwarder']['url'] = 'http://download.splunk.com/releases/6.2.1/universalforwarder/linux/splunkforwarder-6.2.1-245427-linux-2.6-x86_64.rpm'
     default['splunk']['server']['url'] = 'http://download.splunk.com/releases/6.2.1/splunk/linux/splunk-6.2.1-245427-linux-2.6-x86_64.rpm'

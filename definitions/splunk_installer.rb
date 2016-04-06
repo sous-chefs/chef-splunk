@@ -18,7 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-define :splunk_installer, :url => nil do
+define :splunk_installer, url: nil do
   cache_dir = Chef::Config[:file_cache_path]
   package_file = splunk_file(params[:url])
   cached_package = ::File.join(cache_dir, package_file)
@@ -51,16 +51,14 @@ define :splunk_installer, :url => nil do
     end
   end
 
-  package params[:name] do
+  local_package_resource = case node['platform_family']
+                           when 'rhel', 'fedora'  then :rpm_package
+                           when 'debian'          then :dpkg_package
+                           when 'omnios'          then :solaris_package
+                           end
+
+  declare_resource local_package_resource, params[:name] do
     source cached_package.gsub(/\.Z/, '')
-    case node['platform_family']
-    when 'rhel'
-      provider Chef::Provider::Package::Rpm
-    when 'debian'
-      provider Chef::Provider::Package::Dpkg
-    when 'omnios'
-      provider Chef::Provider::Package::Solaris
-      options pkgopts.join(' ')
-    end
+    options pkgopts.join(' ') if platform?('omnios')
   end
 end
