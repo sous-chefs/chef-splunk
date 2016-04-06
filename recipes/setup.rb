@@ -71,7 +71,7 @@ template "#{base_config_dir}/inputs.conf" do
   not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
 end
 
-template "#{base_config_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
+template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
   source 'limits.conf.erb'
   mode 0644
   variables ratelimit_kbps: node['splunk']['ratelimit_kilobytessec']
