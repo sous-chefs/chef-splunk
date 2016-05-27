@@ -72,10 +72,9 @@ module Splunk
 
   def splunk_encrypted_password(plaintext)
     pwd = plaintext.unpack('c*')
-    secret_file = ::File.join(node['splunk']['user']['home'],
-                              'etc/auth/splunk.secret')
+    secret_file = ::File.join(splunk_dir, 'etc', 'auth', 'splunk.secret')
 
-    rc4key = ::IO.read(secret_file).strip![0..15]
+    rc4key = ::IO.read(secret_file)[0..15].chomp
     xorkey = 'DEFAULTSA'.unpack('c*')
     xorkey += xorkey while xorkey.size < pwd.size
 
