@@ -21,7 +21,7 @@ cookbook doesn't support installing from networked package managers
 
 ## Requirements
 
-Chef 11.10.0+ for `declare_resource`.
+Chef 11.12.0+
 
 ### Platforms
 
