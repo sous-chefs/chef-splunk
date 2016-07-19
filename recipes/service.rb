@@ -97,7 +97,6 @@ else
       splunkdir: splunk_dir,
       runasroot: node['splunk']['server']['runasroot']
     )
-    only_if { node['init_package'] == 'init' }
   end
 
   service 'splunk' do
