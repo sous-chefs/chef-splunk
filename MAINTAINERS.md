@@ -15,4 +15,5 @@ for details on the process and how to become a maintainer or the project lead.
 # Maintainers
 * [Jennifer Davis](https://github.com/sigje)
 * [Tim Smith](https://github.com/tas50)
+* [Roy Arsan](https://github.com/rarsan)
 * [Thom May](https://github.com/thommay)
