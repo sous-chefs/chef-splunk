@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## v1.6.0 (2016-07-19)
+
+- Updated the default version of the Splunk forwarder to 6.4
+- Removed the scope section of the readme as this is no longer a Chef Ops maintained cookbook
+
 ## v1.5.0 (2016-03-14)
 
 - Set the default version to 6.3.3 with working URLs
