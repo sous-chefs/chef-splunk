@@ -1,32 +1,13 @@
-AllCops:
+# rubocop todo:
+#
+Lint/AmbiguousRegexpLiteral:
   Exclude:
-    - vendor/**/*
-    - Guardfile
-    - test/**/*
+    - 'test/integration/client_lwrps/serverspec/splunkapp_spec.rb'
+    - 'test/integration/server_lwrps/serverspec/splunkapp_spec.rb'
 
-AlignParameters:
-  Enabled: false
-ClassLength:
-  Enabled: false
-CyclomaticComplexity:
-  Enabled: false
-Documentation:
-  Enabled: false
-Encoding:
-  Enabled: false
-Style/FileName:
-  Enabled: false
-LineLength:
-  Enabled: false
-MethodLength:
-  Enabled: false
-Metrics/AbcSize:
-  Enabled: false
-PerceivedComplexity:
-  Enabled: false
-SpaceBeforeFirstArg:
-  Enabled: false
-Style/ClassAndModuleChildren:
-  Enabled: false
-Style/FileName:
-  Enabled: false
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
+# SupportedStyles: slashes, percent_r, mixed
+Style/RegexpLiteral:
+  Exclude:
+    - 'test/integration/client-inputs-outputs/serverspec/client_spec.rb'
