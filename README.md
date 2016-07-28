@@ -381,7 +381,7 @@ then that file should be removed.
 
 This recipe sets up Splunk indexer clustering based on the node's
 clustering mode or `node['splunk']['clustering']['mode']`. The attribute
-`node['splunk']['clustering']['enable']` must be set to true in order to
+`node['splunk']['clustering']['enabled']` must be set to true in order to
 run this recipe. Similar to `setup_auth`, this recipes loads
 the same encrypted data bag with the Splunk `secret` key (to be shared among
 cluster members), using the [chef-vault cookbook](http://ckbk.it/chef-vault)
