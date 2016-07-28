@@ -122,7 +122,7 @@ clustering in the `setup_clustering` recipe:
 
 * `node['splunk']['clustering']`: A hash of indexer clustering configurations
   used in the `setup_clustering` recipe
-* `node['splunk']['clustering']['enable']`: Whether to enable indexer clustering,
+* `node['splunk']['clustering']['enabled']`: Whether to enable indexer clustering,
   must be set to `true` to use the `setup_clustering` recipe. Defaults to `false`,
   must be a boolean literal `true` or `false`.
 * `node['splunk']['clustering']['mode']`: The clustering mode of the node within
