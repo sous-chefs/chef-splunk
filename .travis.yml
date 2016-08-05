@@ -25,14 +25,11 @@ env:
     - INSTANCE=server-runas-splunk-centos-7
     - INSTANCE=client-inputs-outputs-centos-7
 
-# Ensure we make ChefDK's Ruby the default
+  fast_finish: true
+
 before_script:
-  # https://github.com/zuazo/kitchen-in-travis-native/issues/1#issuecomment-142230889
   - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
   - eval "$(/opt/chefdk/bin/chef shell-init bash)"
-  # We have to install chef-sugar for ChefSpec
-  - /opt/chefdk/embedded/bin/chef gem install chef-sugar
-  - /opt/chefdk/embedded/bin/chef gem install kitchen-docker
   # workaround for "unusable filesystem" error in splunk
   # https://answers.splunk.com/answers/9035/can-i-run-splunk-on-btrfs.html#answer-152672
   - sudo mkdir -p /data/splunk-test
