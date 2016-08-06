@@ -20,6 +20,7 @@ platforms:
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
       - RUN /usr/bin/apt-get install lsb-release -y
+      - RUN sudo mkdir -p /data/splunk-test
 
 - name: debian-8
   driver:
@@ -28,6 +29,7 @@ platforms:
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
       - RUN /usr/bin/apt-get install lsb-release -y
+      - RUN sudo mkdir -p /data/splunk-test
 
 - name: centos-5
   driver:
@@ -36,6 +38,7 @@ platforms:
     pid_one_command: /sbin/init
     intermediate_instructions:
       - RUN yum install -y which initscripts
+      - RUN sudo mkdir -p /data/splunk-test
 
 - name: centos-6
   driver:
@@ -44,6 +47,7 @@ platforms:
     pid_one_command: /sbin/init
     intermediate_instructions:
       - RUN yum -y install which initscripts
+      - RUN sudo mkdir -p /data/splunk-test
 
 - name: centos-7
   driver:
@@ -52,6 +56,7 @@ platforms:
     pid_one_command: /usr/lib/systemd/systemd
     intermediate_instructions:
       - RUN yum -y install lsof which systemd-sysv initscripts
+      - RUN sudo mkdir -p /data/splunk-test
 
 - name: fedora-latest
   driver:
@@ -59,6 +64,7 @@ platforms:
     pid_one_command: /usr/lib/systemd/systemd
     intermediate_instructions:
       - RUN dnf -y install yum which systemd-sysv initscripts
+      - RUN sudo mkdir -p /data/splunk-test
 
 - name: ubuntu-12.04
   driver:
@@ -66,6 +72,7 @@ platforms:
     pid_one_command: /sbin/init
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
+      - RUN sudo mkdir -p /data/splunk-test
 
 - name: ubuntu-14.04
   driver:
@@ -73,6 +80,7 @@ platforms:
     pid_one_command: /sbin/init
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
+      - RUN sudo mkdir -p /data/splunk-test
 
 - name: ubuntu-16.04
   driver:
@@ -80,20 +88,7 @@ platforms:
     pid_one_command: /bin/systemd
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
-
-- name: opensuse-13.2
-  driver:
-    image: opensuse:13.2
-    pid_one_command: /bin/systemd
-    intermediate_instructions:
-      - RUN zypper --non-interactive install aaa_base perl-Getopt-Long-Descriptive which
-
-- name: opensuse-42.1
-  driver:
-    image: opensuse:42.1
-    pid_one_command: /bin/systemd
-    intermediate_instructions:
-      - RUN zypper --non-interactive install aaa_base perl-Getopt-Long-Descriptive which
+      - RUN sudo mkdir -p /data/splunk-test
 
 suites:
   - name: client
