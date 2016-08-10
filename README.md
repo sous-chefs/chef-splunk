@@ -103,7 +103,7 @@ SSL in the `setup_ssl` recipe.
   load, defaults to `vault` (as chef-vault is used).
 * `node['splunk']['ssl_options']['data_bag_item']`: The data bag item
   name that contains the keyfile and crtfile, defaults to
-  `splunk_ceritficates`.
+  `splunk_certificates`.
 * `node['splunk']['ssl_options']['keyfile']`: The name of the SSL key
   file, and the content will be written to
   `etc/auth/splunkweb/KEYFILE`. Must be an element under `data` in the
