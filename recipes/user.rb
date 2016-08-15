@@ -28,5 +28,6 @@ user node['splunk']['user']['username'] do
   shell node['splunk']['user']['shell']
   gid node['splunk']['user']['username']
   uid node['splunk']['user']['uid']
+  home node['splunk']['user']['home']
   system true if %w(linux).include?(node['os'])
 end
