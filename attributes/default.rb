@@ -51,6 +51,7 @@ default['splunk']['shclustering']= {
   'replication_factor' => 2,
   'replication_port' => 9900,
   'deployer_url' => '',
+  'mgmt_uri' => "https://#{node['fqdn']}:8089",
   'shcluster_members' => []
 }
 
