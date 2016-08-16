@@ -46,6 +46,8 @@ default['splunk']['clustering'] = {
   'replication_port' => 9887
 }
 
+default['splunk']['shclustering']['enabled'] = false
+
 # Add key value pairs to this to add configuration pairs to the output.conf file
 # 'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem'
 default['splunk']['outputs_conf'] = {
