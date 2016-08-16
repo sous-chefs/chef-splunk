@@ -48,3 +48,7 @@ end
 if node['splunk']['clustering']['enabled']
   include_recipe 'chef-splunk::setup_clustering'
 end
+
+if node['splunk']['shclustering']['enabled']
+  include_recipe 'chef-splunk::setup_shclustering'
+end
