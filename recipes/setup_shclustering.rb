@@ -31,3 +31,5 @@ begin
 rescue Chef::Exceptions::ResourceNotFound
   service 'splunk'
 end
+
+include_recipe 'chef-vault'
