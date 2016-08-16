@@ -63,3 +63,10 @@ execute 'bootstrap-shcluster' do
   not_if { ::File.exist?("#{splunk_dir}/etc/.setup_shcluster") }
   notifies :restart, 'service[splunk]'
 end
+
+file "#{splunk_dir}/etc/.setup_shcluster" do
+  content 'true\n'
+  owner node['splunk']['user']['username']
+  group node['splunk']['user']['username']
+  mode 00600
+end
