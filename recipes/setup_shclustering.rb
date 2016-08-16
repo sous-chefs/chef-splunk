@@ -33,3 +33,26 @@ rescue Chef::Exceptions::ResourceNotFound
 end
 
 include_recipe 'chef-vault'
+
+passwords = chef_vault_item('vault', "splunk_#{node.chef_environment}")
+splunk_auth_info = passwords['auth']
+shcluster_secret = passwords['shcluster_secret']
+
+shcluster_params = node['splunk']['shclustering']
+shcluster_servers_list = shcluster_params['shcluster_members'].join(',')
+
+# build out the command params
+splunk_cmd_params = "-mgmt_uri #{shcluster_params['mgmt_uri']}\
+ -replication_factor #{shcluster_params['replication_factor']}\
+ -replication_port #{shcluster_params['replication_port']}\
+ -conf_deploy_fetch_url #{shcluster_params['deployer_url']}"
+
+# add the secret if one is used
+splunk_cmd_params << " -secret #{shcluster_secret}" if shcluster_secret
+
+# execute splunk command to initialize shcluster config
+execute 'init-shcluster-config' do
+	command "#{splunk_cmd} init shcluster-config #{splunk_cmd_params} -auth '#{splunk_auth_info}'"
+	not_if { ::File.exist?("#{splunk_dir}/etc/.setup_shcluster") }
+	notifies :restart, 'service[splunk]'
+end
