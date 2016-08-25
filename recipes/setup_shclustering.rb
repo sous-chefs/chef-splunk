@@ -57,11 +57,13 @@ execute 'init-shcluster-config' do
 	notifies :restart, 'service[splunk]'
 end
 
-# bootstrap the shcluster and elect a captain
-execute 'bootstrap-shcluster' do
-  command "#{splunk_cmd} bootstrap shcluster-captain -servers_list #{shcluster_servers_list} -auth '#{splunk_auth_info}'"
-  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_shcluster") }
-  notifies :restart, 'service[splunk]'
+# bootstrap the shcluster and elect a captain if initial_captain set to true and this is the initial shcluster build
+if node['splunk']['shclustering']['initial_captain']
+	execute 'bootstrap-shcluster' do
+	  command "#{splunk_cmd} bootstrap shcluster-captain -servers_list #{shcluster_servers_list} -auth '#{splunk_auth_info}'"
+	  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_shcluster") }
+	  notifies :restart, 'service[splunk]'
+	end
 end
 
 file "#{splunk_dir}/etc/.setup_shcluster" do

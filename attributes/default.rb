@@ -48,6 +48,7 @@ default['splunk']['clustering'] = {
 
 default['splunk']['shclustering']= {
   'enabled' => false,
+  'initial_captain' => false,
   'replication_factor' => 2,
   'replication_port' => 9900,
   'deployer_url' => '',
