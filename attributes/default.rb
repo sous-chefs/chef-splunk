@@ -48,12 +48,14 @@ default['splunk']['clustering'] = {
 
 default['splunk']['shclustering']= {
   'enabled' => false,
-  'initial_captain' => false,
+  'mode' => "member", # member|captain
+  'label' => "shcluster1",
   'replication_factor' => 2,
   'replication_port' => 9900,
   'deployer_url' => '',
   'mgmt_uri' => "https://#{node['fqdn']}:8089",
-  'shcluster_members' => []
+  'shcluster_members' => [],
+  'shcluster_secret' => nil
 }
 
 # Add key value pairs to this to add configuration pairs to the output.conf file
