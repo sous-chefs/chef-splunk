@@ -1,0 +1,13 @@
+# Dropped off by Chef
+
+[replication_port://<%= @shcluster_params['replication_port'] %>]
+
+[shclustering]
+disabled = 0
+mgmt_uri = <%= @shcluster_params['mgmt_uri'] %>
+conf_deploy_fetch_url = <%= @shcluster_params['deployer_url'] %>
+replication_factor = <%= @shcluster_params['replication_factor'] %>
+shcluster_label = <%= @shcluster_params['label'] %>
+<% unless @shcluster_secret.nil? -%>
+	pass4SymmKey = <%= @shcluster_secret %>
+<% end -%>
