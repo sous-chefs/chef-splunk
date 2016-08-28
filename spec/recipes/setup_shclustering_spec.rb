@@ -22,36 +22,6 @@ describe 'chef-splunk::setup_shclustering' do
     end
   end
 
-  let(:sh1_node) do
-    stub_node(platform: 'ubuntu', version: '12.04') do |node|
-      node.automatic['fqdn'] = 'sh1.cluster.example.com'
-      node.automatic['ipaddress'] = '192.168.0.11'
-      node.set['dev_mode'] = true
-      node.set['splunk']['is_server'] = true
-      node.set['splunk']['shclustering']['enabled'] = true
-    end
-  end
-
-  let(:sh2_node) do
-    stub_node(platform: 'ubuntu', version: '12.04') do |node|
-      node.automatic['fqdn'] = 'sh2.cluster.example.com'
-      node.automatic['ipaddress'] = '192.168.0.12'
-      node.set['dev_mode'] = true
-      node.set['splunk']['is_server'] = true
-      node.set['splunk']['shclustering']['enabled'] = true
-    end
-  end
-
-  let(:sh3_node) do
-    stub_node(platform: 'ubuntu', version: '12.04') do |node|
-      node.automatic['fqdn'] = 'sh3.cluster.example.com'
-      node.automatic['ipaddress'] = '192.168.0.13'
-      node.set['dev_mode'] = true
-      node.set['splunk']['is_server'] = true
-      node.set['splunk']['shclustering']['enabled'] = true
-    end
-  end
-
   context 'default server settings' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
@@ -73,46 +43,96 @@ describe 'chef-splunk::setup_shclustering' do
         node.set['splunk']['is_server'] = true
         node.set['splunk']['shclustering']['enabled'] = true
         node.set['splunk']['shclustering']['deployer_url'] = "https://#{deployer_node.fqdn}:8089",
+        node.set['splunk']['shclustering']['mgmt_uri'] = "https://#{node['fqdn']}:8089",
         node.set['splunk']['shclustering']['shcluster_members'] = [ 
-        	"https://#{sh1_node.fqdn}:8089",
-        	"https://#{sh2_node.fqdn}:8089",
-        	"https://#{sh3_node.fqdn}:8089"
+        	"#{node['splunk']['shclustering']['mgmt_uri']}"
         ]
         # Populate mock vault data bag to the server
         server.create_data_bag('vault', secrets)
       end.converge(described_recipe)
     end
 
-    let(:shcluster_servers_list) do
-    	chef_run.node['splunk']['shclustering']['shcluster_members'].join(',')
-    end
-
     it 'includes chef-vault' do
       expect(chef_run).to include_recipe('chef-vault::default')
-    end
-
-    it 'runs init-shcluster-config with correct parameters' do
-    	expect(chef_run).to run_execute('init-shcluster-config').with(
-        'command' => "/opt/splunk/bin/splunk init shcluster-config -mgmt_uri #{chef_run.node['splunk']['shclustering']['mgmt_uri']}\
- -replication_factor #{chef_run.node['splunk']['shclustering']['replication_factor']}\
- -replication_port #{chef_run.node['splunk']['shclustering']['replication_port']}\
- -conf_deploy_fetch_url #{chef_run.node['splunk']['shclustering']['deployer_url']}\
- -secret #{secrets['splunk__default']['shcluster_secret']}\
- -auth '#{secrets['splunk__default']['auth']}'"
-      )
-      expect(chef_run.execute('init-shcluster-config')).to notify('service[splunk]').to(:restart)
-    end
-
-    it 'runs bootstrap shcluster-captain with correct parameters' do
-      expect(chef_run).to run_execute('bootstrap-shcluster').with(
-        'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list #{shcluster_servers_list}\
- -auth '#{secrets['splunk__default']['auth']}'"
-      )
-      expect(chef_run.execute('bootstrap-shcluster')).to notify('service[splunk]').to(:restart)
     end
 
     it 'writes a file marker to ensure convergence' do
       expect(chef_run).to render_file('/opt/splunk/etc/.setup_shcluster').with_content('true\n')
     end
+
+		it 'writes server.conf with replication port' do
+			expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+			.with_content("[replication_port://#{chef_run.node['splunk']['shclustering']['replication_port']}]")
+		end
+
+		it 'writes server.conf with a shclustering stanza' do
+			expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+			.with_content("[shclustering]")
+		end
+
+		it 'writes server.conf with the deployer url' do
+			expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+			.with_content("conf_deploy_fetch_url = #{chef_run.node['splunk']['shclustering']['deployer_url']}")
+		end
+
+		it 'writes server.conf with the node mgmt uri' do
+			expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+			.with_content("mgmt_uri = #{chef_run.node['splunk']['shclustering']['mgmt_uri']}")
+		end
+
+		it 'writes server.conf with the shcluster replication factor' do
+			expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+			.with_content("replication_factor = #{chef_run.node['splunk']['shclustering']['replication_factor']}")
+		end
+
+		it 'writes server.conf with the shcluster label' do
+			expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+			.with_content("shcluster_label = #{chef_run.node['splunk']['shclustering']['label']}")
+		end
+
+		it 'writes server.conf with the shcluster secret' do
+			expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+			.with_content("pass4SymmKey = #{chef_run.node['splunk']['shclustering']['shcluster_secret']}")
+		end
+
+    context 'while set to captain mode' do
+    	before(:each) do
+	      chef_run.node.set['splunk']['shclustering']['mode'] = "captain"
+	      chef_run.converge(described_recipe)
+	    end
+
+			let(:shcluster_servers_list) do
+				chef_run.node['splunk']['shclustering']['shcluster_members'].join(',')
+			end
+
+    	context 'during intial chef run' do
+    		it 'runs bootstrap shcluster-captain with correct parameters' do
+		      expect(chef_run).to run_execute('bootstrap-shcluster').with(
+        'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list #{shcluster_servers_list}\
+ -auth '#{secrets['splunk__default']['auth']}'"
+		      )
+		      expect(chef_run.execute('bootstrap-shcluster')).to notify('service[splunk]').to(:restart)
+		    end				
+    	end
+
+
+# This keeps giving error about expecting action 'run' to not be in the resource's list
+# Would be nice if we could test that the bootstrap command does not get run on subsequent
+# chef runs. Feel free to submit a PR for this.
+#    	context 'during subsequent chef runs' do
+
+#    		it 'does not run bootstrap shcluster-captain' do
+# 				allow(File).to receive(:exist?).and_call_original
+# 				allow(File).to receive(:exist?)
+# 				.with("/opt/splunk/etc/.setup_shcluster")
+# 				.and_return(true)
+
+#    			expect(chef_run).to_not run_execute('bootstrap-shcluster').with(
+#        'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list #{shcluster_servers_list}\
+# -auth '#{secrets['splunk__default']['auth']}'"
+# 	      )
+#    		end
+#    	end
+	  end
   end
 end
