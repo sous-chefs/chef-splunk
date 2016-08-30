@@ -56,22 +56,6 @@ else
 	shcluster_servers_list = shcluster_params['shcluster_members'].join(',')
 end
 
-# bootstrap the shcluster and elect a captain if initial_captain set to true and this is the initial shcluster build
-if node['splunk']['shclustering']['mode'] == "captain"
-	execute 'bootstrap-shcluster' do
-	  command "#{splunk_cmd} bootstrap shcluster-captain -servers_list #{shcluster_servers_list} -auth '#{splunk_auth_info}'"
-	  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_shcluster") }
-	  notifies :restart, 'service[splunk]'
-	end
-end
-
-file "#{splunk_dir}/etc/.setup_shcluster" do
-  content 'true\n'
-  owner node['splunk']['user']['username']
-  group node['splunk']['user']['username']
-  mode 00600
-end
-
 # create app directories to house our server.conf with our shcluster configuration
 shcluster_app_dir = "#{splunk_dir}/etc/apps/0_autogen_shcluster_config"
 
@@ -95,5 +79,21 @@ template "#{shcluster_app_dir}/local/server.conf" do
     :shcluster_secret => shcluster_secret
   )
   sensitive true
-	notifies :restart, 'service[splunk]'
+	notifies :restart, 'service[splunk]', :immediately
+end
+
+# bootstrap the shcluster and elect a captain if initial_captain set to true and this is the initial shcluster build
+if node['splunk']['shclustering']['mode'] == "captain"
+	execute 'bootstrap-shcluster' do
+	  command "#{splunk_cmd} bootstrap shcluster-captain -servers_list '#{shcluster_servers_list.join(',')}' -auth '#{splunk_auth_info}'"
+	  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_shcluster") }
+	  notifies :restart, 'service[splunk]'
+	end
+end
+
+file "#{splunk_dir}/etc/.setup_shcluster" do
+  content 'true\n'
+  owner node['splunk']['user']['username']
+  group node['splunk']['user']['username']
+  mode 00600
 end
