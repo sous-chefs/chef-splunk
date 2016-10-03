@@ -73,7 +73,7 @@ end
 
 template "#{shcluster_app_dir}/local/server.conf" do
   source "shclustering/server.conf.erb"
-  mode 0755
+  mode 0600
   variables(
     :shcluster_params => node['splunk']['shclustering'],
     :shcluster_secret => shcluster_secret
