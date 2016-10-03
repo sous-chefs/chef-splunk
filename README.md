@@ -158,7 +158,7 @@ clustering in the `setup_shclustering` recipe:
   of the shcluster members. Defaults to 9900.
 * `node['splunk']['shclustering']['deployer_url']`: The management url for the
   shcluster deployer server, must be set to a string such as: `https://deployer.domain.tld:8089`.
-  Defaults to empty.
+  This attribute is optional. Defaults to empty.
 * `node['splunk']['shclustering']['mgmt_uri']`: The management url for the
   shcluster member node, must be set to a string such as: `https://shx.domain.tld:8089`. You can
   use the node's IP address instead of the FQDN if desired. Defaults to `https://#{node['fqdn']}:8089`.
@@ -462,10 +462,10 @@ will build and execute the Splunk command to bootstrap the search head cluster a
 initiate the captain election process.
 
 In addition to using this recipe for configuring the search head cluster members, you
-will also have to manually configure a stand-alone search head instance to serve as the 
+will also have to manually configure a search head instance to serve as the 
 search head cluster's deployer. This is done by adding a `[shclustering]` stanza to
 that instance's `etc/system/local/server.conf` with the same `pass4SymmKey = <shcluster_secret>`
-and the same `splunk_shclustering_label`. This deployer must be configured prior to 
+and the same `splunk_shclustering_label`. This deployer is optional, but should be configured prior to 
 running the bootstrap on the captain and then the search head cluster member nodes 
 configured with this deployer node's mgmt_uri set in the member node's `splunk_shclustering_deployer_url`
 
