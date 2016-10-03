@@ -147,13 +147,13 @@ clustering in the `setup_shclustering` recipe:
   must be set to `true` to use the `setup_shclustering` recipe. Defaults to `false`,
   must be a boolean literal `true` or `false`.
 * `node['splunk']['shclustering']['mode']`: The search head clustering mode of the node within
-  the cluster. This is used to determine if the node needs to bootstrap the shcluster and begin
-  captain election. Must be set using string literal 'member' or 'captain'.
+  the cluster. This is used to determine if the node needs to bootstrap the shcluster and initialize
+  the node as the captain. Must be set using string literal 'member' or 'captain'.
 * `node['splunk']['shclustering']['label']`: The label for the shcluster. Used to differentiate 
   from other shclusters in the environment. Must be a string. Defaults to `shcluster1`.
   captain election. Must be set using string literal 'member' or 'captain'.
 * `node['splunk']['shclustering']['replication_factor']`: The replication factor
-  of the shcluster. Defaults to 2, must be a positive integer.
+  of the shcluster. Defaults to 3, must be a positive integer.
 * `node['splunk']['shclustering']['replication_port']`: The replication port
   of the shcluster members. Defaults to 9900.
 * `node['splunk']['shclustering']['deployer_url']`: The management url for the
