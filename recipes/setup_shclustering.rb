@@ -39,23 +39,6 @@ splunk_auth_info = passwords['auth']
 shcluster_secret = passwords['shcluster_secret'] || node['splunk']['shclustering']['shcluster_secret']
 shcluster_params = node['splunk']['shclustering']
 
-# unless shcluster members are staticly assigned via the node attribute,
-# try to find the other shcluster members via Chef search
-if shcluster_params['shcluster_members'].empty?
-  shcluster_servers_list = Array.new
-  search( # ~FC003
-    :node,
-    "\
-    splunk_shclustering_enabled:true AND \
-    splunk_shclustering_label:#{node['splunk']['shclustering']['label']} AND \
-    chef_environment:#{node.chef_environment}"
-  ).each do |result|
-    shcluster_servers_list << result['splunk']['shclustering']['mgmt_uri']
-  end
-else
-  shcluster_servers_list = shcluster_params['shcluster_members'].join(',')
-end
-
 # create app directories to house our server.conf with our shcluster configuration
 shcluster_app_dir = "#{splunk_dir}/etc/apps/0_autogen_shcluster_config"
 
@@ -84,6 +67,23 @@ end
 
 # bootstrap the shcluster and elect a captain if initial_captain set to true and this is the initial shcluster build
 if node['splunk']['shclustering']['mode'] == "captain"
+  # unless shcluster members are staticly assigned via the node attribute,
+  # try to find the other shcluster members via Chef search
+  if shcluster_params['shcluster_members'].empty?
+    shcluster_servers_list = Array.new
+    search( # ~FC003
+      :node,
+      "\
+      splunk_shclustering_enabled:true AND \
+      splunk_shclustering_label:#{node['splunk']['shclustering']['label']} AND \
+      chef_environment:#{node.chef_environment}"
+    ).each do |result|
+      shcluster_servers_list << result['splunk']['shclustering']['mgmt_uri']
+    end
+  else
+    shcluster_servers_list = shcluster_params['shcluster_members'].join(',')
+  end
+
   execute 'bootstrap-shcluster' do
     command "#{splunk_cmd} bootstrap shcluster-captain -servers_list '#{shcluster_servers_list.join(',')}' -auth '#{splunk_auth_info}'"
     not_if { ::File.exist?("#{splunk_dir}/etc/.setup_shcluster") }
