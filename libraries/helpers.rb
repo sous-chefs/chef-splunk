@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: splunk
+# Cookbook Name:: chef-splunk
 # Libraries:: helpers
 #
 # Author: Joshua Timberman <joshua@chef.io>
