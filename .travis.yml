@@ -20,8 +20,12 @@ services: docker
 
 env:
   matrix:
+    - INSTANCE=server-runas-splunk-ubuntu-1604
+    - INSTANCE=client-inputs-outputs-ubuntu-1604
     - INSTANCE=server-runas-splunk-ubuntu-1404
     - INSTANCE=client-inputs-outputs-ubuntu-1404
+    - INSTANCE=server-runas-splunk-ubuntu-1204
+    - INSTANCE=client-inputs-outputs-ubuntu-1204
     - INSTANCE=server-runas-splunk-centos-7
     - INSTANCE=client-inputs-outputs-centos-7
 
