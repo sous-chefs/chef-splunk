@@ -19,7 +19,7 @@ platforms:
     pid_one_command: /sbin/init
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
-      - RUN /usr/bin/apt-get install lsb-release -y
+      - RUN /usr/bin/apt-get install lsb-release procps -y
       - RUN sudo mkdir -p /data/splunk-test
 
 - name: debian-8
@@ -89,6 +89,20 @@ platforms:
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
       - RUN sudo mkdir -p /data/splunk-test
+
+- name: opensuse-13.2
+  driver:
+    image: opensuse:13.2
+    pid_one_command: /bin/systemd
+    intermediate_instructions:
+      - RUN zypper --non-interactive install aaa_base perl-Getopt-Long-Descriptive which net-tools
+
+- name: opensuse-42.1
+  driver:
+    image: opensuse:42.1
+    pid_one_command: /bin/systemd
+    intermediate_instructions:
+      - RUN zypper --non-interactive install aaa_base perl-Getopt-Long-Descriptive which hostname
 
 suites:
   - name: client
