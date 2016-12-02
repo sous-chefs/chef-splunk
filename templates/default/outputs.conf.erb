@@ -1,9 +1,12 @@
 [tcpout]
-defaultGroup = splunk_indexers_<%= node['splunk']['receiver_port'] %>
+defaultGroup = default
 disabled=false
 
-[tcpout:splunk_indexers_<%= node['splunk']['receiver_port'] %>]
-server=<% @splunk_servers.map do |s| -%><%= s['ipaddress'] %>:<%= s['splunk']['receiver_port'] %> <% end.join(', ') -%>
-<% @outputs_conf.each_pair do |name, value| -%>
+<% @outputs.each_pair do |name, output| -%>
+[tcpout:<%= name %>]
+server=<%= output['servers'].map { |s| "#{s['ipaddress']}:#{s['port']}" }.join(',') %>
+<% output['attributes'].each_pair do |name, value| -%>
 <%= name %> = <%= value %>
+<% end -%>
+
 <% end -%>

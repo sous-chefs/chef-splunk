@@ -50,17 +50,12 @@ default['splunk']['clustering'] = {
 
 # Add key value pairs to this to add configuration pairs to the output.conf file
 # 'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem'
-default['splunk']['outputs_conf'] = {
-  'forwardedindex.0.whitelist' => '.*',
-  'forwardedindex.1.blacklist' => '_.*',
-  'forwardedindex.2.whitelist' => '_audit',
-  'forwardedindex.filter.disable' => 'false'
-}
 
 # Add a host name if you need inputs.conf file to be configured
 # Note: if host is empty the inputs.conf template will not be used.
 default['splunk']['inputs_conf']['host'] = ''
 default['splunk']['inputs_conf']['ports'] = []
+default['splunk']['splunk_config_path'] = 'system/local'
 
 # If the `is_server` attribute is set (via an overridable location
 # like a role), then set particular attribute defaults based on the
@@ -69,6 +64,21 @@ default['splunk']['inputs_conf']['ports'] = []
 default['splunk']['user']['home'] = '/opt/splunk' if node['splunk']['is_server']
 
 default['splunk']['server']['runasroot'] = true
+
+default['splunk']['output_groups'] = {
+  'default' => {
+    'servers' => [{
+      'ipaddress' => '127.0.0.1',
+      'port' => node['splunk']['receiver_port']
+    }],
+    'attributes' => {
+      'forwardedindex.0.whitelist' => '.*',
+      'forwardedindex.1.blacklist' => '_.*',
+      'forwardedindex.2.whitelist' => '_audit',
+      'forwardedindex.filter.disable' => 'false'
+    }
+  }
+}
 
 case node['platform_family']
 when 'rhel', 'fedora'
