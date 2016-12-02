@@ -22,20 +22,20 @@
 # server (with node['splunk']['is_server'] true). The recipes can be
 # used on their own composed in your own wrapper cookbook or role.
 
-if node['splunk']['splunk_servers']
-  splunk_servers = node['splunk']['splunk_servers']
-else
-  splunk_servers = search( # ~FC003
-    :node,
-    "splunk_is_server:true AND chef_environment:#{node.chef_environment}"
-  ).sort! do
-    |a, b| a.name <=> b.name
-  end
-end
+splunk_servers = if node['splunk']['splunk_servers']
+                   node['splunk']['splunk_servers']
+                 else
+                   search( # ~FC003
+                     :node,
+                     "splunk_is_server:true AND chef_environment:#{node.chef_environment}"
+                   ).sort! do |a, b|
+                     a.name <=> b.name
+                   end
+                 end
 
 servers_hash = []
-for s in splunk_servers
-  servers_hash.push({'ipaddress' => s['ipaddress'], 'port' => s['splunk']['receiver_port']})
+splunk_servers.each do |s|
+  servers_hash.push('ipaddress' => s['ipaddress'], 'port' => s['splunk']['receiver_port'])
 end
 
 node.set['splunk']['output_groups']['default']['servers'] = servers_hash
