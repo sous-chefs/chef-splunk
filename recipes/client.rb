@@ -47,14 +47,14 @@ end
 
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
-  mode 0644
+  mode '644'
   variables splunk_servers: splunk_servers, outputs_conf: node['splunk']['outputs_conf']
   notifies :restart, 'service[splunk]'
 end
 
 template "#{splunk_dir}/etc/system/local/inputs.conf" do
   source 'inputs.conf.erb'
-  mode 0644
+  mode '644'
   variables inputs_conf: node['splunk']['inputs_conf']
   notifies :restart, 'service[splunk]'
   not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
@@ -62,7 +62,7 @@ end
 
 template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
   source 'limits.conf.erb'
-  mode 0644
+  mode '644'
   variables ratelimit_kbps: node['splunk']['ratelimit_kilobytessec']
   notifies :restart, 'service[splunk]'
 end

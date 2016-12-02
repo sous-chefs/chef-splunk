@@ -49,7 +49,7 @@ file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['keyfile']}" do
   content certs[ssl_options['keyfile']]
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
-  mode 00600
+  mode '600'
   notifies :restart, 'service[splunk]'
 end
 
@@ -57,6 +57,6 @@ file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['crtfile']}" do
   content certs[ssl_options['crtfile']]
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
-  mode 00600
+  mode '600'
   notifies :restart, 'service[splunk]'
 end

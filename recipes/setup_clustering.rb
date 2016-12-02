@@ -77,5 +77,5 @@ file "#{splunk_dir}/etc/.setup_cluster_#{cluster_mode}" do
   content 'true\n'
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
-  mode 00600
+  mode '600'
 end

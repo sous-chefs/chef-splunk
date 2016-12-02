@@ -26,25 +26,25 @@ if node['splunk']['is_server']
   directory splunk_dir do
     owner myuser
     group myuser
-    mode 00755
+    mode '755'
   end
 
   directory "#{splunk_dir}/var" do
     owner node['splunk']['user']['username']
     group node['splunk']['user']['username']
-    mode 00711
+    mode '711'
   end
 
   directory "#{splunk_dir}/var/log" do
     owner node['splunk']['user']['username']
     group node['splunk']['user']['username']
-    mode 00711
+    mode '711'
   end
 
   directory "#{splunk_dir}/var/log/splunk" do
     owner node['splunk']['user']['username']
     group node['splunk']['user']['username']
-    mode 00700
+    mode '700'
   end
 end
 
@@ -76,7 +76,7 @@ end
 if node['init_package'] == 'systemd'
   template '/usr/lib/systemd/system/splunk.service' do
     source 'splunk-systemd.erb'
-    mode 0700
+    mode '700'
     variables(
       splunkdir: splunk_dir,
       runasroot: node['splunk']['server']['runasroot']
@@ -91,7 +91,7 @@ if node['init_package'] == 'systemd'
 else
   template '/etc/init.d/splunk' do
     source 'splunk-init.erb'
-    mode 0700
+    mode '700'
     variables(
       splunkdir: splunk_dir,
       runasroot: node['splunk']['server']['runasroot']

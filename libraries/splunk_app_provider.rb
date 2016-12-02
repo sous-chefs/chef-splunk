@@ -72,7 +72,7 @@ class Chef
 
         directory "#{app_dir}/local" do
           recursive true
-          mode 00755
+          mode '755'
           owner node['splunk']['user']['username'] unless node['splunk']['server']['runasroot']
         end
 
@@ -80,7 +80,7 @@ class Chef
           new_resource.templates.each do |t|
             template "#{app_dir}/local/#{t}" do
               source "#{new_resource.app_name}/#{t}.erb"
-              mode 00644
+              mode '644'
               notifies :restart, 'service[splunk]'
             end
           end
