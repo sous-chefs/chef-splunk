@@ -1,9 +1,8 @@
 #
-# Cookbook Name:: splunk
+# Cookbook Name:: chef-splunk
 # Recipe:: service
 #
-# Author: Joshua Timberman <joshua@chef.io>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright 2014-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -74,17 +73,34 @@ ruby_block 'splunk_fix_file_ownership' do
   not_if { node['splunk']['server']['runasroot'] }
 end
 
-template '/etc/init.d/splunk' do
-  source 'splunk-init.erb'
-  mode 0700
-  variables(
-    splunkdir: splunk_dir,
-    runasroot: node['splunk']['server']['runasroot']
-  )
-end
+if node['init_package'] == 'systemd'
+  template '/usr/lib/systemd/system/splunk.service' do
+    source 'splunk-systemd.erb'
+    mode 0700
+    variables(
+      splunkdir: splunk_dir,
+      runasroot: node['splunk']['server']['runasroot']
+    )
+  end
 
-service 'splunk' do
-  supports status: true, restart: true
-  provider Chef::Provider::Service::Init
-  action :start
+  service 'splunk' do
+    supports status: true, restart: true
+    provider Chef::Provider::Service::Systemd
+    action [:enable, :start]
+  end
+else
+  template '/etc/init.d/splunk' do
+    source 'splunk-init.erb'
+    mode 0700
+    variables(
+      splunkdir: splunk_dir,
+      runasroot: node['splunk']['server']['runasroot']
+    )
+  end
+
+  service 'splunk' do
+    supports status: true, restart: true
+    provider Chef::Provider::Service::Init
+    action :start
+  end
 end

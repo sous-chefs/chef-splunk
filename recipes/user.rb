@@ -1,9 +1,8 @@
 #
-# Cookbook Name:: splunk
+# Cookbook Name:: chef-splunk
 # Recipe:: user
 #
-# Author: Joshua Timberman <joshua@chef.io>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright 2014-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,5 +27,6 @@ user node['splunk']['user']['username'] do
   shell node['splunk']['user']['shell']
   gid node['splunk']['user']['username']
   uid node['splunk']['user']['uid']
+  home node['splunk']['user']['home']
   system true if %w(linux).include?(node['os'])
 end

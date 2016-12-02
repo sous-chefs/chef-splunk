@@ -1,9 +1,8 @@
 #
-# Cookbook Name:: splunk
+# Cookbook Name:: chef-splunk
 # Recipe:: setup_clustering
 #
-# Author: Roy Arsan <rarsan@splunk.com>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright 2014-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -63,7 +62,7 @@ when 'slave', 'searchhead'
 else
   Chef::Log.fatal("You have set an incorrect clustering mode: #{cluster_mode}")
   Chef::Log.fatal("Set `node['splunk']['clustering']['mode']` to master|slave|searchhead, and try again.")
-  raise
+  raise 'Failed to setup clustering'
 end
 
 splunk_cmd_params << " -secret #{cluster_secret}" if cluster_secret

@@ -1,8 +1,10 @@
-AllCops:
+# rubocop todo:
+#
+Lint/AmbiguousRegexpLiteral:
   Exclude:
-    - vendor/**/*
-    - Guardfile
-    - test/**/*
+    - 'test/integration/client_lwrps/serverspec/splunkapp_spec.rb'
+    - 'test/integration/server_lwrps/serverspec/splunkapp_spec.rb'
+    - 'test/integration/client-inputs-outputs/serverspec/client_spec.rb'
 
 AlignParameters:
   Enabled: false

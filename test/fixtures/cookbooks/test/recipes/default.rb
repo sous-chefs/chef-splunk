@@ -1,4 +1,4 @@
-execute 'apt-get update' if platform_family?('debian')
+apt_update 'update' if platform_family?('debian')
 
 splunk_app 'bistro' do
   splunk_auth 'admin:notarealpassword'

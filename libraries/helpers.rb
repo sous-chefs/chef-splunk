@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: splunk
+# Cookbook Name:: chef-splunk
 # Libraries:: helpers
 #
 # Author: Joshua Timberman <joshua@chef.io>
@@ -34,9 +34,9 @@ def splunk_dir
   # (intermediary) server which installs to /opt/splunkforwarder
   forwarderpath = '/opt/splunkforwarder'
   enterprisepath = '/opt/splunk'
-  if node['splunk']['is_intermediate']
+  if node['splunk']['is_intermediate'] == true
     forwarderpath
-  elsif node['splunk']['is_server']
+  elsif node['splunk']['is_server'] == true
     enterprisepath
   else
     forwarderpath
