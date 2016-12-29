@@ -69,6 +69,7 @@ template "#{base_config_dir}/inputs.conf" do
   variables inputs_conf: node['splunk']['inputs_conf']
   notifies :restart, 'service[splunk]'
   not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
+  only_if { !node['splunk']['inputs_conf']['inputs'].nil? && !node['splunk']['inputs_conf']['inputs'].empty? }
 end
 
 template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
