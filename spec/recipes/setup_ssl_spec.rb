@@ -7,9 +7,9 @@ describe 'chef-splunk::setup_ssl' do
         'id' => 'splunk_certificates',
         'data' => {
           'self-signed.example.com.key' => '-----BEGIN RSA PRIVATE KEY-----',
-          'self-signed.example.com.crt' => '-----BEGIN CERTIFICATE-----'
-        }
-      }
+          'self-signed.example.com.crt' => '-----BEGIN CERTIFICATE-----',
+        },
+      },
     }
   end
 

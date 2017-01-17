@@ -29,7 +29,7 @@ default['splunk']['user'] = {
   'comment'  => 'Splunk Server',
   'home'     => '/opt/splunkforwarder',
   'shell'    => '/bin/bash',
-  'uid'      => 396
+  'uid'      => 396,
 }
 
 default['splunk']['ssl_options'] = {
@@ -37,7 +37,7 @@ default['splunk']['ssl_options'] = {
   'data_bag' => 'vault',
   'data_bag_item' => 'splunk_certificates',
   'keyfile' => 'self-signed.example.com.key',
-  'crtfile' => 'self-signed.example.com.crt'
+  'crtfile' => 'self-signed.example.com.crt',
 }
 
 default['splunk']['clustering'] = {
@@ -45,7 +45,7 @@ default['splunk']['clustering'] = {
   'mode' => 'master', # master|slave|searchhead
   'replication_factor' => 3,
   'search_factor' => 2,
-  'replication_port' => 9887
+  'replication_port' => 9887,
 }
 
 # Add key value pairs to this to add configuration pairs to the output.conf file
@@ -54,7 +54,7 @@ default['splunk']['outputs_conf'] = {
   'forwardedindex.0.whitelist' => '.*',
   'forwardedindex.1.blacklist' => '_.*',
   'forwardedindex.2.whitelist' => '_audit',
-  'forwardedindex.filter.disable' => 'false'
+  'forwardedindex.filter.disable' => 'false',
 }
 
 # Add a host name if you need inputs.conf file to be configured

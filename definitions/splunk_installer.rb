@@ -30,7 +30,7 @@ define :splunk_installer, url: nil do
   if %w( omnios ).include?(node['platform'])
     pkgopts = [
       "-a #{cache_dir}/#{params[:name]}-nocheck",
-      "-r #{cache_dir}/splunk-response"
+      "-r #{cache_dir}/splunk-response",
     ]
 
     execute "uncompress #{cached_package}" do
