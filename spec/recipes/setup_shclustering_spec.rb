@@ -45,7 +45,9 @@ describe 'chef-splunk::setup_shclustering' do
         node.set['splunk']['shclustering']['deployer_url'] = "https://#{deployer_node.fqdn}:8089",
         node.set['splunk']['shclustering']['mgmt_uri'] = "https://#{node['fqdn']}:8089",
         node.set['splunk']['shclustering']['shcluster_members'] = [ 
-        	"#{node['splunk']['shclustering']['mgmt_uri']}"
+        	"https://shcluster-member01:8089",
+          "https://shcluster-member02:8089",
+          "https://shcluster-member03:8089"
         ]
         # Populate mock vault data bag to the server
         server.create_data_bag('vault', secrets)
@@ -106,33 +108,18 @@ describe 'chef-splunk::setup_shclustering' do
 			end
 
     	context 'during intial chef run' do
+        let(:shcluster_servers_list) do
+          chef_run.node['splunk']['shclustering']['shcluster_members'].join(',')
+        end
     		it 'runs bootstrap shcluster-captain with correct parameters' do
 		      expect(chef_run).to run_execute('bootstrap-shcluster').with(
-        'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list #{shcluster_servers_list}\
+        'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list '#{shcluster_servers_list}'\
  -auth '#{secrets['splunk__default']['auth']}'"
 		      )
 		      expect(chef_run.execute('bootstrap-shcluster')).to notify('service[splunk]').to(:restart)
 		    end				
     	end
-
-
-# This keeps giving error about expecting action 'run' to not be in the resource's list
-# Would be nice if we could test that the bootstrap command does not get run on subsequent
-# chef runs. Feel free to submit a PR for this.
-#    	context 'during subsequent chef runs' do
-
-#    		it 'does not run bootstrap shcluster-captain' do
-# 				allow(File).to receive(:exist?).and_call_original
-# 				allow(File).to receive(:exist?)
-# 				.with("/opt/splunk/etc/.setup_shcluster")
-# 				.and_return(true)
-
-#    			expect(chef_run).to_not run_execute('bootstrap-shcluster').with(
-#        'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list #{shcluster_servers_list}\
-# -auth '#{secrets['splunk__default']['auth']}'"
-# 	      )
-#    		end
-#    	end
+    
 	  end
   end
 end
