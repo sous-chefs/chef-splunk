@@ -81,7 +81,7 @@ if node['splunk']['shclustering']['mode'] == "captain"
       shcluster_servers_list << result['splunk']['shclustering']['mgmt_uri']
     end
   else
-    shcluster_servers_list = shcluster_params['shcluster_members'].join(',')
+    shcluster_servers_list = shcluster_params['shcluster_members']
   end
 
   execute 'bootstrap-shcluster' do
