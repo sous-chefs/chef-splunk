@@ -167,9 +167,6 @@ clustering in the `setup_shclustering` recipe:
   are in the same environment, with search head clustering enabled, and with the same
   cluster label. Alternatively, this can be hard-coded with a list of all shcluster 
   members including the current node. Must be an array of strings. Defaults to an empty array.
-* `node['splunk']['shclustering']['shcluster_secret']`: If you want to hard-code the shcluster secret
-  instead of setting it in a chef-vault encrypted databag, you can set it here. Must be a string.
-  Defaults to `nil`.
 
 The following attributes are related to setting up a splunk forwarder
 with the `client` recipe
@@ -439,7 +436,7 @@ more about Splunk indexer clustering, refer to [Splunk Docs](http://docs.splunk.
 This recipe sets up Splunk search head clustering. The attribute
 `node['splunk']['shclustering']['enabled']` must be set to true in order to
 run this recipe. Similar to `setup_auth`, this recipes loads
-the same encrypted data bag with the Splunk `shcluster_secret` key (to be shared among
+the same encrypted data bag with the Splunk `secret` key (to be shared among
 cluster members), using the [chef-vault cookbook](http://ckbk.it/chef-vault)
 helper method, `chef_vault_item`. See __Usage__ for how to set this up. The
 recipe will edit the cluster configuration, and then write a state file to
@@ -464,8 +461,8 @@ initiate the captain election process.
 In addition to using this recipe for configuring the search head cluster members, you
 will also have to manually configure a search head instance to serve as the 
 search head cluster's deployer. This is done by adding a `[shclustering]` stanza to
-that instance's `etc/system/local/server.conf` with the same `pass4SymmKey = <shcluster_secret>`
-and the same `splunk_shclustering_label`. This deployer is optional, but should be configured prior to 
+that instance's `etc/system/local/server.conf` with the same `pass4SymmKey = <secret>`
+and the same `shcluster_label = <splunk_shclustering_label>`. This deployer is optional, but should be configured prior to 
 running the bootstrap on the captain and then the search head cluster member nodes 
 configured with this deployer node's mgmt_uri set in the member node's `splunk_shclustering_deployer_url`
 
