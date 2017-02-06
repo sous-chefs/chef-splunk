@@ -36,7 +36,7 @@ include_recipe 'chef-vault'
 
 passwords = chef_vault_item('vault', "splunk_#{node.chef_environment}")
 splunk_auth_info = passwords['auth']
-shcluster_secret = passwords['shcluster_secret'] || node['splunk']['shclustering']['shcluster_secret']
+shcluster_secret = passwords['secret']
 shcluster_params = node['splunk']['shclustering']
 
 # create app directories to house our server.conf with our shcluster configuration

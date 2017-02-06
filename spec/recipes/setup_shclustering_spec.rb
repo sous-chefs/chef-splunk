@@ -6,8 +6,7 @@ describe 'chef-splunk::setup_shclustering' do
       'splunk__default' => {
         'id' => 'splunk__default',
         'auth' => 'admin:notarealpassword',
-        'secret' => 'notarealsecret',
-        'shcluster_secret' => 'secretsquirrel'
+        'secret' => 'notarealsecret'
       }
     }
   end
@@ -36,7 +35,7 @@ describe 'chef-splunk::setup_shclustering' do
     end
   end
 
-	context 'with valid shcluster settings' do
+	context 'search head cluster member settings' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
         node.set['dev_mode'] = true
@@ -52,6 +51,10 @@ describe 'chef-splunk::setup_shclustering' do
         # Populate mock vault data bag to the server
         server.create_data_bag('vault', secrets)
       end.converge(described_recipe)
+    end
+
+    let(:shcluster_servers_list) do
+      chef_run.node['splunk']['shclustering']['shcluster_members'].join(',')
     end
 
     it 'includes chef-vault' do
@@ -94,8 +97,12 @@ describe 'chef-splunk::setup_shclustering' do
 
 		it 'writes server.conf with the shcluster secret' do
 			expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
-			.with_content("pass4SymmKey = #{chef_run.node['splunk']['shclustering']['shcluster_secret']}")
+			.with_content("pass4SymmKey = #{secrets['splunk__default']['secret']}")
 		end
+
+    it 'does not run command to bootstrap captain' do
+      expect(chef_run).to_not run_execute('bootstrap-shcluster')
+    end
 
     context 'while set to captain mode' do
     	before(:each) do
@@ -103,15 +110,8 @@ describe 'chef-splunk::setup_shclustering' do
 	      chef_run.converge(described_recipe)
 	    end
 
-			let(:shcluster_servers_list) do
-				chef_run.node['splunk']['shclustering']['shcluster_members'].join(',')
-			end
-
-    	context 'during intial chef run' do
-        let(:shcluster_servers_list) do
-          chef_run.node['splunk']['shclustering']['shcluster_members'].join(',')
-        end
-    		it 'runs bootstrap shcluster-captain with correct parameters' do
+    	context 'during initial chef run' do
+    		it 'runs command to bootstrap captain with correct parameters' do
 		      expect(chef_run).to run_execute('bootstrap-shcluster').with(
         'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list '#{shcluster_servers_list}'\
  -auth '#{secrets['splunk__default']['auth']}'"
