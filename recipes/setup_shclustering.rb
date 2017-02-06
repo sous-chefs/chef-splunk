@@ -57,6 +57,8 @@ end
 template "#{shcluster_app_dir}/local/server.conf" do
   source "shclustering/server.conf.erb"
   mode 0600
+  owner node['splunk']['user']['username']
+  group node['splunk']['user']['username']
   variables(
     :shcluster_params => node['splunk']['shclustering'],
     :shcluster_secret => shcluster_secret
