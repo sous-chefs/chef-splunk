@@ -23,6 +23,9 @@ default['splunk']['receiver_port']  = '9997'
 default['splunk']['web_port']       = '443'
 default['splunk']['ratelimit_kilobytessec'] = '2048'
 
+default['splunk']['vault']['data_bag'] = 'vault'
+default['splunk']['vault']['data_bag_item'] = "splunk_#{node.chef_environment}"
+
 default['splunk']['setup_auth'] = true
 default['splunk']['user'] = {
   'username' => 'splunk',

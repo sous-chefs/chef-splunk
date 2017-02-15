@@ -33,7 +33,7 @@ end
 
 include_recipe 'chef-vault'
 
-passwords = chef_vault_item('vault', "splunk_#{node.chef_environment}")
+passwords = chef_vault_item(node['splunk']['vault']['data_bag'], node['splunk']['vault']['data_bag_item'])
 splunk_auth_info = passwords['auth']
 
 cluster_secret = passwords['secret']
