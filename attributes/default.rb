@@ -46,6 +46,9 @@ default['splunk']['clustering'] = {
   'replication_factor' => 3,
   'search_factor' => 2,
   'replication_port' => 9887,
+  'search' => "splunk_clustering_enabled:true AND \
+    splunk_clustering_mode:master AND \
+    chef_environment:#{node.chef_environment}"
 }
 
 # Add key value pairs to this to add configuration pairs to the output.conf file
