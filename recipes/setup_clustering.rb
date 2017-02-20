@@ -42,7 +42,7 @@ cluster_mode = cluster_params['mode']
 
 Chef::Log.debug("Current node clustering mode: #{cluster_mode}")
 
-cluster_master = search(:node, cluster_params['search']).first unless cluster_mode == 'master'
+cluster_master = search(:node, cluster_params['search']).first unless cluster_mode == 'master' # ~FC003
 
 case cluster_mode
 when 'master'
