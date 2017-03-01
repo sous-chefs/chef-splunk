@@ -63,7 +63,7 @@ platforms:
     image: fedora:latest
     pid_one_command: /usr/lib/systemd/systemd
     intermediate_instructions:
-      - RUN dnf -y install yum which systemd-sysv initscripts
+      - RUN dnf -y install which systemd-sysv initscripts
       - RUN sudo mkdir -p /data/splunk-test
 
 - name: ubuntu-12.04
