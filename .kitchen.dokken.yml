@@ -8,6 +8,7 @@ transport:
 
 provisioner:
   name: dokken
+  deprecations_as_errors: true
 
 verifier:
   name: inspec
@@ -19,7 +20,7 @@ platforms:
     pid_one_command: /sbin/init
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
-      - RUN /usr/bin/apt-get install lsb-release procps -y
+      - RUN /usr/bin/apt-get install apt-transport-https lsb-release procps net-tools -y
       - RUN sudo mkdir -p /data/splunk-test
 
 - name: debian-8
@@ -28,16 +29,7 @@ platforms:
     pid_one_command: /bin/systemd
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
-      - RUN /usr/bin/apt-get install lsb-release -y
-      - RUN sudo mkdir -p /data/splunk-test
-
-- name: centos-5
-  driver:
-    image: centos:5
-    platform: rhel
-    pid_one_command: /sbin/init
-    intermediate_instructions:
-      - RUN yum install -y which initscripts
+      - RUN /usr/bin/apt-get install apt-transport-https lsb-release procps net-tools -y
       - RUN sudo mkdir -p /data/splunk-test
 
 - name: centos-6
@@ -46,7 +38,7 @@ platforms:
     platform: rhel
     pid_one_command: /sbin/init
     intermediate_instructions:
-      - RUN yum -y install which initscripts
+      - RUN yum -y install lsof which initscripts net-tools wget net-tools
       - RUN sudo mkdir -p /data/splunk-test
 
 - name: centos-7
@@ -55,7 +47,7 @@ platforms:
     platform: rhel
     pid_one_command: /usr/lib/systemd/systemd
     intermediate_instructions:
-      - RUN yum -y install lsof which systemd-sysv initscripts
+      - RUN yum -y install lsof which systemd-sysv initscripts wget net-tools
       - RUN sudo mkdir -p /data/splunk-test
 
 - name: fedora-latest
@@ -63,7 +55,7 @@ platforms:
     image: fedora:latest
     pid_one_command: /usr/lib/systemd/systemd
     intermediate_instructions:
-      - RUN dnf -y install which systemd-sysv initscripts
+      - RUN dnf -y install which systemd-sysv initscripts wget net-tools
       - RUN sudo mkdir -p /data/splunk-test
 
 - name: ubuntu-14.04
@@ -72,6 +64,7 @@ platforms:
     pid_one_command: /sbin/init
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
+      - RUN /usr/bin/apt-get install apt-transport-https lsb-release procps net-tools -y
       - RUN sudo mkdir -p /data/splunk-test
 
 - name: ubuntu-16.04
@@ -80,6 +73,7 @@ platforms:
     pid_one_command: /bin/systemd
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
+      - RUN /usr/bin/apt-get install apt-transport-https lsb-release procps net-tools -y
       - RUN sudo mkdir -p /data/splunk-test
 
 - name: opensuse-leap
@@ -87,7 +81,7 @@ platforms:
     image: opensuse:leap
     pid_one_command: /bin/systemd
     intermediate_instructions:
-      - RUN zypper --non-interactive install aaa_base perl-Getopt-Long-Descriptive which hostname
+      - RUN zypper --non-interactive install aaa_base perl-Getopt-Long-Descriptive which net-tools
 
 suites:
   - name: client
