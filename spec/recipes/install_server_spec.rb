@@ -50,7 +50,7 @@ describe 'chef-splunk::install_server' do
       ChefSpec::ServerRunner.new(
         step_into: ['splunk_installer'],
         platform: 'omnios',
-        version: '151002'
+        version: '151018'
       ) do |node|
         node.normal['splunk']['server']['url'] = 'http://splunk.example.com/server/package.pkg.Z'
       end.converge(described_recipe)

@@ -50,7 +50,7 @@ describe 'chef-splunk::install_forwarder' do
       ChefSpec::ServerRunner.new(
         step_into: ['splunk_installer'],
         platform: 'omnios',
-        version: '151002'
+        version: '151018'
       ) do |node|
         node.normal['splunk']['forwarder']['url'] = 'http://splunk.example.com/forwarder/package.pkg.Z'
       end.converge(described_recipe)
