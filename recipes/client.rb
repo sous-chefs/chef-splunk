@@ -23,7 +23,7 @@
 include_recipe 'chef-splunk::user'
 include_recipe 'chef-splunk::install_forwarder'
 
-splunk_servers = search( # ~FC003
+splunk_servers = search(
   :node,
   "splunk_is_server:true AND chef_environment:#{node.chef_environment}"
 ).sort! do |a, b|

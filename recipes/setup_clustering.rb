@@ -42,7 +42,7 @@ cluster_mode = cluster_params['mode']
 
 Chef::Log.debug("Current node clustering mode: #{cluster_mode}")
 
-cluster_master = search( # ~FC003
+cluster_master = search(
   :node,
   "\
   splunk_clustering_enabled:true AND \
