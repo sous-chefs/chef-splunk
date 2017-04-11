@@ -6,6 +6,11 @@ description 'Manage Splunk Enterprise or Splunk Universal Forwarder'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '1.6.0'
 
+supports 'debian'
+supports 'ubuntu'
+supports 'redhat'
+supports 'centos'
+
 # for secrets management in setup_auth recipe
 depends 'chef-vault', '>= 1.0.4'
 
