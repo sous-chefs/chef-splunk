@@ -11,7 +11,8 @@ provisioner:
   deprecations_as_errors: true
 
 verifier:
-  name: inspec
+  root_path: '/opt/verifier'
+  sudo: false
 
 platforms:
 - name: debian-7
@@ -21,7 +22,13 @@ platforms:
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
       - RUN /usr/bin/apt-get install apt-transport-https lsb-release procps net-tools -y
-      - RUN sudo mkdir -p /data/splunk-test
+      - RUN mkdir -p /data/splunk-test
+      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      - RUN mkdir -p /opt/splunk/etc
+      - RUN printf '
+        SPLUNK_SERVER_NAME=Splunkd\n
+        SLPUNK_WEB_NAME=splunkweb\n
+        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
 - name: debian-8
   driver:
@@ -30,7 +37,13 @@ platforms:
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
       - RUN /usr/bin/apt-get install apt-transport-https lsb-release procps net-tools -y
-      - RUN sudo mkdir -p /data/splunk-test
+      - RUN mkdir -p /data/splunk-test
+      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      - RUN mkdir -p /opt/splunk/etc
+      - RUN printf '
+        SPLUNK_SERVER_NAME=Splunkd\n
+        SLPUNK_WEB_NAME=splunkweb\n
+        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
 - name: centos-6
   driver:
@@ -39,7 +52,13 @@ platforms:
     pid_one_command: /sbin/init
     intermediate_instructions:
       - RUN yum -y install lsof which initscripts net-tools wget net-tools
-      - RUN sudo mkdir -p /data/splunk-test
+      - RUN mkdir -p /data/splunk-test
+      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      - RUN mkdir -p /opt/splunk/etc
+      - RUN printf '
+        SPLUNK_SERVER_NAME=Splunkd\n
+        SLPUNK_WEB_NAME=splunkweb\n
+        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
 - name: centos-7
   driver:
@@ -48,7 +67,13 @@ platforms:
     pid_one_command: /usr/lib/systemd/systemd
     intermediate_instructions:
       - RUN yum -y install lsof which systemd-sysv initscripts wget net-tools
-      - RUN sudo mkdir -p /data/splunk-test
+      - RUN mkdir -p /data/splunk-test
+      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      - RUN mkdir -p /opt/splunk/etc
+      - RUN printf '
+        SPLUNK_SERVER_NAME=Splunkd\n
+        SLPUNK_WEB_NAME=splunkweb\n
+        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
 - name: fedora-latest
   driver:
@@ -56,7 +81,13 @@ platforms:
     pid_one_command: /usr/lib/systemd/systemd
     intermediate_instructions:
       - RUN dnf -y install which systemd-sysv initscripts wget net-tools
-      - RUN sudo mkdir -p /data/splunk-test
+      - RUN mkdir -p /data/splunk-test
+      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      - RUN mkdir -p /opt/splunk/etc
+      - RUN printf '
+        SPLUNK_SERVER_NAME=Splunkd\n
+        SLPUNK_WEB_NAME=splunkweb\n
+        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
 - name: ubuntu-14.04
   driver:
@@ -65,7 +96,13 @@ platforms:
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
       - RUN /usr/bin/apt-get install apt-transport-https lsb-release procps net-tools -y
-      - RUN sudo mkdir -p /data/splunk-test
+      - RUN mkdir -p /data/splunk-test
+      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      - RUN mkdir -p /opt/splunk/etc
+      - RUN printf '
+        SPLUNK_SERVER_NAME=Splunkd\n
+        SLPUNK_WEB_NAME=splunkweb\n
+        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
 - name: ubuntu-16.04
   driver:
@@ -74,14 +111,26 @@ platforms:
     intermediate_instructions:
       - RUN /usr/bin/apt-get update
       - RUN /usr/bin/apt-get install apt-transport-https lsb-release procps net-tools -y
-      - RUN sudo mkdir -p /data/splunk-test
+      - RUN mkdir -p /data/splunk-test
+      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      - RUN mkdir -p /opt/splunk/etc
+      - RUN printf '
+        SPLUNK_SERVER_NAME=Splunkd\n
+        SLPUNK_WEB_NAME=splunkweb\n
+        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
 - name: opensuse-leap
   driver:
     image: opensuse:leap
     pid_one_command: /bin/systemd
     intermediate_instructions:
-      - RUN zypper --non-interactive install aaa_base perl-Getopt-Long-Descriptive which net-tools
+      - RUN zypper --non-interactive install aaa_base perl-Getopt-Long-Descriptive which net-tools systemd-sysvinit 
+      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      - RUN mkdir -p /opt/splunk/etc
+      - RUN printf '
+        SPLUNK_SERVER_NAME=Splunkd\n
+        SLPUNK_WEB_NAME=splunkweb\n
+        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
 suites:
   - name: client
