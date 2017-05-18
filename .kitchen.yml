@@ -3,17 +3,16 @@ driver:
 
 provisioner:
   name: chef_zero
+  deprecations_as_errors: true
   data_bags_path: "test/fixtures/data_bags"
 
 platforms:
-  - name: centos-5.11
   - name: centos-6.8
-  - name: centos-7.2
+  - name: centos-7.3
   - name: debian-7.11
-  - name: debian-8.5
-  - name: fedora-24
-    run_list: yum::dnf_yum_compat
-  - name: ubuntu-12.04
+  - name: debian-8.7
+  - name: fedora-25
+  - name: opensuse-leap-42.2
   - name: ubuntu-14.04
   - name: ubuntu-16.04
 

@@ -1,13 +1,5 @@
-# rubocop todo:
-#
-Lint/AmbiguousRegexpLiteral:
-  Exclude:
-    - 'test/integration/client_lwrps/serverspec/splunkapp_spec.rb'
-    - 'test/integration/server_lwrps/serverspec/splunkapp_spec.rb'
+# rubocop todo
 
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
 Style/RegexpLiteral:
   Exclude:
     - 'test/integration/client-inputs-outputs/serverspec/client_spec.rb'

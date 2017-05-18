@@ -1,4 +1,3 @@
-# Use Travis's legacy infrastructure
 sudo: required
 dist: trusty
 
@@ -20,22 +19,26 @@ services: docker
 
 env:
   matrix:
+    - INSTANCE=server-runas-splunk-ubuntu-1604
+    - INSTANCE=client-inputs-outputs-ubuntu-1604
     - INSTANCE=server-runas-splunk-ubuntu-1404
     - INSTANCE=client-inputs-outputs-ubuntu-1404
     - INSTANCE=server-runas-splunk-centos-7
     - INSTANCE=client-inputs-outputs-centos-7
 
-  fast_finish: true
-
 before_script:
   - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
   - eval "$(/opt/chefdk/bin/chef shell-init bash)"
-  # workaround for "unusable filesystem" error in splunk
-  # https://answers.splunk.com/answers/9035/can-i-run-splunk-on-btrfs.html#answer-152672
-  - sudo mkdir -p /data/splunk-test
-script:
-  - /opt/chefdk/embedded/bin/chef --version
-  - /opt/chefdk/embedded/bin/cookstyle --version
-  - /opt/chefdk/embedded/bin/foodcritic --version
-  - /opt/chefdk/bin/chef exec rake
-  - KITCHEN_LOCAL_YAML=.kitchen.docker.yml /opt/chefdk/embedded/bin/kitchen verify ${INSTANCE}
+
+script: KITCHEN_LOCAL_YAML=.kitchen.dokken.yml /opt/chefdk/embedded/bin/kitchen verify ${INSTANCE}
+
+matrix:
+  include:
+    - before_script:
+      - eval "$(/opt/chefdk/bin/chef shell-init bash)"
+      - /opt/chefdk/embedded/bin/chef --version
+      - /opt/chefdk/embedded/bin/cookstyle --version
+      - /opt/chefdk/embedded/bin/foodcritic --version
+    - script:
+      - /opt/chefdk/bin/chef exec delivery local all
+      env: UNIT_AND_LINT=1

@@ -1,6 +1,6 @@
 #
 # Author: Joshua Timberman <joshua@chef.io>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2014-2016, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ include Chef::Mixin::ShellOut
 class Chef
   class Provider
     class SplunkApp < Chef::Provider::LWRPBase
-      provides :splunk_app if respond_to?(:provides)
+      provides :splunk_app
 
       use_inline_resources
 
@@ -72,7 +72,7 @@ class Chef
 
         directory "#{app_dir}/local" do
           recursive true
-          mode 00755
+          mode '755'
           owner node['splunk']['user']['username'] unless node['splunk']['server']['runasroot']
         end
 
@@ -80,7 +80,7 @@ class Chef
           new_resource.templates.each do |t|
             template "#{app_dir}/local/#{t}" do
               source "#{new_resource.app_name}/#{t}.erb"
-              mode 00644
+              mode '644'
               notifies :restart, 'service[splunk]'
             end
           end

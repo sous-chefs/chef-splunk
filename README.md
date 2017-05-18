@@ -21,7 +21,7 @@ cookbook doesn't support installing from networked package managers
 
 ## Requirements
 
-Chef 11.12.0+
+Chef 12.1+
 
 ### Platforms
 
@@ -296,14 +296,14 @@ write out `etc/system/local/outputs.conf` with the server's IP and the
 `receiver_port` attribute in the Splunk install directory
 (`/opt/splunkforwarder`).
 
-Setting node['splunk']['tcpout_server_config_map'] with key value pairs
+Setting node['splunk']['outputs_conf'] with key value pairs
 updates the outputs.conf server configuration with those key value pairs.
 These key value pairs can be used to setup SSL encryption on messages
 forwarded through this client:
 
 ```
 # Note that the ssl CA and certs must exist on the server.
-node['splunk']['tcpout_server_config_map'] = {
+node['splunk']['outputs_conf'] = {
   'sslCommonNameToCheck' => 'sslCommonName',
   'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem',
   'sslPassword' => 'password'
