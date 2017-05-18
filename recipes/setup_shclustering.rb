@@ -42,7 +42,7 @@ shcluster_params = node['splunk']['shclustering']
 # create app directories to house our server.conf with our shcluster configuration
 shcluster_app_dir = "#{splunk_dir}/etc/apps/0_autogen_shcluster_config"
 
-directory "#{shcluster_app_dir}" do
+directory shcluster_app_dir do
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
   mode 0755
@@ -55,24 +55,24 @@ directory "#{shcluster_app_dir}/local" do
 end
 
 template "#{shcluster_app_dir}/local/server.conf" do
-  source "shclustering/server.conf.erb"
+  source 'shclustering/server.conf.erb'
   mode 0600
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
   variables(
-    :shcluster_params => node['splunk']['shclustering'],
-    :shcluster_secret => shcluster_secret
+    shcluster_params: node['splunk']['shclustering'],
+    shcluster_secret: shcluster_secret
   )
   sensitive true
   notifies :restart, 'service[splunk]', :immediately
 end
 
 # bootstrap the shcluster and elect a captain if initial_captain set to true and this is the initial shcluster build
-if node['splunk']['shclustering']['mode'] == "captain"
+if node['splunk']['shclustering']['mode'] == 'captain'
   # unless shcluster members are staticly assigned via the node attribute,
   # try to find the other shcluster members via Chef search
   if shcluster_params['shcluster_members'].empty?
-    shcluster_servers_list = Array.new
+    shcluster_servers_list = []
     search( # ~FC003
       :node,
       "\
