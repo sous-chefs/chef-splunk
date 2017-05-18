@@ -76,7 +76,7 @@ suites:
           enable_ssl: true
         web_port: 8443
 
-  - name: server-runas-splunk-shcluster
+  - name: server-runas-splunk-shcluster-member
     run_list:
       - recipe[chef-splunk::default]
     attributes:

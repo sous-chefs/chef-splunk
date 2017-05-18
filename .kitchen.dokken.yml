@@ -192,6 +192,22 @@ suites:
           enable_ssl: true
         web_port: 8443
 
+  - name: server-runas-splunk-shcluster-member
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        is_server: true
+        accept_license: true
+        ssl_options:
+          enable_ssl: true
+        web_port: 8443
+        shclustering:
+          enabled: true
+
   - name: disabled
     run_list:
       - recipe[chef-splunk::default]
