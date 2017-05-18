@@ -52,7 +52,7 @@ default['splunk']['clustering'] = {
   # Following three params only applicable if num_sites > 1 (multisite is true)
   'site' => 'site1',
   'site_replication_factor' => 'origin:2,total:3',
-  'site_search_factor' => 'origin:1,total:2'
+  'site_search_factor' => 'origin:1,total:2',
 }
 
 # Add key value pairs to this to add configuration pairs to the output.conf file

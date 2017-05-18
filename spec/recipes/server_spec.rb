@@ -6,8 +6,8 @@ describe 'chef-splunk::server' do
       'splunk__default' => {
         'id' => 'splunk__default',
         'auth' => 'admin:notarealpassword',
-        'secret' => 'notarealsecret'
-      }
+        'secret' => 'notarealsecret',
+      },
     }
   end
 
