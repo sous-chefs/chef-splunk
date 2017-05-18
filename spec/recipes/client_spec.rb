@@ -34,7 +34,7 @@ describe 'chef-splunk::client' do
 
   context 'inputs config has hosts' do
     before(:each) do
-      chef_run.node.set['splunk']['inputs_conf']['host'] = 'localhost'
+      chef_run.node.normal['splunk']['inputs_conf']['host'] = 'localhost'
       chef_run.converge(described_recipe)
     end
 

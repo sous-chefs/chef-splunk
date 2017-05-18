@@ -1,6 +1,8 @@
 #
-# Author: Joshua Timberman <joshua@chef.io>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Cookbook:: chef-splunk
+# Attributes:: upgrade
+#
+# Copyright:: 2014-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +18,7 @@
 #
 if node['splunk']['upgrade_enabled']
   case node['platform_family']
-  when 'rhel'
+  when 'rhel', 'fedora'
     if node['kernel']['machine'] == 'x86_64'
       default['splunk']['upgrade']['server_url'] = 'http://download.splunk.com/releases/4.3.7/splunk/linux/splunk-4.3.7-181874-linux-2.6-x86_64.rpm'
       default['splunk']['upgrade']['forwarder_url'] = 'http://download.splunk.com/releases/4.3.7/universalforwarder/linux/splunkforwarder-4.3.7-181874-linux-2.6-x86_64.rpm'

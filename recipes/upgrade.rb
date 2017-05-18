@@ -1,9 +1,8 @@
 #
-# Cookbook Name:: splunk
+# Cookbook:: chef-splunk
 # Recipe:: upgrade
 #
-# Author: Joshua Timberman <joshua@chef.io>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2014-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +21,7 @@ unless node['splunk']['upgrade_enabled']
   Chef::Log.fatal('The chef-splunk::upgrade recipe was added to the node,')
   Chef::Log.fatal('but the attribute `node["splunk"]["upgrade_enabled"]` was not set.')
   Chef::Log.fatal('I am bailing here so this node does not upgrade.')
-  fail
+  raise 'Failed to upgrade'
 end
 
 service 'splunk_stop' do
@@ -51,5 +50,5 @@ if node['splunk']['accept_license']
 else
   Chef::Log.fatal('You did not accept the license (set node["splunk"]["accept_license"] to true)')
   Chef::Log.fatal('Splunk is stopped and cannot be restarted until the license is accepted!')
-  fail
+  raise 'Failed to upgrade'
 end

@@ -1,9 +1,8 @@
 #
-# Cookbook Name:: splunk
+# Cookbook:: chef-splunk
 # Recipe:: setup_clustering
 #
-# Author: Roy Arsan <rarsan@splunk.com>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2014-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,8 +43,9 @@ is_multisite = cluster_params['num_sites'] > 1
 
 Chef::Log.debug("Current node clustering mode: #{cluster_mode}")
 
-cluster_master = search( # ~FC003
-  :node, "\
+cluster_master = search(
+  :node,
+  "\
   splunk_clustering_enabled:true AND \
   splunk_clustering_mode:master AND \
   chef_environment:#{node.chef_environment}"
@@ -74,7 +74,7 @@ when 'slave', 'searchhead'
 else
   Chef::Log.fatal("You have set an incorrect clustering mode: #{cluster_mode}")
   Chef::Log.fatal("Set `node['splunk']['clustering']['mode']` to master|slave|searchhead, and try again.")
-  fail
+  raise 'Failed to setup clustering'
 end
 
 splunk_cmd_params << " -secret #{cluster_secret}" if cluster_secret
@@ -89,5 +89,5 @@ file "#{splunk_dir}/etc/.setup_clustering" do
   content 'true\n'
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
-  mode 00600
+  mode '600'
 end

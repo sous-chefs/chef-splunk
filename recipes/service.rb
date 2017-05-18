@@ -1,9 +1,8 @@
 #
-# Cookbook Name:: splunk
+# Cookbook:: chef-splunk
 # Recipe:: service
 #
-# Author: Joshua Timberman <joshua@chef.io>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2014-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,25 +26,25 @@ if node['splunk']['is_server']
   directory splunk_dir do
     owner myuser
     group myuser
-    mode 00755
+    mode '755'
   end
 
   directory "#{splunk_dir}/var" do
     owner node['splunk']['user']['username']
     group node['splunk']['user']['username']
-    mode 00711
+    mode '711'
   end
 
   directory "#{splunk_dir}/var/log" do
     owner node['splunk']['user']['username']
     group node['splunk']['user']['username']
-    mode 00711
+    mode '711'
   end
 
   directory "#{splunk_dir}/var/log/splunk" do
     owner node['splunk']['user']['username']
     group node['splunk']['user']['username']
-    mode 00700
+    mode '700'
   end
 end
 
@@ -65,27 +64,45 @@ ruby_block 'splunk_fix_file_ownership' do
     checkowner << "#{splunk_dir}/etc/myinstall/splunkd.xml"
     checkowner << "#{splunk_dir}/"
     checkowner.each do |dir|
-      if File.exist? dir
-        if File.stat(dir).uid.eql?(0)
-          FileUtils.chown_R(myuser, myuser, splunk_dir)
-        end
+      next unless File.exist? dir
+      if File.stat(dir).uid.eql?(0)
+        FileUtils.chown_R(myuser, myuser, splunk_dir)
       end
     end
   end
   not_if { node['splunk']['server']['runasroot'] }
 end
 
-template '/etc/init.d/splunk' do
-  source 'splunk-init.erb'
-  mode 0700
-  variables(
-    splunkdir: splunk_dir,
-    runasroot: node['splunk']['server']['runasroot']
-  )
-end
+Chef::Log.info("Node init package: #{node['init_package']}")
 
-service 'splunk' do
-  supports status: true, restart: true
-  provider Chef::Provider::Service::Init
-  action :start
+if node['init_package'] == 'systemd'
+  template '/etc/systemd/system/splunk.service' do
+    source 'splunk-systemd.erb'
+    mode '700'
+    variables(
+      splunkdir: splunk_dir,
+      runasroot: node['splunk']['server']['runasroot']
+    )
+  end
+
+  service 'splunk' do
+    supports status: true, restart: true
+    provider Chef::Provider::Service::Systemd
+    action [:enable, :start]
+  end
+else
+  template '/etc/init.d/splunk' do
+    source 'splunk-init.erb'
+    mode '700'
+    variables(
+      splunkdir: splunk_dir,
+      runasroot: node['splunk']['server']['runasroot']
+    )
+  end
+
+  service 'splunk' do
+    supports status: true, restart: true
+    provider Chef::Provider::Service::Init
+    action :start
+  end
 end

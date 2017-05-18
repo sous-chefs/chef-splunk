@@ -31,8 +31,8 @@ describe 'chef-splunk::setup_clustering' do
 
   let(:chef_run_init) do
     ChefSpec::ServerRunner.new do |node, server|
-      node.set['dev_mode'] = true
-      node.set['splunk']['is_server'] = true
+      node.normal['dev_mode'] = true
+      node.normal['splunk']['is_server'] = true
       # Populate mock vault data bag to the server
       server.create_data_bag('vault', secrets)
     end
@@ -50,8 +50,8 @@ describe 'chef-splunk::setup_clustering' do
 
   context 'invalid cluster mode settings' do
     before(:each) do
-      chef_run_init.node.set['splunk']['clustering']['enabled'] = true
-      chef_run_init.node.set['splunk']['clustering']['mode'] = 'foo'
+      chef_run_init.node.normal['splunk']['clustering']['enabled'] = true
+      chef_run_init.node.normal['splunk']['clustering']['mode'] = 'foo'
     end
 
     it 'raises an error' do
@@ -61,8 +61,8 @@ describe 'chef-splunk::setup_clustering' do
 
   context 'cluster master mode' do
     before(:each) do
-      chef_run_init.node.set['splunk']['clustering']['enabled'] = true
-      chef_run_init.node.set['splunk']['clustering']['mode'] = 'master'
+      chef_run_init.node.normal['splunk']['clustering']['enabled'] = true
+      chef_run_init.node.normal['splunk']['clustering']['mode'] = 'master'
     end
 
     context 'default settings (single-site)' do
@@ -71,7 +71,7 @@ describe 'chef-splunk::setup_clustering' do
 
     context 'multisite clustering with default settings' do
       before(:each) do
-        chef_run_init.node.set['splunk']['clustering']['num_sites'] = 2
+        chef_run_init.node.normal['splunk']['clustering']['num_sites'] = 2
       end
 
       it_performs 'a successful run', "-mode master -multisite true -available_sites site1,site2 -site site1\
@@ -80,8 +80,8 @@ describe 'chef-splunk::setup_clustering' do
 
     context 'single-site clustering with custom settings' do
       before(:each) do
-        chef_run_init.node.set['splunk']['clustering']['replication_factor'] = 5
-        chef_run_init.node.set['splunk']['clustering']['search_factor'] = 3
+        chef_run_init.node.normal['splunk']['clustering']['replication_factor'] = 5
+        chef_run_init.node.normal['splunk']['clustering']['search_factor'] = 3
       end
 
       it_performs 'a successful run', '-mode master -replication_factor 5 -search_factor 3'
@@ -89,10 +89,10 @@ describe 'chef-splunk::setup_clustering' do
 
     context 'multisite clustering with custom settings' do
       before(:each) do
-        chef_run_init.node.set['splunk']['clustering']['num_sites'] = 3
-        chef_run_init.node.set['splunk']['clustering']['site'] = 'site2'
-        chef_run_init.node.set['splunk']['clustering']['site_replication_factor'] = 'origin:2,site1:1,site2:1,total:4'
-        chef_run_init.node.set['splunk']['clustering']['site_search_factor'] = 'origin:1,site1:1,site2:1,total:3'
+        chef_run_init.node.normal['splunk']['clustering']['num_sites'] = 3
+        chef_run_init.node.normal['splunk']['clustering']['site'] = 'site2'
+        chef_run_init.node.normal['splunk']['clustering']['site_replication_factor'] = 'origin:2,site1:1,site2:1,total:4'
+        chef_run_init.node.normal['splunk']['clustering']['site_search_factor'] = 'origin:1,site1:1,site2:1,total:3'
       end
 
       it_performs 'a successful run', "-mode master -multisite true -available_sites site1,site2,site3 -site site2\
@@ -102,17 +102,17 @@ describe 'chef-splunk::setup_clustering' do
 
   context 'cluster search head mode' do
     before(:each) do
-      chef_run_init.node.set['splunk']['clustering']['enabled'] = true
-      chef_run_init.node.set['splunk']['clustering']['mode'] = 'searchhead'
+      chef_run_init.node.normal['splunk']['clustering']['enabled'] = true
+      chef_run_init.node.normal['splunk']['clustering']['mode'] = 'searchhead'
       # Publish mock cluster master node to the server
       cluster_master_node = stub_node(platform: 'ubuntu', version: '12.04') do |node|
         node.automatic['fqdn'] = 'cm.cluster.example.com'
         node.automatic['ipaddress'] = '192.168.0.10'
-        node.set['dev_mode'] = true
-        node.set['splunk']['is_server'] = true
-        node.set['splunk']['mgmt_port'] = '8089'
-        node.set['splunk']['clustering']['enabled'] = true
-        node.set['splunk']['clustering']['mode'] = 'master'
+        node.normal['dev_mode'] = true
+        node.normal['splunk']['is_server'] = true
+        node.normal['splunk']['mgmt_port'] = '8089'
+        node.normal['splunk']['clustering']['enabled'] = true
+        node.normal['splunk']['clustering']['mode'] = 'master'
       end
       chef_run_init.create_node(cluster_master_node)
     end
@@ -123,8 +123,8 @@ describe 'chef-splunk::setup_clustering' do
 
     context 'multisite clustering with default settings' do
       before(:each) do
-        chef_run_init.node.set['splunk']['clustering']['num_sites'] = 2
-        chef_run_init.node.set['splunk']['clustering']['site'] = 'site2'
+        chef_run_init.node.normal['splunk']['clustering']['num_sites'] = 2
+        chef_run_init.node.normal['splunk']['clustering']['site'] = 'site2'
       end
 
       it_performs 'a successful run', '-mode searchhead -site site2 -master_uri https://192.168.0.10:8089 -replication_port 9887'

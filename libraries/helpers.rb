@@ -1,9 +1,9 @@
 #
-# Cookbook Name:: splunk
+# Cookbook:: chef-splunk
 # Libraries:: helpers
 #
 # Author: Joshua Timberman <joshua@chef.io>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2014-2016, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,14 +35,11 @@ def splunk_dir
   forwarderpath = '/opt/splunkforwarder'
   enterprisepath = '/opt/splunk'
   if node['splunk']['is_intermediate'] == true
-    path = forwarderpath
-    return path
+    forwarderpath
   elsif node['splunk']['is_server'] == true
-    path = enterprisepath
-    return path
+    enterprisepath
   else
-    path = forwarderpath
-    return path
+    forwarderpath
   end
 end
 

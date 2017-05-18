@@ -2,7 +2,9 @@ require 'chefspec'
 require 'chefspec/berkshelf'
 
 RSpec.configure do |config|
-  config.log_level = :fatal
+  config.color = true               # Use color in STDOUT
+  config.formatter = :documentation # Use the specified formatter
+  config.log_level = :error         # Avoid deprecation notice SPAM
 
   config.alias_it_should_behave_like_to :it_performs, 'performs'
 end

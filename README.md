@@ -1,5 +1,5 @@
-splunk Cookbook
-===============
+chef-splunk Cookbook
+====================
 
 [![Build Status](https://travis-ci.org/chef-cookbooks/chef-splunk.svg?branch=master)](https://travis-ci.org/chef-cookbooks/chef-splunk)
 [![Cookbook Version](https://img.shields.io/cookbook/v/chef-splunk.svg)](https://supermarket.chef.io/cookbooks/chef-splunk)
@@ -18,9 +18,10 @@ are mirrored locally, supply the local URL instead. At this time the
 cookbook doesn't support installing from networked package managers
 (like apt or yum), since Splunk doesn't provide package repositories.
 
+
 ## Requirements
 
-Chef 11.10.0+ for `declare_resource`.
+Chef 12.1+
 
 ### Platforms
 
@@ -105,7 +106,7 @@ SSL in the `setup_ssl` recipe.
   load, defaults to `vault` (as chef-vault is used).
 * `node['splunk']['ssl_options']['data_bag_item']`: The data bag item
   name that contains the keyfile and crtfile, defaults to
-  `splunk_ceritficates`.
+  `splunk_certificates`.
 * `node['splunk']['ssl_options']['keyfile']`: The name of the SSL key
   file, and the content will be written to
   `etc/auth/splunkweb/KEYFILE`. Must be an element under `data` in the
@@ -284,14 +285,14 @@ write out `etc/system/local/outputs.conf` with the server's IP and the
 `receiver_port` attribute in the Splunk install directory
 (`/opt/splunkforwarder`).
 
-Setting node['splunk']['tcpout_server_config_map'] with key value pairs
+Setting node['splunk']['outputs_conf'] with key value pairs
 updates the outputs.conf server configuration with those key value pairs.
 These key value pairs can be used to setup SSL encryption on messages
 forwarded through this client:
 
 ```
 # Note that the ssl CA and certs must exist on the server.
-node['splunk']['tcpout_server_config_map'] = {
+node['splunk']['outputs_conf'] = {
   'sslCommonNameToCheck' => 'sslCommonName',
   'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem',
   'sslPassword' => 'password'
@@ -399,7 +400,7 @@ then that file should be removed.
 
 This recipe sets up Splunk indexer clustering based on the node's
 clustering mode or `node['splunk']['clustering']['mode']`. The attribute
-`node['splunk']['clustering']['enable']` must be set to true in order to
+`node['splunk']['clustering']['enabled']` must be set to true in order to
 run this recipe. Similar to `setup_auth`, this recipes loads
 the same encrypted data bag with the Splunk `secret` key (to be shared among
 cluster members), using the [chef-vault cookbook](http://ckbk.it/chef-vault)
