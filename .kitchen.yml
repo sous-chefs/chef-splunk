@@ -76,7 +76,7 @@ suites:
           enable_ssl: true
         web_port: 8443
 
-  - name: cluster_master
+  - name: server-cluster-master
     run_list:
       - recipe[chef-splunk::default]
     attributes:
