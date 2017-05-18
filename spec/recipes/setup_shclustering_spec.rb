@@ -62,7 +62,7 @@ describe 'chef-splunk::setup_shclustering' do
     end
 
     it 'writes a file marker to ensure convergence' do
-      expect(chef_run).to render_file('/opt/splunk/etc/.normalup_shcluster').with_content('true\n')
+      expect(chef_run).to render_file('/opt/splunk/etc/.setup_shcluster').with_content('true\n')
     end
 
     it 'writes server.conf with replication port' do
