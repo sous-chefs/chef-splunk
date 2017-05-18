@@ -58,6 +58,7 @@ define :splunk_installer, url: nil do
 
   declare_resource local_package_resource, params[:name] do
     source cached_package.gsub(/\.Z/, '')
+    version package_file[/#{params[:name]}-([^-]+)/, 1]
     options pkgopts.join(' ') if platform?('omnios')
   end
 end
