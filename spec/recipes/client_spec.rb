@@ -53,7 +53,7 @@ describe 'chef-splunk::client' do
         s['fqdn'] + ':' + s['splunk']['receiver_port']
       end.join(', ')
       expect(chef_run).to render_file('/opt/splunkforwarder/etc/system/local/outputs.conf')
-        .with_content("server=#{server_list}")
+        .with_content("server = #{server_list}")
     end
 
     it 'notifies the splunk service to restart when rendering the outputs template' do
@@ -84,7 +84,7 @@ describe 'chef-splunk::client' do
 
     it 'writes outputs.conf with tcpout server list from node attribute' do
       expect(chef_run).to render_file('/opt/splunkforwarder/etc/system/local/outputs.conf')
-        .with_content('server=indexers.splunkcloud.com:9997')
+        .with_content('server = indexers.splunkcloud.com:9997')
     end
 
     it 'notifies the splunk service to restart when rendering the outputs template' do
