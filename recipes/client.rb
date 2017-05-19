@@ -30,6 +30,13 @@ splunk_servers = search(
   a.name <=> b.name
 end
 
+server_list = splunk_servers.map do |s|
+  "#{s['fqdn'] || s['ipaddress']}:#{s['splunk']['receiver_port']}"
+end.join(', ')
+
+# fallback to statically defined server list as alternative to search
+server_list = node['splunk']['server_list'] if server_list.empty?
+
 # ensure that the splunk service resource is available without cloning
 # the resource (CHEF-3694). this is so the later notification works,
 # especially when using chefspec to run this cookbook's specs.
@@ -48,7 +55,10 @@ end
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
   source 'outputs.conf.erb'
   mode '644'
-  variables splunk_servers: splunk_servers, outputs_conf: node['splunk']['outputs_conf']
+  variables(
+    server_list: server_list,
+    outputs_conf: node['splunk']['outputs_conf']
+  )
   notifies :restart, 'service[splunk]'
 end
 
