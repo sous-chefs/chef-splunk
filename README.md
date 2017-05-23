@@ -157,6 +157,36 @@ clustering in the `setup_clustering` recipe:
     `node['splunk']['clustering']['mode']='master'` and multisite is true. Defaults to 'origin:1,total:2'.
     Refer to [Splunk Admin docs](http://docs.splunk.com/Documentation/Splunk/latest/Admin/serverconf) for exact syntax and more details.
 
+The following attributes are related to setting up a Splunk server with search head
+clustering in the `setup_shclustering` recipe:
+
+* `node['splunk']['shclustering']`: A hash of search head clustering configurations
+  used in the `setup_shclustering` recipe
+* `node['splunk']['shclustering']['enabled']`: Whether to enable search head clustering,
+  must be set to `true` to use the `setup_shclustering` recipe. Defaults to `false`,
+  must be a boolean literal `true` or `false`.
+* `node['splunk']['shclustering']['mode']`: The search head clustering mode of the node within
+  the cluster. This is used to determine if the node needs to bootstrap the shcluster and initialize
+  the node as the captain. Must be set using string literal 'member' or 'captain'.
+* `node['splunk']['shclustering']['label']`: The label for the shcluster. Used to differentiate 
+  from other shclusters in the environment. Must be a string. Defaults to `shcluster1`.
+  captain election. Must be set using string literal 'member' or 'captain'.
+* `node['splunk']['shclustering']['replication_factor']`: The replication factor
+  of the shcluster. Defaults to 3, must be a positive integer.
+* `node['splunk']['shclustering']['replication_port']`: The replication port
+  of the shcluster members. Defaults to 9900.
+* `node['splunk']['shclustering']['deployer_url']`: The management url for the
+  shcluster deployer server, must be set to a string such as: `https://deployer.domain.tld:8089`.
+  This attribute is optional. Defaults to empty.
+* `node['splunk']['shclustering']['mgmt_uri']`: The management url for the
+  shcluster member node, must be set to a string such as: `https://shx.domain.tld:8089`. You can
+  use the node's IP address instead of the FQDN if desired. Defaults to `https://#{node['fqdn']}:8089`.
+* `node['splunk']['shclustering']['shcluster_members']`: An array of all search head 
+  cluster members referenced by their `mgmt_uri`. Currently this will do a Chef search for nodes that
+  are in the same environment, with search head clustering enabled, and with the same
+  cluster label. Alternatively, this can be hard-coded with a list of all shcluster 
+  members including the current node. Must be an array of strings. Defaults to an empty array.
+
 The following attributes are related to setting up a splunk forwarder
 with the `client` recipe
 
@@ -428,6 +458,44 @@ of clustering stanza in `etc/system/local/server.conf`).
 
 Indexer clustering is used to achieve some data availability & recovery. To learn
 more about Splunk indexer clustering, refer to [Splunk Docs](http://docs.splunk.com/Documentation/Splunk/latest/Indexer/Aboutclusters).
+
+## setup_shclustering
+
+This recipe sets up Splunk search head clustering. The attribute
+`node['splunk']['shclustering']['enabled']` must be set to true in order to
+run this recipe. Similar to `setup_auth`, this recipes loads
+the same encrypted data bag with the Splunk `secret` key (to be shared among
+cluster members), using the [chef-vault cookbook](http://ckbk.it/chef-vault)
+helper method, `chef_vault_item`. See __Usage__ for how to set this up. The
+recipe will edit the cluster configuration, and then write a state file to
+`etc/.setup_shcluster` to indicate in future Chef runs that it has set the node's 
+search head clustering configuration. If cluster configuration should be changed, 
+then that file should be removed.
+
+It will also search a Chef Server for a Splunk Enterprise (server)
+node of type cluster master, that is with `splunk_shclustering_enable:true` and
+the same `splunk_shclustering_label` in the same `chef_environment` and
+use that server's IP when building the list of `shcluster_members`.
+
+The search head cluster configuration is deployed as a custom Splunk app that
+is written to `etc/apps/0_autogen_shcluster_config` to take advantage of Splunk's
+built in config layering. All nodes with `splunk_shclustering_enable:true` will
+receive this app.
+
+On the first Chef run on a node with `splunk_shclustering_mode:captain`, this recipe
+will build and execute the Splunk command to bootstrap the search head cluster and
+initiate the captain election process.
+
+In addition to using this recipe for configuring the search head cluster members, you
+will also have to manually configure a search head instance to serve as the 
+search head cluster's deployer. This is done by adding a `[shclustering]` stanza to
+that instance's `etc/system/local/server.conf` with the same `pass4SymmKey = <secret>`
+and the same `shcluster_label = <splunk_shclustering_label>`. This deployer is optional, but should be configured prior to 
+running the bootstrap on the captain and then the search head cluster member nodes 
+configured with this deployer node's mgmt_uri set in the member node's `splunk_shclustering_deployer_url`
+
+Search head clustering is used to achieve high availability & scaling. To learn
+more about Splunk search head clustering, refer to [Splunk Docs](http://docs.splunk.com/Documentation/Splunk/latest/DistSearch/AboutSHC).
 
 ## upgrade
 
