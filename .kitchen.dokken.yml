@@ -199,7 +199,7 @@ suites:
       dev_mode: true
       splunk:
         server:
-          runasroot: true
+          runasroot: false
         is_server: true
         accept_license: true
         clustering:
@@ -209,6 +209,22 @@ suites:
           search_factor: 3
         ssl_options:
           enable_ssl: true
+
+  - name: server-shcluster-member
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        is_server: true
+        accept_license: true
+        shclustering:
+          enabled: true
+        ssl_options:
+          enable_ssl: true
+        web_port: 8443
 
   - name: disabled
     run_list:
