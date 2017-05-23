@@ -54,7 +54,7 @@ directory "#{shcluster_app_dir}/local" do
   mode 0755
 end
 
-template "#{shcluster_app_dir}/local/server.conf" do
+template "#{shcluster_app_dir}/local/server.conf" do # ~FC033
   source 'shclustering/server.conf.erb'
   mode 0600
   owner node['splunk']['user']['username']
