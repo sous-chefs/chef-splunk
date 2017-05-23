@@ -44,12 +44,12 @@ end
 execute 'enable-splunk-receiver-port' do
   command "#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth '#{splunk_auth_info}'"
   not_if do
-    # TCPSocket will return a file descriptor if it can open the
-    # connection, and raise Errno::ECONNREFUSED if it can't. We rescue
+    # TCPSocket will return a file descriptor if it can open the connection,
+    # and raise Errno::ECONNREFUSED or Errno::ETIMEDOUT if it can't. We rescue
     # that exception and return false so not_if works proper-like.
     begin
       ::TCPSocket.new(node['ipaddress'], node['splunk']['receiver_port'])
-    rescue Errno::ECONNREFUSED
+    rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
       false
     end
   end

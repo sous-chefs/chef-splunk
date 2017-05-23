@@ -27,6 +27,8 @@ describe 'chef-splunk::server' do
   before(:each) do
     allow_any_instance_of(Chef::Recipe).to receive(:include_recipe).and_return(true)
     stub_command("/opt/splunk/bin/splunk enable listen 9997 -auth '#{secrets['splunk__default']['auth']}'").and_return(true)
+    # Stub TCP Socket to immediately fail connection to 9997 and raise error without waiting for entire default timeout
+    allow(TCPSocket).to receive(:new).with(anything, '9997') { raise Errno::ETIMEDOUT }
   end
 
   context 'default settings' do
