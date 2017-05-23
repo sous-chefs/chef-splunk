@@ -55,6 +55,17 @@ default['splunk']['clustering'] = {
   'site_search_factor' => 'origin:1,total:2',
 }
 
+default['splunk']['shclustering'] = {
+  'enabled' => false,
+  'mode' => 'member', # member|captain
+  'label' => 'shcluster1',
+  'replication_factor' => 3,
+  'replication_port' => 9900,
+  'deployer_url' => '',
+  'mgmt_uri' => "https://#{node['fqdn']}:8089",
+  'shcluster_members' => [],
+}
+
 # Add key value pairs to this to add configuration pairs to the output.conf file
 # 'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem'
 default['splunk']['outputs_conf'] = {
