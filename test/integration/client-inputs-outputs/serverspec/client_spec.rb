@@ -20,7 +20,7 @@ describe 'outputs config should be configured per node attributes' do
     its(:content) { should match(/forwardedindex.2.whitelist = _audit/) }
     its(:content) { should match(/forwardedindex.filter.disable = false/) }
     # servers
-    its(:content) { should match(/server = 10.0.2.47:9997/) }
+    its(:content) { should match(/server = server-ubuntu-1204.vagrantup.com:9997/) }
     # attributes for dynamic definition
     its(:content) { should match(/sslCertPath = \$SPLUNK_HOME\/etc\/certs\/cert.pem/) }
     its(:content) { should match(/sslCommonNameToCheck = sslCommonName/) }

@@ -182,11 +182,20 @@ forwardedindex.2.whitelist = _audit
 forwardedindex.filter.disable = false
 ```
 
-The `tcpout:splunk_indexers_9997` section is defined by the search results for Splunk Servers, and the `server` directive is a comma-separated listed of server IPs and the ports. For example, to add an `sslCertPath` directive, define the attribute in your role, wrapper cookbook, etc:
+As an example of `outputs_conf` attribute usage, to add an `sslCertPath` directive, define the attribute in your role or wrapper cookbook as such:
 
 ```
 node.default['splunk']['outputs_conf']['sslCertPath'] = '$SPLUNK_HOME/etc/certs/cert.pem'
 ```
+The `server` attribute in `tcpout:splunk_indexers_9997` stanza above is populated by default from Chef search results for Splunk servers, or, alternatively, is statically defined in node attribute `node['splunk']['server_list']`.
+
+`node['splunk']['server_list']` is an optional comma-separated listed of server IPs and the ports. It's only applicable when there are no Splunk servers managed by Chef, e.g. sending data to Splunk Cloud which has managed indexers.
+
+For example:
+```
+node.default['splunk']['server_list'] = '10.0.2.47:9997, 10.0.2.49:9997'
+```
+
 
 `node['splunk']['inputs_conf']` is a hash of configuration values that are used to populate the `inputs.conf` file.
 
