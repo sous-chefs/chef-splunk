@@ -60,6 +60,9 @@ General attributes:
 * `node['splunk']['receiver_port']`: The port that the receiver
   (server) listens to. This is set to the Splunk Enterprise default,
   9997.
+* `node['splunk']['mgmt_port']`: The port that splunkd service
+  listens to, aka the management port. This is set to the Splunk
+  Enterprise default, 8089.
 * `node['splunk']['web_port']`: The port that the splunkweb service
   listens to. This is set to the default for HTTPS, 443, as it is
   configured by the `setup_ssl` recipe.
@@ -125,18 +128,34 @@ clustering in the `setup_clustering` recipe:
 * `node['splunk']['clustering']['enabled']`: Whether to enable indexer clustering,
   must be set to `true` to use the `setup_clustering` recipe. Defaults to `false`,
   must be a boolean literal `true` or `false`.
+* `node['splunk']['clustering']['num_sites']`: The number of sites in the cluster.
+  Multisite is enabled automatically if num_sites > 1. Defaults to 1, must be a positive integer.
 * `node['splunk']['clustering']['mode']`: The clustering mode of the node within
   the indexer cluster. Must be set using string literal 'master',
   'slave', or 'searchhead'.
-* `node['splunk']['clustering']['replication_factor']`: The replication factor
-  of the indexer cluster. Defaults to 3, must be a positive integer. Only valid
-  when `node['splunk']['clustering']['mode']='master'`.
-* `node['splunk']['clustering']['search_factor']`: The search factor
-  of the indexer cluster. Only valid when `node['splunk']['clustering']['mode']='master'`.
-  Defaults to 2, must be a positive integer.
 * `node['splunk']['clustering']['replication_port']`: The replication port
   of the cluster peer member. Only valid when `node['splunk']['clustering']['mode']='slave'`.
   Defaults to 9887.
+
+* For single-site clustering (`node['splunk']['clustering']['num_sites']` = 1):
+  * `node['splunk']['clustering']['replication_factor']`: The replication factor
+    of the indexer cluster. Defaults to 3, must be a positive integer. Only valid
+    when `node['splunk']['clustering']['mode']='master'` and
+    `node['splunk']['clustering']['num_sites']`=1 (single-site clustering).
+  * `node['splunk']['clustering']['search_factor']`: The search factor 
+    of the indexer cluster. Only valid when `node['splunk']['clustering']['mode']='master'` and
+    `node['splunk']['clustering']['num_sites']`=1 (single-site clustering). Defaults to 2, must be a positive integer.
+
+* For multisite clustering (`node['splunk']['clustering']['num_sites']` > 1):
+  * `node['splunk']['clustering']['site']`: The site the node belongs to. Valid values include site1 to site63
+  * `node['splunk']['clustering']['site_replication_factor']`: The per-site replication policy
+    of any given bucket. This is represented as a comma-separated list of per-site entries. Only valid
+    when `node['splunk']['clustering']['mode']='master'` and multisite is true. Defaults to 'origin:2,total:3'.
+    Refer to [Splunk Admin docs](http://docs.splunk.com/Documentation/Splunk/latest/Admin/serverconf) for exact syntax and more details.
+  * `node['splunk']['clustering']['site_search_factor']`: The per-site search policy for searchable copies
+    for any given bucket. This is represented as a comma-separated list of per-site entires. Only valid when
+    `node['splunk']['clustering']['mode']='master'` and multisite is true. Defaults to 'origin:1,total:2'.
+    Refer to [Splunk Admin docs](http://docs.splunk.com/Documentation/Splunk/latest/Admin/serverconf) for exact syntax and more details.
 
 The following attributes are related to setting up a splunk forwarder
 with the `client` recipe

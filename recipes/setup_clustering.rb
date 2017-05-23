@@ -39,6 +39,7 @@ splunk_auth_info = passwords['auth']
 cluster_secret = passwords['secret']
 cluster_params = node['splunk']['clustering']
 cluster_mode = cluster_params['mode']
+is_multisite = cluster_params['num_sites'] > 1
 
 Chef::Log.debug("Current node clustering mode: #{cluster_mode}")
 
@@ -52,13 +53,24 @@ cluster_master = search(
 
 case cluster_mode
 when 'master'
-  splunk_cmd_params = "-mode master\
- -replication_factor #{cluster_params['replication_factor']}\
- -search_factor #{cluster_params['search_factor']}"
+  splunk_cmd_params = '-mode master'
+  if is_multisite
+    available_sites = (1..cluster_params['num_sites']).to_a.map { |i| 'site' + i.to_s }.join(',')
+    splunk_cmd_params <<
+      " -multisite true -available_sites #{available_sites} -site #{cluster_params['site']}" \
+      " -site_replication_factor #{cluster_params['site_replication_factor']}" \
+      " -site_search_factor #{cluster_params['site_search_factor']}"
+  else
+    splunk_cmd_params <<
+      " -replication_factor #{cluster_params['replication_factor']}" \
+      " -search_factor #{cluster_params['search_factor']}"
+  end
 when 'slave', 'searchhead'
-  splunk_cmd_params = "-mode #{cluster_mode}\
- -master_uri https://#{cluster_master['fqdn'] || cluster_master['ipaddress']}:8089\
- -replication_port #{cluster_params['replication_port']}"
+  splunk_cmd_params = "-mode #{cluster_mode}"
+  splunk_cmd_params << " -site #{cluster_params['site']}" if is_multisite
+  splunk_cmd_params <<
+    " -master_uri https://#{cluster_master['ipaddress'] || cluster_master['fqdn']}:#{cluster_master['splunk']['mgmt_port']}" \
+    " -replication_port #{cluster_params['replication_port']}"
 else
   Chef::Log.fatal("You have set an incorrect clustering mode: #{cluster_mode}")
   Chef::Log.fatal("Set `node['splunk']['clustering']['mode']` to master|slave|searchhead, and try again.")
@@ -69,11 +81,11 @@ splunk_cmd_params << " -secret #{cluster_secret}" if cluster_secret
 
 execute 'setup-indexer-cluster' do
   command "#{splunk_cmd} edit cluster-config #{splunk_cmd_params} -auth '#{splunk_auth_info}'"
-  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_cluster_#{cluster_mode}") }
+  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_clustering") }
   notifies :restart, 'service[splunk]'
 end
 
-file "#{splunk_dir}/etc/.setup_cluster_#{cluster_mode}" do
+file "#{splunk_dir}/etc/.setup_clustering" do
   content 'true\n'
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
