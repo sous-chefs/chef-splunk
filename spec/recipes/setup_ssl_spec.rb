@@ -7,18 +7,18 @@ describe 'chef-splunk::setup_ssl' do
         'id' => 'splunk_certificates',
         'data' => {
           'self-signed.example.com.key' => '-----BEGIN RSA PRIVATE KEY-----',
-          'self-signed.example.com.crt' => '-----BEGIN CERTIFICATE-----'
-        }
-      }
+          'self-signed.example.com.crt' => '-----BEGIN CERTIFICATE-----',
+        },
+      },
     }
   end
 
   context 'default attribute settings' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
-        node.set['splunk']['ssl_options']['enable_ssl'] = true
-        node.set['splunk']['is_server'] = true
-        node.set['dev_mode'] = true
+        node.normal['splunk']['ssl_options']['enable_ssl'] = true
+        node.normal['splunk']['is_server'] = true
+        node.normal['dev_mode'] = true
         # Populate mock certs data into Chef server
         server.create_data_bag('vault', certs)
       end.converge(described_recipe)
@@ -48,10 +48,10 @@ describe 'chef-splunk::setup_ssl' do
   context 'alternative webui port' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
-        node.set['splunk']['ssl_options']['enable_ssl'] = true
-        node.set['splunk']['is_server'] = true
-        node.set['dev_mode'] = true
-        node.set['splunk']['web_port'] = '7777'
+        node.normal['splunk']['ssl_options']['enable_ssl'] = true
+        node.normal['splunk']['is_server'] = true
+        node.normal['dev_mode'] = true
+        node.normal['splunk']['web_port'] = '7777'
         # Populate mock certs data into Chef server
         server.create_data_bag('vault', certs)
       end.converge(described_recipe)

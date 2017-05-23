@@ -1,9 +1,8 @@
 #
-# Cookbook Name:: splunk
+# Cookbook:: chef-splunk
 # Recipe:: setup_clustering
 #
-# Author: Roy Arsan <rarsan@splunk.com>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2014-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +42,7 @@ cluster_mode = cluster_params['mode']
 
 Chef::Log.debug("Current node clustering mode: #{cluster_mode}")
 
-cluster_master = search( # ~FC003
+cluster_master = search(
   :node,
   "\
   splunk_clustering_enabled:true AND \
@@ -78,5 +77,5 @@ file "#{splunk_dir}/etc/.setup_cluster_#{cluster_mode}" do
   content 'true\n'
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
-  mode 00600
+  mode '600'
 end
