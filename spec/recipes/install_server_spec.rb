@@ -6,7 +6,7 @@ describe 'chef-splunk::install_server' do
       ChefSpec::ServerRunner.new(
         step_into: ['splunk_installer'],
         platform: 'ubuntu',
-        version: '12.04'
+        version: '16.04'
       ) do |node|
         node.normal['splunk']['server']['url'] = 'http://splunk.example.com/server/package.deb'
       end.converge(described_recipe)

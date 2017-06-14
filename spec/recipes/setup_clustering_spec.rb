@@ -105,7 +105,7 @@ describe 'chef-splunk::setup_clustering' do
       chef_run_init.node.normal['splunk']['clustering']['enabled'] = true
       chef_run_init.node.normal['splunk']['clustering']['mode'] = 'searchhead'
       # Publish mock cluster master node to the server
-      cluster_master_node = stub_node(platform: 'ubuntu', version: '12.04') do |node|
+      cluster_master_node = stub_node(platform: 'ubuntu', version: '16.04') do |node|
         node.automatic['fqdn'] = 'cm.cluster.example.com'
         node.automatic['ipaddress'] = '192.168.0.10'
         node.normal['dev_mode'] = true

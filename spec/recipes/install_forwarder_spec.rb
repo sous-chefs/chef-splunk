@@ -6,7 +6,7 @@ describe 'chef-splunk::install_forwarder' do
       ChefSpec::ServerRunner.new(
         step_into: ['splunk_installer'],
         platform: 'ubuntu',
-        version: '12.04'
+        version: '16.04'
       ) do |node|
         node.normal['splunk']['forwarder']['url'] = 'http://splunk.example.com/forwarder/package.deb'
       end.converge(described_recipe)

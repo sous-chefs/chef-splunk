@@ -5,7 +5,7 @@ describe 'chef-splunk::user' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new(
         platform: 'ubuntu',
-        version: '12.04'
+        version: '16.04'
       ).converge(described_recipe)
     end
 

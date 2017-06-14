@@ -12,7 +12,7 @@ describe 'chef-splunk::setup_shclustering' do
   end
 
   let(:deployer_node) do
-    stub_node(platform: 'ubuntu', version: '12.04') do |node|
+    stub_node(platform: 'ubuntu', version: '16.04') do |node|
       node.automatic['fqdn'] = 'deploy.cluster.example.com'
       node.automatic['ipaddress'] = '192.168.0.10'
       node.normal['dev_mode'] = true
