@@ -2,6 +2,17 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## v1.7.0 (2017-06-25)
+
+- Fix CI and Kitchen Dokken 
+- Fix upgrade recipe 
+- Fix install on SUSE platform 
+- Add Splunk 6.6 URLs as default 
+- Add static list of indexers for client recipe 
+- Add multisite indexer clustering 
+- Add search head clustering 
+- Add ['splunk']['splunk_servers'] attribute as an alternative to using chef search functionality to discover splunk servers.
+
 ## v1.6.0 (2016-07-19)
 
 - Updated the default version of the Splunk forwarder to 6.4
