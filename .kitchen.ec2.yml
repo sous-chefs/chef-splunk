@@ -1,9 +1,9 @@
 ---
   driver:
     name: ec2
-    aws_ssh_key_id: kiri-aws
-    security_group_ids: ["sg-1a31097d"]
-    subnet_id: subnet-b901dae1
+    aws_ssh_key_id: 
+    security_group_ids: ["sg-*****"]
+    subnet_id: subnet-
     region: us-west-1
     availability_zone: us-west-1c
     require_chef_omnibus: true
@@ -17,7 +17,7 @@
   cookbook_path: "./cookbooks"
 
   transport:
-  ssh_key: /Users/kiri/.ssh/kiri-aws.pem
+  ssh_key: /path/to/your/aws/private/key
   connection_timeout: 10
   connection_retries: 5
   username: ec2-user
@@ -27,7 +27,7 @@
       driver:
         image_id: ami-3a674d5a
       transport:
-        ssh_key: /Users/kiri/.ssh/kiri-aws.pem
+        ssh_key: /path/to/your/aws/private/key
         username: ec2-user
 
   suites:
