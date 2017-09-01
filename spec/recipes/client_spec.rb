@@ -7,7 +7,7 @@ describe 'chef-splunk::client' do
 
   context 'client config with remote indexers managed by Chef server' do
     let(:splunk_indexer1) do
-      stub_node('idx1', platform: 'ubuntu', version: '12.04') do |node|
+      stub_node('idx1', platform: 'ubuntu', version: '16.04') do |node|
         node.automatic['fqdn'] = 'idx1.example.com'
         node.automatic['ipaddress'] = '10.10.15.43'
         node.set['dev_mode'] = true
@@ -17,7 +17,7 @@ describe 'chef-splunk::client' do
     end
 
     let(:splunk_indexer2) do
-      stub_node('idx2', platform: 'ubuntu', version: '12.04') do |node|
+      stub_node('idx2', platform: 'ubuntu', version: '16.04') do |node|
         node.automatic['hostname'] = 'spelunker'
         node.automatic['fqdn'] = 'idx2.example.com'
         node.automatic['ipaddress'] = '10.10.15.45'
