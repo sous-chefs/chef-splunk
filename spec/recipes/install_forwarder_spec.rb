@@ -28,7 +28,7 @@ describe 'chef-splunk::install_forwarder' do
       ChefSpec::ServerRunner.new(
         step_into: ['splunk_installer'],
         platform: 'centos',
-        version: '6.4'
+        version: '6.8'
       ) do |node|
         node.normal['splunk']['forwarder']['url'] = 'http://splunk.example.com/forwarder/package.rpm'
       end.converge(described_recipe)
