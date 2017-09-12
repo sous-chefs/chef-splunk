@@ -91,7 +91,7 @@ default['splunk']['server']['runasroot'] = true
 default['splunk']['splunk_servers'] = []
 
 case node['platform_family']
-when 'rhel', 'fedora', 'suse'
+when 'rhel', 'fedora', 'suse', 'amazon'
   if node['kernel']['machine'] == 'x86_64'
     default['splunk']['forwarder']['url'] = 'https://download.splunk.com/products/universalforwarder/releases/6.6.0/linux/splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-x86_64.rpm'
     default['splunk']['server']['url'] = 'https://download.splunk.com/products/splunk/releases/6.6.0/linux/splunk-6.6.0-1c4f3bbe1aea-linux-2.6-x86_64.rpm'
