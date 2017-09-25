@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 1.7.1 (2017-09-25)
+
+- Enable amazon platform support for splunk forwarder
+- Resolve deprecation warning in Chefspec and use the latest platforms in the specs
+
 ## v1.7.0 (2017-06-25)
 
 - Fix CI and Kitchen Dokken 
