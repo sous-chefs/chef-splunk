@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 1.7.2 (2017-11-06)
+
+- set the systemd unit file to 644
+
 ## 1.7.1 (2017-09-25)
 
 - Enable amazon platform support for splunk forwarder
