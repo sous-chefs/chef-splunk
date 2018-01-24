@@ -12,7 +12,7 @@ host = <%= @inputs_conf['host'] %>
 
 <% unless @inputs_conf['inputs'].nil? %>
 <% @inputs_conf['inputs'].each do |input| -%>
-[<%= input['input_num'] %>]
+[<%= input['input_path'] %>]
   <% input['config'].each_pair do |name, value| -%>
 <%= name %> = <%= value %>
   <% end -%>
