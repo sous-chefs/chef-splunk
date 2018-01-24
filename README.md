@@ -235,6 +235,9 @@ is not overwritten if this is not set or is an empty string.
 * `node['splunk']['inputs_conf']['ports']`: An array of hashes that contain
 the input port configuration necessary to generate the inputs.conf
 file.
+* `node['splunk']['inputs_conf']['inputs']`: An array of hashes that contain
+the input configuration necessary to generate the inputs.conf
+file. This attribute supports all input types.
 
 For example:
 ```
@@ -246,6 +249,16 @@ node.default['splunk']['inputs_conf']['ports'] = [
     }
   }
 ]
+
+node.default['splunk']['inputs_conf']['inputs'] = [
+  {
+    input_path => 'monitor:///var/log/syslog',
+    config => {
+      'sourcetype' => 'syslog'
+    }
+  }
+]
+
 ```
 
 The following attributes are related to upgrades in the `upgrade`
