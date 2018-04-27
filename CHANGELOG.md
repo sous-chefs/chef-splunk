@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 1.7.3 (2018-04-27)
+
+- Set ownership of web.conf file using the splunk owner/group attributes
+
 ## 1.7.2 (2017-11-06)
 
 - set the systemd unit file to 644

@@ -4,7 +4,7 @@ maintainer_email 'cookbooks@chef.io'
 license 'Apache-2.0'
 description 'Manage Splunk Enterprise or Splunk Universal Forwarder'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '1.7.2'
+version '1.7.3'
 
 supports 'debian'
 supports 'ubuntu'
