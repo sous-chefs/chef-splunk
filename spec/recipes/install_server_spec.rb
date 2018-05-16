@@ -28,7 +28,7 @@ describe 'chef-splunk::install_server' do
       ChefSpec::ServerRunner.new(
         step_into: ['splunk_installer'],
         platform: 'centos',
-        version: '6.8'
+        version: '6.9'
       ) do |node|
         node.normal['splunk']['server']['url'] = 'http://splunk.example.com/server/package.rpm'
       end.converge(described_recipe)
