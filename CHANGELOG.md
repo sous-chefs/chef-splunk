@@ -2,6 +2,30 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 1.7.3 (2018-04-27)
+
+- Set ownership of web.conf file using the splunk owner/group attributes
+
+## 1.7.2 (2017-11-06)
+
+- set the systemd unit file to 644
+
+## 1.7.1 (2017-09-25)
+
+- Enable amazon platform support for splunk forwarder
+- Resolve deprecation warning in Chefspec and use the latest platforms in the specs
+
+## v1.7.0 (2017-06-25)
+
+- Fix CI and Kitchen Dokken 
+- Fix upgrade recipe 
+- Fix install on SUSE platform 
+- Add Splunk 6.6 URLs as default 
+- Add static list of indexers for client recipe 
+- Add multisite indexer clustering 
+- Add search head clustering 
+- Add ['splunk']['splunk_servers'] attribute as an alternative to using chef search functionality to discover splunk servers.
+
 ## v1.6.0 (2016-07-19)
 
 - Updated the default version of the Splunk forwarder to 6.4

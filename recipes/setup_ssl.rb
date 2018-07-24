@@ -42,6 +42,8 @@ end
 template "#{splunk_dir}/etc/system/local/web.conf" do
   source 'system-web.conf.erb'
   variables ssl_options
+  owner node['splunk']['user']['username']
+  group node['splunk']['user']['username']
   notifies :restart, 'service[splunk]'
 end
 

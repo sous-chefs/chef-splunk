@@ -21,7 +21,7 @@ cookbook doesn't support installing from networked package managers
 
 ## Requirements
 
-Chef 11.12.0+
+Chef 12.1+
 
 ### Platforms
 
@@ -60,6 +60,9 @@ General attributes:
 * `node['splunk']['receiver_port']`: The port that the receiver
   (server) listens to. This is set to the Splunk Enterprise default,
   9997.
+* `node['splunk']['mgmt_port']`: The port that splunkd service
+  listens to, aka the management port. This is set to the Splunk
+  Enterprise default, 8089.
 * `node['splunk']['web_port']`: The port that the splunkweb service
   listens to. This is set to the default for HTTPS, 443, as it is
   configured by the `setup_ssl` recipe.
@@ -125,18 +128,64 @@ clustering in the `setup_clustering` recipe:
 * `node['splunk']['clustering']['enabled']`: Whether to enable indexer clustering,
   must be set to `true` to use the `setup_clustering` recipe. Defaults to `false`,
   must be a boolean literal `true` or `false`.
+* `node['splunk']['clustering']['num_sites']`: The number of sites in the cluster.
+  Multisite is enabled automatically if num_sites > 1. Defaults to 1, must be a positive integer.
 * `node['splunk']['clustering']['mode']`: The clustering mode of the node within
   the indexer cluster. Must be set using string literal 'master',
   'slave', or 'searchhead'.
-* `node['splunk']['clustering']['replication_factor']`: The replication factor
-  of the indexer cluster. Defaults to 3, must be a positive integer. Only valid
-  when `node['splunk']['clustering']['mode']='master'`.
-* `node['splunk']['clustering']['search_factor']`: The search factor
-  of the indexer cluster. Only valid when `node['splunk']['clustering']['mode']='master'`.
-  Defaults to 2, must be a positive integer.
 * `node['splunk']['clustering']['replication_port']`: The replication port
   of the cluster peer member. Only valid when `node['splunk']['clustering']['mode']='slave'`.
   Defaults to 9887.
+
+* For single-site clustering (`node['splunk']['clustering']['num_sites']` = 1):
+  * `node['splunk']['clustering']['replication_factor']`: The replication factor
+    of the indexer cluster. Defaults to 3, must be a positive integer. Only valid
+    when `node['splunk']['clustering']['mode']='master'` and
+    `node['splunk']['clustering']['num_sites']`=1 (single-site clustering).
+  * `node['splunk']['clustering']['search_factor']`: The search factor 
+    of the indexer cluster. Only valid when `node['splunk']['clustering']['mode']='master'` and
+    `node['splunk']['clustering']['num_sites']`=1 (single-site clustering). Defaults to 2, must be a positive integer.
+
+* For multisite clustering (`node['splunk']['clustering']['num_sites']` > 1):
+  * `node['splunk']['clustering']['site']`: The site the node belongs to. Valid values include site1 to site63
+  * `node['splunk']['clustering']['site_replication_factor']`: The per-site replication policy
+    of any given bucket. This is represented as a comma-separated list of per-site entries. Only valid
+    when `node['splunk']['clustering']['mode']='master'` and multisite is true. Defaults to 'origin:2,total:3'.
+    Refer to [Splunk Admin docs](http://docs.splunk.com/Documentation/Splunk/latest/Admin/serverconf) for exact syntax and more details.
+  * `node['splunk']['clustering']['site_search_factor']`: The per-site search policy for searchable copies
+    for any given bucket. This is represented as a comma-separated list of per-site entires. Only valid when
+    `node['splunk']['clustering']['mode']='master'` and multisite is true. Defaults to 'origin:1,total:2'.
+    Refer to [Splunk Admin docs](http://docs.splunk.com/Documentation/Splunk/latest/Admin/serverconf) for exact syntax and more details.
+
+The following attributes are related to setting up a Splunk server with search head
+clustering in the `setup_shclustering` recipe:
+
+* `node['splunk']['shclustering']`: A hash of search head clustering configurations
+  used in the `setup_shclustering` recipe
+* `node['splunk']['shclustering']['enabled']`: Whether to enable search head clustering,
+  must be set to `true` to use the `setup_shclustering` recipe. Defaults to `false`,
+  must be a boolean literal `true` or `false`.
+* `node['splunk']['shclustering']['mode']`: The search head clustering mode of the node within
+  the cluster. This is used to determine if the node needs to bootstrap the shcluster and initialize
+  the node as the captain. Must be set using string literal 'member' or 'captain'.
+* `node['splunk']['shclustering']['label']`: The label for the shcluster. Used to differentiate 
+  from other shclusters in the environment. Must be a string. Defaults to `shcluster1`.
+  captain election. Must be set using string literal 'member' or 'captain'.
+* `node['splunk']['shclustering']['replication_factor']`: The replication factor
+  of the shcluster. Defaults to 3, must be a positive integer.
+* `node['splunk']['shclustering']['replication_port']`: The replication port
+  of the shcluster members. Defaults to 9900.
+* `node['splunk']['shclustering']['deployer_url']`: The management url for the
+  shcluster deployer server, must be set to a string such as: `https://deployer.domain.tld:8089`.
+  This attribute is optional. Defaults to empty.
+* `node['splunk']['shclustering']['mgmt_uri']`: The management url for the
+  shcluster member node, must be set to a string such as: `https://shx.domain.tld:8089`. You can
+  use the node's IP address instead of the FQDN if desired. Defaults to `https://#{node['fqdn']}:8089`.
+* `node['splunk']['shclustering']['shcluster_members']`: An array of all search head 
+  cluster members referenced by their `mgmt_uri`. Currently this will do a Chef search for nodes that
+  are in the same environment, with search head clustering enabled, and with the same
+  cluster label. Alternatively, this can be hard-coded with a list of all shcluster 
+  members including the current node. Must be an array of strings. Defaults to an empty array.
 
 The following attributes are related to setting up a splunk forwarder
 with the `client` recipe
@@ -163,11 +212,20 @@ forwardedindex.2.whitelist = _audit
 forwardedindex.filter.disable = false
 ```
 
-The `tcpout:splunk_indexers_9997` section is defined by the search results for Splunk Servers, and the `server` directive is a comma-separated listed of server IPs and the ports. For example, to add an `sslCertPath` directive, define the attribute in your role, wrapper cookbook, etc:
+As an example of `outputs_conf` attribute usage, to add an `sslCertPath` directive, define the attribute in your role or wrapper cookbook as such:
 
 ```
 node.default['splunk']['outputs_conf']['sslCertPath'] = '$SPLUNK_HOME/etc/certs/cert.pem'
 ```
+The `server` attribute in `tcpout:splunk_indexers_9997` stanza above is populated by default from Chef search results for Splunk servers, or, alternatively, is statically defined in node attribute `node['splunk']['server_list']`.
+
+`node['splunk']['server_list']` is an optional comma-separated listed of server IPs and the ports. It's only applicable when there are no Splunk servers managed by Chef, e.g. sending data to Splunk Cloud which has managed indexers.
+
+For example:
+```
+node.default['splunk']['server_list'] = '10.0.2.47:9997, 10.0.2.49:9997'
+```
+
 
 `node['splunk']['inputs_conf']` is a hash of configuration values that are used to populate the `inputs.conf` file.
 
@@ -177,6 +235,9 @@ is not overwritten if this is not set or is an empty string.
 * `node['splunk']['inputs_conf']['ports']`: An array of hashes that contain
 the input port configuration necessary to generate the inputs.conf
 file.
+* `node['splunk']['inputs_conf']['inputs']`: An array of hashes that contain
+the input configuration necessary to generate the inputs.conf
+file. This attribute supports all input types.
 
 For example:
 ```
@@ -188,6 +249,16 @@ node.default['splunk']['inputs_conf']['ports'] = [
     }
   }
 ]
+
+node.default['splunk']['inputs_conf']['inputs'] = [
+  {
+    input_path => 'monitor:///var/log/syslog',
+    config => {
+      'sourcetype' => 'syslog'
+    }
+  }
+]
+
 ```
 
 The following attributes are related to upgrades in the `upgrade`
@@ -266,14 +337,14 @@ write out `etc/system/local/outputs.conf` with the server's IP and the
 `receiver_port` attribute in the Splunk install directory
 (`/opt/splunkforwarder`).
 
-Setting node['splunk']['tcpout_server_config_map'] with key value pairs
+Setting node['splunk']['outputs_conf'] with key value pairs
 updates the outputs.conf server configuration with those key value pairs.
 These key value pairs can be used to setup SSL encryption on messages
 forwarded through this client:
 
 ```
 # Note that the ssl CA and certs must exist on the server.
-node['splunk']['tcpout_server_config_map'] = {
+node['splunk']['outputs_conf'] = {
   'sslCommonNameToCheck' => 'sslCommonName',
   'sslCertPath' => '$SPLUNK_HOME/etc/certs/cert.pem',
   'sslPassword' => 'password'
@@ -400,6 +471,44 @@ of clustering stanza in `etc/system/local/server.conf`).
 
 Indexer clustering is used to achieve some data availability & recovery. To learn
 more about Splunk indexer clustering, refer to [Splunk Docs](http://docs.splunk.com/Documentation/Splunk/latest/Indexer/Aboutclusters).
+
+## setup_shclustering
+
+This recipe sets up Splunk search head clustering. The attribute
+`node['splunk']['shclustering']['enabled']` must be set to true in order to
+run this recipe. Similar to `setup_auth`, this recipes loads
+the same encrypted data bag with the Splunk `secret` key (to be shared among
+cluster members), using the [chef-vault cookbook](http://ckbk.it/chef-vault)
+helper method, `chef_vault_item`. See __Usage__ for how to set this up. The
+recipe will edit the cluster configuration, and then write a state file to
+`etc/.setup_shcluster` to indicate in future Chef runs that it has set the node's 
+search head clustering configuration. If cluster configuration should be changed, 
+then that file should be removed.
+
+It will also search a Chef Server for a Splunk Enterprise (server)
+node of type cluster master, that is with `splunk_shclustering_enable:true` and
+the same `splunk_shclustering_label` in the same `chef_environment` and
+use that server's IP when building the list of `shcluster_members`.
+
+The search head cluster configuration is deployed as a custom Splunk app that
+is written to `etc/apps/0_autogen_shcluster_config` to take advantage of Splunk's
+built in config layering. All nodes with `splunk_shclustering_enable:true` will
+receive this app.
+
+On the first Chef run on a node with `splunk_shclustering_mode:captain`, this recipe
+will build and execute the Splunk command to bootstrap the search head cluster and
+initiate the captain election process.
+
+In addition to using this recipe for configuring the search head cluster members, you
+will also have to manually configure a search head instance to serve as the 
+search head cluster's deployer. This is done by adding a `[shclustering]` stanza to
+that instance's `etc/system/local/server.conf` with the same `pass4SymmKey = <secret>`
+and the same `shcluster_label = <splunk_shclustering_label>`. This deployer is optional, but should be configured prior to 
+running the bootstrap on the captain and then the search head cluster member nodes 
+configured with this deployer node's mgmt_uri set in the member node's `splunk_shclustering_deployer_url`
+
+Search head clustering is used to achieve high availability & scaling. To learn
+more about Splunk search head clustering, refer to [Splunk Docs](http://docs.splunk.com/Documentation/Splunk/latest/DistSearch/AboutSHC).
 
 ## upgrade
 

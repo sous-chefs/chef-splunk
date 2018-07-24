@@ -5,7 +5,7 @@ describe 'chef-splunk::upgrade' do
     ChefSpec::ServerRunner.new(
       step_into: ['splunk_installer'],
       platform: 'ubuntu',
-      version: '12.04'
+      version: '16.04'
     ) do |node|
       node.normal['splunk']['upgrade_enabled'] = true
       node.normal['splunk']['accept_license'] = true

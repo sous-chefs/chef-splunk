@@ -73,10 +73,12 @@ ruby_block 'splunk_fix_file_ownership' do
   not_if { node['splunk']['server']['runasroot'] }
 end
 
+Chef::Log.info("Node init package: #{node['init_package']}")
+
 if node['init_package'] == 'systemd'
-  template '/usr/lib/systemd/system/splunk.service' do
+  template '/etc/systemd/system/splunk.service' do
     source 'splunk-systemd.erb'
-    mode '700'
+    mode '644'
     variables(
       splunkdir: splunk_dir,
       runasroot: node['splunk']['server']['runasroot']

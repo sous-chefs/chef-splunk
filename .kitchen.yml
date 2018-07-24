@@ -3,16 +3,17 @@ driver:
 
 provisioner:
   name: chef_zero
+  deprecations_as_errors: true
   data_bags_path: "test/fixtures/data_bags"
 
 platforms:
-  - name: centos-6.8
-  - name: centos-7.3
-  - name: debian-7.11
-  - name: debian-8.6
-  - name: fedora-25
-  - name: opensuse-13.2
-  - name: opensuse-leap-42.2
+  - name: centos-6
+  - name: centos-7
+  - name: debian-7
+  - name: debian-8
+  - name: debian-9
+  - name: fedora-26
+  - name: opensuse-leap-42
   - name: ubuntu-14.04
   - name: ubuntu-16.04
 
@@ -72,6 +73,40 @@ suites:
           runasroot: false
         is_server: true
         accept_license: true
+        ssl_options:
+          enable_ssl: true
+        web_port: 8443
+
+  - name: server-cluster-master
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        is_server: true
+        accept_license: true
+        clustering:
+          enabled: true
+          mode: master
+          replication_factor: 5
+          search_factor: 3
+        ssl_options:
+          enable_ssl: true
+
+  - name: server-shcluster-member
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        is_server: true
+        accept_license: true
+        shclustering:
+          enabled: true
         ssl_options:
           enable_ssl: true
         web_port: 8443

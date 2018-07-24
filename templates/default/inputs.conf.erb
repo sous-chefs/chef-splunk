@@ -1,9 +1,20 @@
 [default]
 host = <%= @inputs_conf['host'] %>
 
+<% unless @inputs_conf['ports'].nil? %>
 <% @inputs_conf['ports'].each do |port| -%>
 [tcp://:<%= port['port_num'] %>]
   <% port['config'].each_pair do |name, value| -%>
 <%= name %> = <%= value %>
   <% end -%>
+<% end -%>
+<% end -%>
+
+<% unless @inputs_conf['inputs'].nil? %>
+<% @inputs_conf['inputs'].each do |input| -%>
+[<%= input['input_path'] %>]
+  <% input['config'].each_pair do |name, value| -%>
+<%= name %> = <%= value %>
+  <% end -%>
+<% end -%>
 <% end -%>
