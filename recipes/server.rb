@@ -33,7 +33,7 @@ end
 
 # We can rely on loading the chef_vault_item here, as `setup_auth`
 # above would have failed if there were another issue.
-splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['auth']
+splunk_auth_info = chef_vault_item(node['splunk']['vault']['data_bag'], node['splunk']['vault']['data_bag_item'])['auth']
 
 execute 'update-splunk-mgmt-port' do
   command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{splunk_auth_info}'"
