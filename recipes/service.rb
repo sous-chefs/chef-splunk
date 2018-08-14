@@ -50,7 +50,7 @@ end
 
 if node['splunk']['accept_license']
   # ftr = first time run file created by a splunk install
-  execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
+  execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes --no-prompt --seed-passwd 'changeme'" do
     only_if { File.exist? "#{splunk_dir}/ftr" }
   end
 end
