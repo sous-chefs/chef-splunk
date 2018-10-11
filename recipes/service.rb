@@ -81,7 +81,10 @@ if node['init_package'] == 'systemd'
     mode '644'
     variables(
       splunkdir: splunk_dir,
-      runasroot: node['splunk']['server']['runasroot']
+      runasroot: node['splunk']['server']['runasroot'],
+      config: node['splunk']['systemd_config']
+    )
+    notifies :reload, 'service[splunk]', :immediately
     )
   end
 

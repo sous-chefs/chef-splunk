@@ -88,6 +88,8 @@ default['splunk']['user']['home'] = '/opt/splunk' if node['splunk']['is_server']
 
 default['splunk']['server']['runasroot'] = true
 
+default['splunk']['systemd_config'] = {}
+
 default['splunk']['splunk_servers'] = []
 
 case node['platform_family']

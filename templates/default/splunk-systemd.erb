@@ -14,6 +14,11 @@ ExecStart=<%= @splunkdir %>/bin/splunk start --no-prompt --answer-yes
 ExecStop=<%= @splunkdir %>/bin/splunk stop
 ExecReload=<%= @splunkdir %>/bin/splunk restart
 PIDFile=<%= @splunkdir %>/var/run/splunk/splunkd.pid
+<% unless @config.nil? || @config.to_hash.empty? %>
+  <% @config.each do |key, value| %>
+<%= key%>=<%= value %>
+  <% end %>
+<% end %>
 
 [Install]
 WantedBy=multi-user.target
