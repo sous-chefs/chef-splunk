@@ -111,3 +111,9 @@ when 'omnios'
   default['splunk']['forwarder']['url'] = 'https://download.splunk.com/products/universalforwarder/releases/6.6.0/solaris/splunkforwarder-6.6.0-1c4f3bbe1aea-solaris-10-intel.pkg.Z'
   default['splunk']['server']['url'] = 'https://download.splunk.com/products/splunk/releases/6.6.0/solaris/splunk-6.6.0-1c4f3bbe1aea-solaris-10-intel.pkg.Z'
 end
+
+# Because we are executing commands with authentication credentials
+# in the command, we should give the developer the option to supress
+# output in the chef run.  Default behavior is to show command for
+# backwards compatability purposes
+default['splunk']['hide_cmd'] = false

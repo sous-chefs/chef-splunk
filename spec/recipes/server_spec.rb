@@ -13,8 +13,8 @@ describe 'chef-splunk::server' do
 
   let(:chef_run_init) do
     ChefSpec::ServerRunner.new do |node, server|
-      node.set['dev_mode'] = true
-      node.set['splunk']['is_server'] = true
+      node.default['dev_mode'] = true
+      node.default['splunk']['is_server'] = true
       # Populate mock vault data bag to the server
       server.create_data_bag('vault', secrets)
     end
@@ -50,7 +50,7 @@ describe 'chef-splunk::server' do
   context 'custom management port' do
     before(:each) do
       stub_command("/opt/splunk/bin/splunk show splunkd-port -auth '#{secrets['splunk__default']['auth']}' | grep ': 9089'").and_return(false)
-      chef_run_init.node.set['splunk']['mgmt_port'] = '9089'
+      chef_run_init.node.default['splunk']['mgmt_port'] = '9089'
     end
 
     it 'updates splunkd management port' do

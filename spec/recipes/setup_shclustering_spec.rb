@@ -41,7 +41,7 @@ describe 'chef-splunk::setup_shclustering' do
         node.normal['dev_mode'] = true
         node.normal['splunk']['is_server'] = true
         node.normal['splunk']['shclustering']['enabled'] = true
-        node.normal['splunk']['shclustering']['deployer_url'] = "https://#{deployer_node.fqdn}:8089"
+        node.normal['splunk']['shclustering']['deployer_url'] = "https://#{deployer_node['fqdn']}:8089"
         node.normal['splunk']['shclustering']['mgmt_uri'] = "https://#{node['fqdn']}:8089"
         node.normal['splunk']['shclustering']['shcluster_members'] = [
           'https://shcluster-member01:8089',

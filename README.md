@@ -67,6 +67,7 @@ General attributes:
   listens to. This is set to the default for HTTPS, 443, as it is
   configured by the `setup_ssl` recipe.
 * `node['splunk']['ratelimit_kilobytessec']`: The default splunk rate limiting rate can now easily be changed with an attribute.  Default is 2048KBytes/sec.
+* `node['splunk']['hide_cmd']`: Supress output of splunk commands which contains -auth parameter from displaying in log of Chef run.  Recommended setting to true for production environments.  Default is false.
 
 The two URL attributes below are selected by platform and architecture
 by default.
@@ -599,6 +600,56 @@ command. Note the search here is for the splunk server only:
         --json data_bags/vault/splunk_certificates.json \
         --search 'splunk_is_server:true' --admins 'yourusername' \
         --mode client
+
+### splunk_app resource
+
+Splunk applications can be installed through the use of the splunk_app resource.  The resource assumes that the splunk application (.spl or .tar.gz) can be downloaded or copied onto the node.  The resource can download the application from a remote site if needed.
+
+#### Installation examples
+
+An application is included inside a cookbook
+
+```ruby
+splunk_app 'bistro' do
+  splunk_auth 'admin:notasecurepassword'
+  cookbook_file 'bistro-1.0.2.spl'
+  checksum '862e2c4422eee93dd50bd93aa73a44045d02cb6232f971ba390a2f1c15bdb79f'
+  action [:install, :enable]
+end
+```
+
+An application is downloaded from a remote site
+
+```ruby
+splunk_app 'bistro-remote-file' do
+  app_name 'bistro-1.0.2'
+  splunk_auth 'admin:notasecurepassword'
+  remote_file 'https://github.com/ampledata/bistro/archive/1.0.2.tar.gz'
+  action :install
+end
+```
+
+An application already exists on the system and needs to be installed
+
+```ruby
+splunk_app 'chef_sample_local_app' do
+  splunk_auth 'admin:notasecurepassword'
+  local_file '/tmp/chef_sample_local_app.spl'
+  action [:install, :enable]
+end
+```
+
+#### Removal examples
+
+Assuming an application is already installed on the system and needs to be removed
+
+```ruby
+splunk_app 'bistro-disable' do
+  app_name 'bistro'
+  splunk_auth 'admin:notarealpassword'
+  action [:disable, :remove]
+end
+```
 
 ## License and Authors
 

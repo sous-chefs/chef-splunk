@@ -81,6 +81,7 @@ splunk_cmd_params << " -secret #{cluster_secret}" if cluster_secret
 
 execute 'setup-indexer-cluster' do
   command "#{splunk_cmd} edit cluster-config #{splunk_cmd_params} -auth '#{splunk_auth_info}'"
+  sensitive node['splunk']['hide_cmd']
   not_if { ::File.exist?("#{splunk_dir}/etc/.setup_clustering") }
   notifies :restart, 'service[splunk]'
 end

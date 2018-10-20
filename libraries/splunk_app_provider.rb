@@ -51,6 +51,13 @@ class Chef
               checksum new_resource.checksum
               notifies :run, "execute[splunk-install-#{new_resource.app_name}]", :immediately
             end
+          elsif new_resource.local_file
+            app_package = new_resource.local_file
+            file new_resource.local_file do
+              only_if { ::File.exist?(new_resource.local_file) }
+              action :touch
+              notifies :run, "execute[splunk-install-#{new_resource.app_name}]", :immediately
+            end
           elsif new_resource.remote_directory
             app_package = app_dir
             remote_directory app_dir do
@@ -65,8 +72,11 @@ class Chef
           dir = app_dir
 
           execute "splunk-install-#{new_resource.app_name}" do
+            action :nothing
             command "#{splunk_cmd} install app #{app_package} -auth #{splunk_auth(new_resource.splunk_auth)}"
+            sensitive node['splunk']['hide_cmd']
             not_if { ::File.exist?("#{dir}/default/app.conf") }
+            notifies :restart, 'service[splunk]'
           end
         end
 
@@ -101,6 +111,7 @@ class Chef
           splunk_service
           execute "splunk-enable-#{new_resource.app_name}" do
             command "#{splunk_cmd} enable app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}"
+            sensitive node['splunk']['hide_cmd']
             notifies :restart, 'service[splunk]'
           end
         end
@@ -111,6 +122,7 @@ class Chef
           splunk_service
           execute "splunk-disable-#{new_resource.app_name}" do
             command "#{splunk_cmd} disable app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}"
+            sensitive node['splunk']['hide_cmd']
             not_if { ::File.exist?("#{splunk_dir}/etc/disabled-apps/#{new_resource.app_name}") }
             notifies :restart, 'service[splunk]'
           end
@@ -138,7 +150,13 @@ class Chef
       end
 
       def app_installed?
-        ::File.exist?("#{app_dir}/default/app.conf")
+        s = shell_out("#{splunk_cmd} display app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}")
+        s.run_command
+        if s.stdout.empty?
+          false
+        else
+          true
+        end
       end
 
       def splunk_service

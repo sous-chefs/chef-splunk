@@ -52,6 +52,7 @@ file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['keyfile']}" do
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
   mode '600'
+  sensitive true
   notifies :restart, 'service[splunk]'
 end
 

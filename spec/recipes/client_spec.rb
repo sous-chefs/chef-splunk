@@ -10,9 +10,9 @@ describe 'chef-splunk::client' do
       stub_node('idx1', platform: 'ubuntu', version: '16.04') do |node|
         node.automatic['fqdn'] = 'idx1.example.com'
         node.automatic['ipaddress'] = '10.10.15.43'
-        node.set['dev_mode'] = true
-        node.set['splunk']['is_server'] = true
-        node.set['splunk']['receiver_port'] = '1648'
+        node.default['dev_mode'] = true
+        node.default['splunk']['is_server'] = true
+        node.default['splunk']['receiver_port'] = '1648'
       end
     end
 
@@ -21,9 +21,9 @@ describe 'chef-splunk::client' do
         node.automatic['hostname'] = 'spelunker'
         node.automatic['fqdn'] = 'idx2.example.com'
         node.automatic['ipaddress'] = '10.10.15.45'
-        node.set['dev_mode'] = true
-        node.set['splunk']['is_server'] = true
-        node.set['splunk']['receiver_port'] = '1648'
+        node.default['dev_mode'] = true
+        node.default['splunk']['is_server'] = true
+        node.default['splunk']['receiver_port'] = '1648'
       end
     end
 

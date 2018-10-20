@@ -33,3 +33,15 @@ splunk_app 'bistro-remote-file' do
   )
   action :install
 end
+
+cookbook_file '/tmp/chef_sample_local_app_test.spl' do
+  source 'chef_sample_local_app_test.spl'
+  mode 644
+  action :create
+end
+
+splunk_app 'chef_sample_local_app_test' do
+  splunk_auth 'admin:notarealpassword'
+  local_file '/tmp/chef_sample_local_app_test.spl'
+  action [:install, :enable]
+end
