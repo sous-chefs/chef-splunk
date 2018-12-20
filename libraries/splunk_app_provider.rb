@@ -42,6 +42,7 @@ class Chef
               source new_resource.cookbook_file
               cookbook new_resource.cookbook
               checksum new_resource.checksum
+              sensitive new_resource.sensitive
               notifies :run, "execute[splunk-install-#{new_resource.app_name}]", :immediately
             end
           elsif new_resource.remote_file
@@ -49,6 +50,7 @@ class Chef
             remote_file app_package do
               source new_resource.remote_file
               checksum new_resource.checksum
+              sensitive new_resource.sensitive
               notifies :run, "execute[splunk-install-#{new_resource.app_name}]", :immediately
             end
           elsif new_resource.remote_directory
@@ -56,6 +58,7 @@ class Chef
             remote_directory app_dir do
               source new_resource.remote_directory
               cookbook new_resource.cookbook
+              sensitive new_resource.sensitive
               notifies :restart, 'service[splunk]', :immediately
             end
           else
