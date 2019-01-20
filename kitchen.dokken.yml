@@ -97,20 +97,6 @@ platforms:
         SLPUNK_WEB_NAME=splunkweb\n
         OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
-- name: ubuntu-14.04
-  driver:
-    image: dokken/ubuntu-14.04
-    pid_one_command: /sbin/init
-    intermediate_instructions:
-      - RUN /usr/bin/apt-get update
-      - RUN mkdir -p /data/splunk-test
-      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-      - RUN mkdir -p /opt/splunk/etc
-      - RUN printf '
-        SPLUNK_SERVER_NAME=Splunkd\n
-        SLPUNK_WEB_NAME=splunkweb\n
-        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
-
 - name: ubuntu-16.04
   driver:
     image: dokken/ubuntu-16.04
