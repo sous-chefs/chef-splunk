@@ -27,10 +27,10 @@ default['splunk']['ratelimit_kilobytessec'] = '2048'
 default['splunk']['setup_auth'] = true
 default['splunk']['user'] = {
   'username' => 'splunk',
-  'comment'  => 'Splunk Server',
-  'home'     => '/opt/splunkforwarder',
-  'shell'    => '/bin/bash',
-  'uid'      => 396,
+  'comment' => 'Splunk Server',
+  'home' => '/opt/splunkforwarder',
+  'shell' => '/bin/bash',
+  'uid' => 396,
 }
 
 default['splunk']['ssl_options'] = {

@@ -55,14 +55,8 @@ execute 'enable-splunk-receiver-port' do
   end
 end
 
-if node['splunk']['ssl_options']['enable_ssl']
-  include_recipe 'chef-splunk::setup_ssl'
-end
+include_recipe 'chef-splunk::setup_ssl' if node['splunk']['ssl_options']['enable_ssl']
 
-if node['splunk']['clustering']['enabled']
-  include_recipe 'chef-splunk::setup_clustering'
-end
+include_recipe 'chef-splunk::setup_clustering' if node['splunk']['clustering']['enabled']
 
-if node['splunk']['shclustering']['enabled']
-  include_recipe 'chef-splunk::setup_shclustering'
-end
+include_recipe 'chef-splunk::setup_shclustering' if node['splunk']['shclustering']['enabled']

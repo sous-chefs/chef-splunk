@@ -18,9 +18,7 @@
 #
 
 myuser = 'root'
-unless node['splunk']['server']['runasroot']
-  myuser = node['splunk']['user']['username']
-end
+myuser = node['splunk']['user']['username'] unless node['splunk']['server']['runasroot']
 
 if node['splunk']['is_server']
   directory splunk_dir do
@@ -65,9 +63,7 @@ ruby_block 'splunk_fix_file_ownership' do
     checkowner << "#{splunk_dir}/"
     checkowner.each do |dir|
       next unless File.exist? dir
-      if File.stat(dir).uid.eql?(0)
-        FileUtils.chown_R(myuser, myuser, splunk_dir)
-      end
+      FileUtils.chown_R(myuser, myuser, splunk_dir) if File.stat(dir).uid.eql?(0)
     end
   end
   not_if { node['splunk']['server']['runasroot'] }
