@@ -33,7 +33,6 @@ script: KITCHEN_LOCAL_YAML=kitchen.dokken.yml kitchen verify ${INSTANCE}
 matrix:
   include:
     - before_script:
-      - eval "$(chef shell-init bash)"
       - chef --version
       - cookstyle --version
       - foodcritic --version
