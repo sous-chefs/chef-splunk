@@ -12,8 +12,7 @@ provisioner:
 
 verifier:
   root_path: '/opt/verifier'
-  sudo: false
-
+  
 platforms:
 - name: debian-7
   driver:
