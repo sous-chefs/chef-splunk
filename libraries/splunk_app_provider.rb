@@ -26,8 +26,6 @@ class Chef
     class SplunkApp < Chef::Provider::LWRPBase
       provides :splunk_app
 
-      use_inline_resources # ~FC113
-
       def whyrun_supported?
         true
       end
