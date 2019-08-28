@@ -1,9 +1,9 @@
 #
-# Cookbook Name:: splunk
+# Cookbook:: splunk
 # Recipe:: setup_shclustering
 #
 # Author: Ryan LeViseur <ryanlev@gmail.com>
-# Copyright (c) 2014, Chef Software, Inc <legal@chef.io>
+# Copyright:: (c) 2014, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,18 +45,18 @@ shcluster_app_dir = "#{splunk_dir}/etc/apps/0_autogen_shcluster_config"
 directory shcluster_app_dir do
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
-  mode 0755
+  mode '755'
 end
 
 directory "#{shcluster_app_dir}/local" do
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
-  mode 0755
+  mode '755'
 end
 
 template "#{shcluster_app_dir}/local/server.conf" do # ~FC033
   source 'shclustering/server.conf.erb'
-  mode 0600
+  mode '600'
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
   variables(
@@ -97,5 +97,5 @@ file "#{splunk_dir}/etc/.setup_shcluster" do
   content 'true\n'
   owner node['splunk']['user']['username']
   group node['splunk']['user']['username']
-  mode 00600
+  mode '600'
 end
