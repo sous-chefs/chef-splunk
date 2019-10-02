@@ -37,7 +37,8 @@ action_class do
     service 'splunk' do
       action :nothing
       supports status: true, restart: true
-      provider Chef::Provider::Service::Init
+      provider splunk_service_provider
+      action node['init_package'] == 'systemd' ? %i[start enable] : :start
     end
   end
 end

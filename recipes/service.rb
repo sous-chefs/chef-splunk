@@ -99,5 +99,5 @@ end
 service 'splunk' do
   supports status: true, restart: true
   provider splunk_service_provider
-  action %i[start enable]
+  action node['init_package'] == 'systemd' ? %i[start enable] : :start
 end
