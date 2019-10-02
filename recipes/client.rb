@@ -48,8 +48,8 @@ end
 
 directory "#{splunk_dir}/etc/system/local" do
   recursive true
-  owner node['splunk']['user']['username']
-  group node['splunk']['user']['username']
+  owner splunk_runas_user
+  group splunk_runas_user
 end
 
 template "#{splunk_dir}/etc/system/local/outputs.conf" do
@@ -60,10 +60,14 @@ template "#{splunk_dir}/etc/system/local/outputs.conf" do
     outputs_conf: node['splunk']['outputs_conf']
   )
   notifies :restart, 'service[splunk]'
+  owner splunk_runas_user
+  group splunk_runas_user
 end
 
 template "#{splunk_dir}/etc/system/local/inputs.conf" do
   source 'inputs.conf.erb'
+  owner splunk_runas_user
+  group splunk_runas_user
   mode '644'
   variables inputs_conf: node['splunk']['inputs_conf']
   notifies :restart, 'service[splunk]'
@@ -72,6 +76,8 @@ end
 
 template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
   source 'limits.conf.erb'
+  owner splunk_runas_user
+  group splunk_runas_user
   mode '644'
   variables ratelimit_kbps: node['splunk']['ratelimit_kilobytessec']
   notifies :restart, 'service[splunk]'

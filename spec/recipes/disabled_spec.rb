@@ -4,7 +4,7 @@ describe 'chef-splunk::disabled' do
   context 'splunk is disabled' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node|
-        node.normal['splunk']['disabled'] = true
+        node.force_default['splunk']['disabled'] = true
       end.converge(described_recipe)
     end
 

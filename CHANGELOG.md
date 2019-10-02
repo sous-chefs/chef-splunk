@@ -2,6 +2,15 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 2.0.0 (2019-05-13)
+
+- Fixed issue [#58](https://github.com/chef-cookbooks/chef-splunk/issues/58) Converted the `splunk_installer` definition into a custom resource
+- bumped chef-vault dependency to `~> 3.1.1`
+- moved content from files/default and templates/default in accordance with modern file specificity rules
+- require Chef 13.11 or newer
+- Removed (undocumented) support for Solaris (OmniOS) platform; omnios is not a platform
+  that can currently be tested under ChefSpec and Test Kitchen.
+
 ## 1.7.3 (2018-04-27)
 
 - Set ownership of web.conf file using the splunk owner/group attributes
@@ -17,13 +26,13 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## v1.7.0 (2017-06-25)
 
-- Fix CI and Kitchen Dokken 
-- Fix upgrade recipe 
-- Fix install on SUSE platform 
-- Add Splunk 6.6 URLs as default 
-- Add static list of indexers for client recipe 
-- Add multisite indexer clustering 
-- Add search head clustering 
+- Fix CI and Kitchen Dokken
+- Fix upgrade recipe
+- Fix install on SUSE platform
+- Add Splunk 6.6 URLs as default
+- Add static list of indexers for client recipe
+- Add multisite indexer clustering
+- Add search head clustering
 - Add ['splunk']['splunk_servers'] attribute as an alternative to using chef search functionality to discover splunk servers.
 
 ## v1.6.0 (2016-07-19)

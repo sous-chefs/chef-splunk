@@ -15,16 +15,16 @@ describe 'chef-splunk::setup_shclustering' do
     stub_node(platform: 'ubuntu', version: '16.04') do |node|
       node.automatic['fqdn'] = 'deploy.cluster.example.com'
       node.automatic['ipaddress'] = '192.168.0.10'
-      node.normal['dev_mode'] = true
-      node.normal['splunk']['is_server'] = true
-      node.normal['splunk']['shclustering']['enabled'] = true
+      node.force_default['dev_mode'] = true
+      node.force_default['splunk']['is_server'] = true
+      node.force_default['splunk']['shclustering']['enabled'] = true
     end
   end
 
   context 'default server settings' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
-        node.normal['splunk']['is_server'] = true
+        node.force_default['splunk']['is_server'] = true
         # Populate mock vault data bag to the server
         server.create_data_bag('vault', secrets)
       end.converge(described_recipe)
@@ -38,12 +38,12 @@ describe 'chef-splunk::setup_shclustering' do
   context 'search head cluster member settings' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
-        node.normal['dev_mode'] = true
-        node.normal['splunk']['is_server'] = true
-        node.normal['splunk']['shclustering']['enabled'] = true
-        node.normal['splunk']['shclustering']['deployer_url'] = "https://#{deployer_node.fqdn}:8089"
-        node.normal['splunk']['shclustering']['mgmt_uri'] = "https://#{node['fqdn']}:8089"
-        node.normal['splunk']['shclustering']['shcluster_members'] = [
+        node.force_default['dev_mode'] = true
+        node.force_default['splunk']['is_server'] = true
+        node.force_default['splunk']['shclustering']['enabled'] = true
+        node.force_default['splunk']['shclustering']['deployer_url'] = "https://#{deployer_node['fqdn']}:8089"
+        node.force_default['splunk']['shclustering']['mgmt_uri'] = "https://#{node['fqdn']}:8089"
+        node.force_default['splunk']['shclustering']['shcluster_members'] = [
           'https://shcluster-member01:8089',
           'https://shcluster-member02:8089',
           'https://shcluster-member03:8089',
@@ -51,10 +51,6 @@ describe 'chef-splunk::setup_shclustering' do
         # Populate mock vault data bag to the server
         server.create_data_bag('vault', secrets)
       end.converge(described_recipe)
-    end
-
-    let(:shcluster_servers_list) do
-      chef_run.node['splunk']['shclustering']['shcluster_members'].join(',')
     end
 
     it 'includes chef-vault' do
@@ -105,16 +101,23 @@ describe 'chef-splunk::setup_shclustering' do
     end
 
     context 'while set to captain mode' do
-      before(:each) do
-        chef_run.node.normal['splunk']['shclustering']['mode'] = 'captain'
-        chef_run.converge(described_recipe)
-      end
-
       context 'during initial chef run' do
+        before(:each) do
+          chef_run.node.force_default['splunk']['shclustering']['mode'] = 'captain'
+          allow_any_instance_of(::File).to receive(:exist?).and_call_original
+          allow_any_instance_of(::File).to receive(:exist?)
+            .with('/opt/splunk/etc/.setup_shcluster').and_return(false)
+          chef_run.converge(described_recipe)
+        end
+
+        let(:shcluster_servers_list) do
+          chef_run.node.force_default['splunk']['shclustering']['shcluster_members'].join(';')
+        end
+
         it 'runs command to bootstrap captain with correct parameters' do
           expect(chef_run).to run_execute('bootstrap-shcluster').with(
-            'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list '#{shcluster_servers_list}'\
- -auth '#{secrets['splunk__default']['auth']}'"
+            'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list '#{shcluster_servers_list}' \
+-auth '#{secrets['splunk__default']['auth']}'"
           )
           expect(chef_run.execute('bootstrap-shcluster')).to notify('service[splunk]').to(:restart)
         end

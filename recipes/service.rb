@@ -16,40 +16,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-myuser = 'root'
-myuser = node['splunk']['user']['username'] unless node['splunk']['server']['runasroot']
-
 if node['splunk']['is_server']
   directory splunk_dir do
-    owner myuser
-    group myuser
+    owner splunk_runas_user
+    group splunk_runas_user
     mode '755'
   end
 
   directory "#{splunk_dir}/var" do
-    owner node['splunk']['user']['username']
-    group node['splunk']['user']['username']
+    owner splunk_runas_user
+    group splunk_runas_user
     mode '711'
   end
 
   directory "#{splunk_dir}/var/log" do
-    owner node['splunk']['user']['username']
-    group node['splunk']['user']['username']
+    owner splunk_runas_user
+    group splunk_runas_user
     mode '711'
   end
 
   directory "#{splunk_dir}/var/log/splunk" do
-    owner node['splunk']['user']['username']
-    group node['splunk']['user']['username']
+    owner splunk_runas_user
+    group splunk_runas_user
     mode '700'
   end
 end
 
 if node['splunk']['accept_license']
   # ftr = first time run file created by a splunk install
-  execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes" do
+  execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes --no-prompt" do
     only_if { File.exist? "#{splunk_dir}/ftr" }
+    notifies :create, 'template[/etc/init.d/splunk]'
   end
 end
 
@@ -63,7 +60,7 @@ ruby_block 'splunk_fix_file_ownership' do
     checkowner << "#{splunk_dir}/"
     checkowner.each do |dir|
       next unless File.exist? dir
-      FileUtils.chown_R(myuser, myuser, splunk_dir) if File.stat(dir).uid.eql?(0)
+      FileUtils.chown_R(splunk_runas_user, splunk_runas_user, splunk_dir) if File.stat(dir).uid.eql?(0)
     end
   end
   not_if { node['splunk']['server']['runasroot'] }
@@ -71,34 +68,36 @@ end
 
 Chef::Log.info("Node init package: #{node['init_package']}")
 
-if node['init_package'] == 'systemd'
-  template '/etc/systemd/system/splunk.service' do
-    source 'splunk-systemd.erb'
-    mode '644'
-    variables(
-      splunkdir: splunk_dir,
-      runasroot: node['splunk']['server']['runasroot']
-    )
-  end
+template '/etc/systemd/system/splunkd.service' do
+  source 'splunk-systemd.erb'
+  mode '644'
+  variables(
+    splunkdir: splunk_dir,
+    splunkcmd: splunk_cmd,
+    runasroot: node['splunk']['server']['runasroot']
+  )
+  notifies :run, 'execute[systemctl daemon-reload]'
+  only_if { node['init_package'] == 'systemd' }
+end
 
-  service 'splunk' do
-    supports status: true, restart: true
-    provider Chef::Provider::Service::Systemd
-    action [:enable, :start]
-  end
-else
-  template '/etc/init.d/splunk' do
-    source 'splunk-init.erb'
-    mode '700'
-    variables(
-      splunkdir: splunk_dir,
-      runasroot: node['splunk']['server']['runasroot']
-    )
-  end
+execute 'systemctl daemon-reload' do
+  action :nothing
+end
 
-  service 'splunk' do
-    supports status: true, restart: true
-    provider Chef::Provider::Service::Init
-    action :start
-  end
+template '/etc/init.d/splunk' do
+  source 'splunk-init.erb'
+  mode '700'
+  variables(
+    splunkdir: splunk_dir,
+    splunkuser: splunk_runas_user,
+    splunkcmd: splunk_cmd,
+    runasroot: node['splunk']['server']['runasroot'] == true
+  )
+  notifies :restart, 'service[splunk]'
+end
+
+service 'splunk' do
+  supports status: true, restart: true
+  provider splunk_service_provider
+  action %i[start enable]
 end

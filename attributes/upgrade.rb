@@ -34,8 +34,5 @@ if node['splunk']['upgrade_enabled']
       default['splunk']['upgrade']['server_url'] = 'http://download.splunk.com/releases/4.3.7/splunk/linux/splunk-4.3.7-181874-linux-2.6-intel.deb'
       default['splunk']['upgrade']['forwarder_url'] = 'http://download.splunk.com/releases/4.3.7/universalforwarder/linux/splunkforwarder-4.3.7-181874-linux-2.6-intel.deb'
     end
-  when 'omnios'
-    default['splunk']['upgrade']['server_url'] = 'http://download.splunk.com/releases/4.3.7/splunk/solaris/splunk-4.3.7-181874-solaris-10-intel.pkg.Z'
-    default['splunk']['upgrade']['forwarder_url'] = 'http://download.splunk.com/releases/4.3.7/universalforwarder/solaris/splunkforwarder-4.3.7-181874-solaris-10-intel.pkg.Z'
   end
 end

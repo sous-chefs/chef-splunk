@@ -18,6 +18,10 @@
 # limitations under the License.
 #
 
+def splunk_installed?
+  ::File.exist?(splunk_cmd)
+end
+
 def splunk_file(uri)
   require 'pathname'
   require 'uri'
@@ -57,5 +61,18 @@ def splunk_auth(auth)
     auth
   when Array
     auth.join(':')
+  end
+end
+
+def splunk_runas_user
+  return 'root' if node['splunk']['server']['runasroot'] == true
+  node['splunk']['user']['username']
+end
+
+def splunk_service_provider
+  if node['init_package'] == 'systemd'
+    Chef::Provider::Service::Systemd
+  else
+    Chef::Provider::Service::Init
   end
 end

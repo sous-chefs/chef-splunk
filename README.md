@@ -21,7 +21,7 @@ cookbook doesn't support installing from networked package managers
 
 ## Requirements
 
-Chef 12.1+
+Chef 13.11 or newer
 
 ### Platforms
 
@@ -30,16 +30,16 @@ post-convergence tests. The tested platforms are considered supported.
 This cookbook may work on other platforms or platform versions with or
 without modification.
 
-* Debian 7
-* Ubuntu 12.04, 14.04
-* CentOS 6
-* OmniOS r151008
+* Debian 8, 9
+* Ubuntu 16.04, 18.04
+* CentOS 6, 7
+* Redhat 6, 7
 
 ### Cookbooks
 
 Used for managing secrets, see __Usage__:
 
-* chef-vault
+* chef-vault, >= 3.1.1
 
 ## Attributes
 
@@ -142,7 +142,7 @@ clustering in the `setup_clustering` recipe:
     of the indexer cluster. Defaults to 3, must be a positive integer. Only valid
     when `node['splunk']['clustering']['mode']='master'` and
     `node['splunk']['clustering']['num_sites']`=1 (single-site clustering).
-  * `node['splunk']['clustering']['search_factor']`: The search factor 
+  * `node['splunk']['clustering']['search_factor']`: The search factor
     of the indexer cluster. Only valid when `node['splunk']['clustering']['mode']='master'` and
     `node['splunk']['clustering']['num_sites']`=1 (single-site clustering). Defaults to 2, must be a positive integer.
 
@@ -168,7 +168,7 @@ clustering in the `setup_shclustering` recipe:
 * `node['splunk']['shclustering']['mode']`: The search head clustering mode of the node within
   the cluster. This is used to determine if the node needs to bootstrap the shcluster and initialize
   the node as the captain. Must be set using string literal 'member' or 'captain'.
-* `node['splunk']['shclustering']['label']`: The label for the shcluster. Used to differentiate 
+* `node['splunk']['shclustering']['label']`: The label for the shcluster. Used to differentiate
   from other shclusters in the environment. Must be a string. Defaults to `shcluster1`.
   captain election. Must be set using string literal 'member' or 'captain'.
 * `node['splunk']['shclustering']['replication_factor']`: The replication factor
@@ -181,10 +181,10 @@ clustering in the `setup_shclustering` recipe:
 * `node['splunk']['shclustering']['mgmt_uri']`: The management url for the
   shcluster member node, must be set to a string such as: `https://shx.domain.tld:8089`. You can
   use the node's IP address instead of the FQDN if desired. Defaults to `https://#{node['fqdn']}:8089`.
-* `node['splunk']['shclustering']['shcluster_members']`: An array of all search head 
+* `node['splunk']['shclustering']['shcluster_members']`: An array of all search head
   cluster members referenced by their `mgmt_uri`. Currently this will do a Chef search for nodes that
   are in the same environment, with search head clustering enabled, and with the same
-  cluster label. Alternatively, this can be hard-coded with a list of all shcluster 
+  cluster label. Alternatively, this can be hard-coded with a list of all shcluster
   members including the current node. Must be an array of strings. Defaults to an empty array.
 
 The following attributes are related to setting up a splunk forwarder
@@ -275,16 +275,16 @@ must be set explicitly elsewhere on the node(s).
   attributes based on platform and architecture. These are only loaded
   if `upgrade_enabled` is set.
 
-## Definitions
+## Custom Resources
 
 ### splunk_installer
 
 The Splunk Enterprise and Splunk Universal Forwarder package
 installation is the same save the name of the package and the URL to
-download. This definition abstracts the package installation to a
+download. This custom resource abstracts the package installation to a
 common baseline. Any new platform installation support should be added
-by modifying the definition as appropriate. One goal of this
-definition is to have a single occurance of a `package` resource,
+by modifying the custom resource as appropriate. One goal of this
+custom resource is to have a single occurrence of a `package` resource,
 using the appropriate "local package file" provider per platform. For
 example, on RHEL, we use `rpm` and on Debian we use `dpkg`.
 
@@ -292,9 +292,13 @@ Package files will be downloaded to Chef's file cache path (e.g.,
 `file_cache_path` in `/etc/chef/client.rb`, `/var/chef/cache` by
 default).
 
-The definition has two parameters.
+#### Actions
+* `:run`: install the client and universal forwarder
+* `:remove`: uninstall the client and universal forwarder
 
-* `name`: The name of the package (e.g., `splunk`).
+The custom resource has two parameters.
+
+* `name`: The name of the package (e.g., `splunk`, `splunkforwarder`).
 * `url`: The URL to the package file.
 
 #### Examples
@@ -310,7 +314,7 @@ end
 ```
 
 The `install_forwarder` and `install_server` recipes use the
-definition with the appropriate `url` attribute.
+custom resource with the appropriate `url` attribute.
 
 ## Recipes
 
@@ -398,13 +402,13 @@ recipe on the required node, or just use the `default` recipe.
 
 ### install_forwarder
 
-This recipe uses the `splunk_installer` definition to install the
+This recipe uses the `splunk_installer` custom resource to install the
 splunkforwarder package from the specified URL (via the
 `node['splunk']['forwarder']['url']` attribute).
 
 ### install_server
 
-This recipe uses the `splunk_installer` definition to install the
+This recipe uses the `splunk_installer` custom resource to install the
 splunk (Enterprise server) package from the specified URL (via the
 `node['splunk']['server']['url']` attribute).
 
@@ -467,7 +471,7 @@ node of type cluster master, that is with `splunk_clustering_enable:true` and
 `splunk_clustering_mode:master` in the same `chef_environment` and
 use that server's IP when configuring a cluster search head or a cluster
 peer node to communicate with the cluster master (Refer to `master_uri` attribute
-of clustering stanza in `etc/system/local/server.conf`). 
+of clustering stanza in `etc/system/local/server.conf`).
 
 Indexer clustering is used to achieve some data availability & recovery. To learn
 more about Splunk indexer clustering, refer to [Splunk Docs](http://docs.splunk.com/Documentation/Splunk/latest/Indexer/Aboutclusters).
@@ -481,8 +485,8 @@ the same encrypted data bag with the Splunk `secret` key (to be shared among
 cluster members), using the [chef-vault cookbook](http://ckbk.it/chef-vault)
 helper method, `chef_vault_item`. See __Usage__ for how to set this up. The
 recipe will edit the cluster configuration, and then write a state file to
-`etc/.setup_shcluster` to indicate in future Chef runs that it has set the node's 
-search head clustering configuration. If cluster configuration should be changed, 
+`etc/.setup_shcluster` to indicate in future Chef runs that it has set the node's
+search head clustering configuration. If cluster configuration should be changed,
 then that file should be removed.
 
 It will also search a Chef Server for a Splunk Enterprise (server)
@@ -500,11 +504,11 @@ will build and execute the Splunk command to bootstrap the search head cluster a
 initiate the captain election process.
 
 In addition to using this recipe for configuring the search head cluster members, you
-will also have to manually configure a search head instance to serve as the 
+will also have to manually configure a search head instance to serve as the
 search head cluster's deployer. This is done by adding a `[shclustering]` stanza to
 that instance's `etc/system/local/server.conf` with the same `pass4SymmKey = <secret>`
-and the same `shcluster_label = <splunk_shclustering_label>`. This deployer is optional, but should be configured prior to 
-running the bootstrap on the captain and then the search head cluster member nodes 
+and the same `shcluster_label = <splunk_shclustering_label>`. This deployer is optional, but should be configured prior to
+running the bootstrap on the captain and then the search head cluster member nodes
 configured with this deployer node's mgmt_uri set in the member node's `splunk_shclustering_deployer_url`
 
 Search head clustering is used to achieve high availability & scaling. To learn
@@ -603,6 +607,7 @@ command. Note the search here is for the splunk server only:
 ## License and Authors
 
 - Author: Joshua Timberman <joshua@chef.io>
+- Contributor: Dang H. Nguyen <dang.nguyen@disney.com>
 - Copyright 2013, Chef Software, Inc <legal@chef.io>
 
 Licensed under the Apache License, Version 2.0 (the "License");
