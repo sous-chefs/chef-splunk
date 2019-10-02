@@ -1,6 +1,6 @@
 #
 # Author: Joshua Timberman <joshua@chef.io>
-# Copyright:: 2014-2016, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2014-2019, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,10 +25,6 @@ class Chef
   class Provider
     class SplunkApp < Chef::Provider::LWRPBase
       provides :splunk_app
-
-      def whyrun_supported?
-        true
-      end
 
       action :install do
         splunk_service
