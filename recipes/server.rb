@@ -37,12 +37,14 @@ splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['a
 
 execute 'update-splunk-mgmt-port' do
   command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{splunk_auth_info}'"
+  sensitive true
   not_if "#{splunk_cmd} show splunkd-port -auth '#{splunk_auth_info}' | grep ': #{node['splunk']['mgmt_port']}'"
   notifies :restart, 'service[splunk]'
 end
 
 execute 'enable-splunk-receiver-port' do
   command "#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth '#{splunk_auth_info}'"
+  sensitive true
   not_if do
     # TCPSocket will return a file descriptor if it can open the connection,
     # and raise Errno::ECONNREFUSED or Errno::ETIMEDOUT if it can't. We rescue

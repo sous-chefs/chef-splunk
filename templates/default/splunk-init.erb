@@ -18,38 +18,38 @@ RETVAL=0
 
 splunk_start() {
   echo Starting Splunk...
-  <% if @runasroot %>
-  "<%= @splunkdir %>/bin/splunk" start --no-prompt --answer-yes
-  <% else %>
-  /bin/su - splunk -c "\"<%= @splunkdir %>/bin/splunk\" start --no-prompt --answer-yes"
-  <% end %>
+<% if @runasroot %>
+  <%= @splunkcmd %> start --no-prompt --answer-yes
+<% else %>
+  su - <%= @splunkuser %> -c '<%= @splunkcmd %> start --no-prompt --answer-yes'
+<% end %>
   RETVAL=$?
 }
 splunk_stop() {
   echo Stopping Splunk...
-  <% if @runasroot %>
-  "<%= @splunkdir %>/bin/splunk" stop 
-  <% else %>
-  /bin/su - splunk -c "\"<%= @splunkdir %>/bin/splunk\" stop "
-  <% end %>
+<% if @runasroot %>
+  <%= @splunkcmd %> stop
+<% else %>
+  su - <%= @splunkuser %> -c '<%= @splunkcmd %> stop'
+<% end %>
   RETVAL=$?
 }
 splunk_restart() {
   echo Restarting Splunk...
-  <% if @runasroot %>
-  "<%= @splunkdir %>/bin/splunk" restart 
-  <% else %>
-  /bin/su - splunk -c "\"<%= @splunkdir %>/bin/splunk\" restart "
-  <% end %>
+<% if @runasroot %>
+  <%= @splunkcmd %> restart
+<% else %>
+  su - <%= @splunkuser %> -c '<%= @splunkcmd %> restart'
+<% end %>
   RETVAL=$?
 }
 splunk_status() {
   echo Splunk status:
-  <% if @runasroot %>
-  "<%= @splunkdir %>/bin/splunk" status 
-  <% else %>
-  /bin/su - splunk -c "\"<%= @splunkdir %>/bin/splunk\" status "
-  <% end %>
+<% if @runasroot %>
+  <%= @splunkcmd %> status
+<% else %>
+  su - <%= @splunkuser %> -c '<%= @splunkcmd %> status'
+<% end %>
   RETVAL=$?
 }
 case "$1" in

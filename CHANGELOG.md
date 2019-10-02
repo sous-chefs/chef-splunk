@@ -2,6 +2,22 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 2.0.0 (TBD)
+
+- Fixed issue [#58](https://github.com/chef-cookbooks/chef-splunk/issues/58) Converted the `splunk_installer` definition into a custom resource
+- Fixed issue [#101](https://github.com/chef-cookbooks/chef-splunk/issues/101) Added sensitive true to the execute resources with commands containing splunk auth
+- Fixed issue [#118](https://github.com/chef-cookbooks/chef-splunk/issues/118) removed omnios platform tests
+- bumped chef-vault dependency to `>= 3.1.1`
+- moved content from files/default and templates/default in accordance with modern file specificity rules
+  - Require Chef 13.11 or newer
+- Removed (undocumented) support for Solaris (OmniOS) platform; omnios is not a platform
+  that can currently be tested under ChefSpec and Test Kitchen.
+- fixes to ensure splunk run as a non-root user
+- added helper methods: `#splunk_runas_user` and `#splunk_service_provider`
+- Fixed logic in setup_shcluster recipe and fixed the corresponding chefspec
+- added `sensitive true` for SSL certificate private key and certificate resources
+- ensured yum-centos repository is enabled in Test Kitchen for tests requiring centos or redhat
+
 ## 1.7.3 (2018-04-27)
 
 - Set ownership of web.conf file using the splunk owner/group attributes
@@ -17,13 +33,13 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## v1.7.0 (2017-06-25)
 
-- Fix CI and Kitchen Dokken 
-- Fix upgrade recipe 
-- Fix install on SUSE platform 
-- Add Splunk 6.6 URLs as default 
-- Add static list of indexers for client recipe 
-- Add multisite indexer clustering 
-- Add search head clustering 
+- Fix CI and Kitchen Dokken
+- Fix upgrade recipe
+- Fix install on SUSE platform
+- Add Splunk 6.6 URLs as default
+- Add static list of indexers for client recipe
+- Add multisite indexer clustering
+- Add search head clustering
 - Add ['splunk']['splunk_servers'] attribute as an alternative to using chef search functionality to discover splunk servers.
 
 ## v1.6.0 (2016-07-19)

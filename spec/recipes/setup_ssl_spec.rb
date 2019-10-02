@@ -16,9 +16,9 @@ describe 'chef-splunk::setup_ssl' do
   context 'default attribute settings' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
-        node.normal['splunk']['ssl_options']['enable_ssl'] = true
-        node.normal['splunk']['is_server'] = true
-        node.normal['dev_mode'] = true
+        node.force_default['splunk']['ssl_options']['enable_ssl'] = true
+        node.force_default['splunk']['is_server'] = true
+        node.force_default['dev_mode'] = true
         # Populate mock certs data into Chef server
         server.create_data_bag('vault', certs)
       end.converge(described_recipe)
@@ -48,10 +48,10 @@ describe 'chef-splunk::setup_ssl' do
   context 'alternative webui port' do
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
-        node.normal['splunk']['ssl_options']['enable_ssl'] = true
-        node.normal['splunk']['is_server'] = true
-        node.normal['dev_mode'] = true
-        node.normal['splunk']['web_port'] = '7777'
+        node.force_default['splunk']['ssl_options']['enable_ssl'] = true
+        node.force_default['splunk']['is_server'] = true
+        node.force_default['dev_mode'] = true
+        node.force_default['splunk']['web_port'] = '7777'
         # Populate mock certs data into Chef server
         server.create_data_bag('vault', certs)
       end.converge(described_recipe)

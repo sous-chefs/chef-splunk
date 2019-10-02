@@ -42,23 +42,25 @@ end
 template "#{splunk_dir}/etc/system/local/web.conf" do
   source 'system-web.conf.erb'
   variables ssl_options
-  owner node['splunk']['user']['username']
-  group node['splunk']['user']['username']
+  owner splunk_runas_user
+  group splunk_runas_user
   notifies :restart, 'service[splunk]'
 end
 
 file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['keyfile']}" do
   content certs[ssl_options['keyfile']]
-  owner node['splunk']['user']['username']
-  group node['splunk']['user']['username']
+  owner splunk_runas_user
+  group splunk_runas_user
   mode '600'
+  sensitive true
   notifies :restart, 'service[splunk]'
 end
 
 file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['crtfile']}" do
   content certs[ssl_options['crtfile']]
-  owner node['splunk']['user']['username']
-  group node['splunk']['user']['username']
+  owner splunk_runas_user
+  group splunk_runas_user
   mode '600'
+  sensitive true
   notifies :restart, 'service[splunk]'
 end

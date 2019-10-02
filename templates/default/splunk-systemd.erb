@@ -6,14 +6,17 @@ After=network.target
 
 [Service]
 Type=forking
-RemainAfterExit=yes
+RemainAfterExit=no
 <% if ! @runasroot %>
 User=splunk
+Group=splunk
 <% end %>
-ExecStart=<%= @splunkdir %>/bin/splunk start --no-prompt --answer-yes
-ExecStop=<%= @splunkdir %>/bin/splunk stop
-ExecReload=<%= @splunkdir %>/bin/splunk restart
+LimitNOFILE=65536
+ExecStart=<%= @splunkcmd %> start --accept-license --answer-yes --no-prompt
+ExecStop=<%= @splunkcmd %> stop
+ExecReload=<%= @splunkcmd %> restart
 PIDFile=<%= @splunkdir %>/var/run/splunk/splunkd.pid
 
 [Install]
 WantedBy=multi-user.target
+Alias=splunk.service

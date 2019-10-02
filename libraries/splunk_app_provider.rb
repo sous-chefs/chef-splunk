@@ -40,6 +40,8 @@ class Chef
               source new_resource.cookbook_file
               cookbook new_resource.cookbook
               checksum new_resource.checksum
+              owner splunk_runas_user
+              group splunk_runas_user
               notifies :run, "execute[splunk-install-#{new_resource.app_name}]", :immediately
             end
           elsif new_resource.remote_file
@@ -47,6 +49,8 @@ class Chef
             remote_file app_package do
               source new_resource.remote_file
               checksum new_resource.checksum
+              owner splunk_runas_user
+              group splunk_runas_user
               notifies :run, "execute[splunk-install-#{new_resource.app_name}]", :immediately
             end
           elsif new_resource.remote_directory
@@ -54,6 +58,10 @@ class Chef
             remote_directory app_dir do
               source new_resource.remote_directory
               cookbook new_resource.cookbook
+              owner splunk_runas_user
+              group splunk_runas_user
+              files_owner splunk_runas_user
+              files_group splunk_runas_user
               notifies :restart, 'service[splunk]', :immediately
             end
           else
@@ -63,6 +71,7 @@ class Chef
           dir = app_dir
 
           execute "splunk-install-#{new_resource.app_name}" do
+            sensitive true
             command "#{splunk_cmd} install app #{app_package} -auth #{splunk_auth(new_resource.splunk_auth)}"
             not_if { ::File.exist?("#{dir}/default/app.conf") }
           end
@@ -71,13 +80,16 @@ class Chef
         directory "#{app_dir}/local" do
           recursive true
           mode '755'
-          owner node['splunk']['user']['username'] unless node['splunk']['server']['runasroot']
+          owner splunk_runas_user
+          group splunk_runas_user
         end
 
         if new_resource.templates
           new_resource.templates.each do |t|
             template "#{app_dir}/local/#{t}" do
               source "#{new_resource.app_name}/#{t}.erb"
+              owner splunk_runas_user
+              group splunk_runas_user
               mode '644'
               notifies :restart, 'service[splunk]'
             end
@@ -90,6 +102,8 @@ class Chef
         directory app_dir do
           action :delete
           recursive true
+          owner splunk_runas_user
+          group splunk_runas_user
           notifies :restart, 'service[splunk]'
         end
       end
@@ -98,6 +112,7 @@ class Chef
         unless app_enabled? # ~FC023
           splunk_service
           execute "splunk-enable-#{new_resource.app_name}" do
+            sensitive true
             command "#{splunk_cmd} enable app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}"
             notifies :restart, 'service[splunk]'
           end
@@ -108,6 +123,7 @@ class Chef
         if app_enabled? # ~FC023
           splunk_service
           execute "splunk-disable-#{new_resource.app_name}" do
+            sensitive true
             command "#{splunk_cmd} disable app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}"
             not_if { ::File.exist?("#{splunk_dir}/etc/disabled-apps/#{new_resource.app_name}") }
             notifies :restart, 'service[splunk]'
@@ -148,9 +164,7 @@ class Chef
       end
 
       def install_dependencies
-        new_resource.app_dependencies.each do |pkg|
-          package pkg
-        end
+        package new_resource.app_dependencies
       end
     end
   end

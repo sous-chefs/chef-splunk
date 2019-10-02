@@ -16,6 +16,12 @@ platforms:
   - name: opensuse-leap-42
   - name: ubuntu-16.04
   - name: ubuntu-18.04
+  - name: redhat-6
+    driver:
+      box: generic/rhel6
+  - name: redhat-7
+    driver:
+      box: generic/rhel7
 
 suites:
   - name: client
@@ -27,7 +33,15 @@ suites:
       splunk:
         accept_license: true
 
-  - name: client-inputs-outputs
+  - name: uninstall_forwarder
+    run_list:
+      - recipe[test::uninstall_forwarder]
+    attributes:
+      dev_mode: true
+      splunk:
+        accept_license: true
+
+  - name: client-inputs-outputs-chef
     run_list:
       - recipe[chef-splunk::default]
       - recipe[test::default]
