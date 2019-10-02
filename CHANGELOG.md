@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 2.0.0 (TBD)
+## 2.0.0 (2019-10-01)
 
 - Fixed issue [#58](https://github.com/chef-cookbooks/chef-splunk/issues/58) Converted the `splunk_installer` definition into a custom resource
 - Fixed issue [#101](https://github.com/chef-cookbooks/chef-splunk/issues/101) Added sensitive true to the execute resources with commands containing splunk auth
