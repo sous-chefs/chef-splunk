@@ -21,7 +21,7 @@ cookbook doesn't support installing from networked package managers
 
 ## Requirements
 
-Chef 13.11 or newer
+Chef 12.1 or newer
 
 ### Platforms
 
