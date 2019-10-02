@@ -15,4 +15,4 @@ depends 'chef-vault', '>= 3.1.1'
 
 source_url 'https://github.com/chef-cookbooks/chef-splunk'
 issues_url 'https://github.com/chef-cookbooks/chef-splunk/issues'
-chef_version '>= 12.1'
+chef_version '>= 13.11'

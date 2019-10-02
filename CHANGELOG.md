@@ -9,6 +9,7 @@ This file is used to list changes made in each version of the splunk cookbook.
 - Fixed issue [#118](https://github.com/chef-cookbooks/chef-splunk/issues/118) removed omnios platform tests
 - bumped chef-vault dependency to `>= 3.1.1`
 - moved content from files/default and templates/default in accordance with modern file specificity rules
+  - Require Chef 13.11 or newer
 - Removed (undocumented) support for Solaris (OmniOS) platform; omnios is not a platform
   that can currently be tested under ChefSpec and Test Kitchen.
 - fixes to ensure splunk run as a non-root user
