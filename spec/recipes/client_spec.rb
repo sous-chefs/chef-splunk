@@ -13,6 +13,7 @@ describe 'chef-splunk::client' do
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['receiver_port'] = '1648'
+        node.force_default['splunk']['server']['runasroot'] = false
       end
     end
 
@@ -24,12 +25,14 @@ describe 'chef-splunk::client' do
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['receiver_port'] = '1648'
+        node.force_default['splunk']['server']['runasroot'] = false
       end
     end
 
     let(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
         node.force_default['dev_mode'] = true
+        node.force_default['splunk']['server']['runasroot'] = false
         # Publish mock indexer nodes to the server
         server.create_node(splunk_indexer1)
         server.create_node(splunk_indexer2)
@@ -67,6 +70,7 @@ describe 'chef-splunk::client' do
       ChefSpec::ServerRunner.new do |node|
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['server_list'] = 'indexers.splunkcloud.com:9997'
+        node.force_default['splunk']['server']['runasroot'] = false
       end.converge(described_recipe)
     end
 
