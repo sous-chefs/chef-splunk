@@ -2,10 +2,16 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 2.1.0 (TBD)
+- Added `upgrade` action to `splunk_installer` resource
+- Fixed `chef-splunk::upgrade` recipe to actually upgrade splunk
+- Fixed issue [#122](https://github.com/chef-cookbooks/chef-splunk/issues/122) removed `initial_captain` reference from comment
+
 ## 2.0.0 (2019-10-01)
 
 - Fixed issue [#58](https://github.com/chef-cookbooks/chef-splunk/issues/58) Converted the `splunk_installer` definition into a custom resource
 - Fixed issue [#101](https://github.com/chef-cookbooks/chef-splunk/issues/101) Added sensitive true to the execute resources with commands containing splunk auth
+- Fixed issue [#106](https://github.com/chef-cookbooks/chef-splunk/issues/106) splunk service runs as splunk user now
 - Fixed issue [#118](https://github.com/chef-cookbooks/chef-splunk/issues/118) removed omnios platform tests
 - bumped chef-vault dependency to `>= 3.1.1`
 - moved content from files/default and templates/default in accordance with modern file specificity rules

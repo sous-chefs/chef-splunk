@@ -66,7 +66,8 @@ suites:
 
   - name: server-runas-root
     run_list:
-      - recipe[chef-splunk::default]
+      - recipe[test::default]
+      - recipe[chef-splunk]
     attributes:
       dev_mode: true
       splunk:
@@ -79,7 +80,8 @@ suites:
 
   - name: server-runas-splunk
     run_list:
-      - recipe[chef-splunk::default]
+      - recipe[test::default]
+      - recipe[chef-splunk]
     attributes:
       dev_mode: true
       splunk:
@@ -93,7 +95,8 @@ suites:
 
   - name: server-cluster-master
     run_list:
-      - recipe[chef-splunk::default]
+      - recipe[test::default]
+      - recipe[chef-splunk]
     attributes:
       dev_mode: true
       splunk:
@@ -111,7 +114,8 @@ suites:
 
   - name: server-shcluster-member
     run_list:
-      - recipe[chef-splunk::default]
+      - recipe[test::default]
+      - recipe[chef-splunk]
     attributes:
       dev_mode: true
       splunk:
@@ -127,14 +131,16 @@ suites:
 
   - name: disabled
     run_list:
-      - recipe[chef-splunk::default]
+      - recipe[test::default]
+      - recipe[chef-splunk]
     attributes:
       splunk:
         disabled: true
 
   - name: upgrade_client
     run_list:
-      - recipe[chef-splunk::default]
+      - recipe[test::default]
+      - recipe[chef-splunk]
       - recipe[chef-splunk::upgrade]
     attributes:
       dev_mode: true
@@ -144,7 +150,8 @@ suites:
 
   - name: upgrade_server
     run_list:
-      - recipe[chef-splunk::default]
+      - recipe[test::default]
+      - recipe[chef-splunk]
       - recipe[chef-splunk::upgrade]
     attributes:
       dev_mode: true
@@ -157,6 +164,7 @@ suites:
     run_list:
       - recipe[chef-splunk::default]
       - recipe[test::default]
+      - recipe[test::splunk_app]
     attributes:
       dev_mode: true
       splunk:
@@ -169,6 +177,7 @@ suites:
     run_list:
       - recipe[chef-splunk::default]
       - recipe[test::default]
+      - recipe[test::splunk_app]
     attributes:
       dev_mode: true
       splunk:

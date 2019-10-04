@@ -12,20 +12,16 @@ describe 'chef-splunk::upgrade' do
       end.converge(described_recipe)
     end
 
-    it 'stops splunk with a special service resource' do # ~FC005
-      expect(chef_run).to stop_service('splunk_stop').with(
-        'service_name' => 'splunk'
-      )
-    end
-
-    it 'ran the splunk installer' do
-      expect(chef_run).to run_splunk_installer('splunk').with(url: url)
+    it 'ran the splunk installer to upgrade' do
+      expect(chef_run).to upgrade_splunk_installer('splunk upgrade').with(url: url)
+      resource = chef_run.splunk_installer('splunk upgrade')
+      expect(resource).to notify('service[splunk]').to(:stop).before
+      expect(resource).to notify('execute[splunk-unattended-upgrade]').to(:run).immediately
+      expect(resource).to notify('service[splunk]').to(:start).delayed
     end
 
     it 'runs an unattended upgrade (starts splunk)' do
-      expect(chef_run).to run_execute('splunk-unattended-upgrade').with(
-        'command' => '/opt/splunk/bin/splunk start --accept-license --answer-yes'
-      )
+      expect(chef_run.execute('splunk-unattended-upgrade')).to do_nothing
     end
   end
 
@@ -40,20 +36,16 @@ describe 'chef-splunk::upgrade' do
       end.converge(described_recipe)
     end
 
-    it 'stops splunk with a special service resource' do # ~FC005
-      expect(chef_run).to stop_service('splunk_stop').with(
-        'service_name' => 'splunk'
-      )
-    end
-
-    it 'ran the splunk installer' do
-      expect(chef_run).to run_splunk_installer('splunkforwarder').with(url: url)
+    it 'ran the splunk installer to upgrade forwarder' do
+      expect(chef_run).to upgrade_splunk_installer('splunkforwarder upgrade').with(url: url)
+      resource = chef_run.splunk_installer('splunkforwarder upgrade')
+      expect(resource).to notify('service[splunk]').to(:stop).before
+      expect(resource).to notify('execute[splunk-unattended-upgrade]').to(:run).immediately
+      expect(resource).to notify('service[splunk]').to(:start).delayed
     end
 
     it 'runs an unattended upgrade (starts splunk)' do
-      expect(chef_run).to run_execute('splunk-unattended-upgrade').with(
-        'command' => '/opt/splunkforwarder/bin/splunk start --accept-license --answer-yes'
-      )
+      expect(chef_run.execute('splunk-unattended-upgrade')).to do_nothing
     end
   end
 end

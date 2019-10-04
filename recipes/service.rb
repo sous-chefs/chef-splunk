@@ -16,6 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+if node['splunk']['accept_license'] != true
+  Chef::Log.fatal('You did not accept the license (set node["splunk"]["accept_license"] to true)')
+  raise 'Splunk license was not accepted'
+end
+
 if node['splunk']['is_server']
   directory splunk_dir do
     owner splunk_runas_user
@@ -42,12 +47,11 @@ if node['splunk']['is_server']
   end
 end
 
-if node['splunk']['accept_license']
-  # ftr = first time run file created by a splunk install
-  execute "#{splunk_cmd} enable boot-start --accept-license --answer-yes --no-prompt" do
-    only_if { File.exist? "#{splunk_dir}/ftr" }
-    notifies :create, 'template[/etc/init.d/splunk]'
-  end
+# ftr = first time run file created by a splunk install
+execute "#{splunk_cmd} enable boot-start" do
+  command "#{splunk_cmd} enable boot-start --accept-license --answer-yes --no-prompt"
+  only_if { File.exist? "#{splunk_dir}/ftr" }
+  notifies :create, 'template[/etc/init.d/splunk]'
 end
 
 # If we run as splunk user do a recursive chown to that user for all splunk
@@ -76,7 +80,7 @@ template '/etc/systemd/system/splunkd.service' do
     splunkcmd: splunk_cmd,
     runasroot: node['splunk']['server']['runasroot']
   )
-  notifies :run, 'execute[systemctl daemon-reload]'
+  notifies :run, 'execute[systemctl daemon-reload]', :immediately
   only_if { node['init_package'] == 'systemd' }
 end
 
@@ -93,6 +97,7 @@ template '/etc/init.d/splunk' do
     splunkcmd: splunk_cmd,
     runasroot: node['splunk']['server']['runasroot'] == true
   )
+  notifies :run, 'execute[systemctl daemon-reload]', :immediately
   notifies :restart, 'service[splunk]'
 end
 
