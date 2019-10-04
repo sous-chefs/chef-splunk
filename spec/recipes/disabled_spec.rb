@@ -12,12 +12,8 @@ describe 'chef-splunk::disabled' do
       expect(chef_run).to stop_service('splunk')
     end
 
-    it 'uninstalls the splunk package' do
-      expect(chef_run).to remove_package('splunk')
-    end
-
-    it 'uninstalls the splunkforwarder package' do
-      expect(chef_run).to remove_package('splunkforwarder')
+    it 'uninstalls the splunk and splunkforwarder packages' do
+      expect(chef_run).to remove_package(%w(splunk splunkforwarder))
     end
 
     it 'disables splunk startup at boot' do

@@ -66,7 +66,7 @@ template "#{shcluster_app_dir}/local/server.conf" do # ~FC033
   notifies :restart, 'service[splunk]', :immediately
 end
 
-# bootstrap the shcluster and elect a captain if initial_captain set to true and this is the initial shcluster build
+# bootstrap the shcluster and the node as a captain if shclustering mode is set to 'captain'
 shcluster_servers_list = node['splunk']['shclustering']['shcluster_members']
 
 # unless shcluster members are staticly assigned via the node attribute,

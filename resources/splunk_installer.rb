@@ -47,11 +47,30 @@ action :run do
   return if splunk_installed?
 
   remote_file cached_package do
+    backup false
+    mode '644'
     source new_resource.url
     action :create_if_missing
   end
 
   declare_resource local_package_resource, new_resource.name do
+    source cached_package.gsub(/\.Z/, '')
+    version package_file[/#{new_resource.name}-([^-]+)/, 1]
+  end
+end
+
+action :upgrade do
+  return unless splunk_installed?
+
+  remote_file cached_package do
+    backup false
+    mode '644'
+    source new_resource.url
+    action :create_if_missing
+  end
+
+  declare_resource local_package_resource, new_resource.name do
+    action :upgrade
     source cached_package.gsub(/\.Z/, '')
     version package_file[/#{new_resource.name}-([^-]+)/, 1]
   end
