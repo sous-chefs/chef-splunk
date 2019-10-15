@@ -2,10 +2,23 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 2.1.0 (TBD)
+## 3.0.0 (TBD)
 - Added `upgrade` action to `splunk_installer` resource
 - Fixed `chef-splunk::upgrade` recipe to actually upgrade splunk
 - Fixed issue [#122](https://github.com/chef-cookbooks/chef-splunk/issues/122) removed `initial_captain` reference from comment
+- `node['splunk']['accept_license']` is strictly enforced and documented that the value must be set to boolean `true`. Anything else will be considered not acceptig the license agreement.
+- Ensures that the splunk directory has proper permissions and ownership set when splunk is run as a non-root user
+- DRY chefspec examples
+- cookstyle auto-corrects
+- added Test Kitchen suites: `upgrade_server` and `uninstall_forwarder`
+- Updated travis-ci config to include more test cases
+- Fixed default upgrade URLs so they are not HTTP Redirect targets for debian platform family
+- Accepted the license in startup scripts if accepted in attributes
+- removed from Test Kitchen under dokken: debian 8
+- added to Test Kitchen under dokken: debian 10 and ubuntu 18.04
+- ensured that all recipes declare the service[splunk] resource consistently
+- added helper methods: `#svc_command` and `#license_accepted?`
+- Configure amazonlinux and fedora instances in kitchen-dokken and chefspec to run correctly.
 
 ## 2.0.0 (2019-10-01)
 
