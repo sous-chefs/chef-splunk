@@ -17,13 +17,13 @@
 # limitations under the License.
 #
 
-if node['splunk']['disabled']
+if node['splunk']['disabled'] == true
   include_recipe 'chef-splunk::disabled'
   Chef::Log.debug('Splunk is disabled on this node.')
   return
 end
 
-if node['splunk']['is_server']
+if node['splunk']['is_server'] == true
   include_recipe 'chef-splunk::server'
 else
   include_recipe 'chef-splunk::client'

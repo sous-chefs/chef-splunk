@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 describe 'chef-splunk::upgrade' do
   context 'is server' do
@@ -12,20 +12,8 @@ describe 'chef-splunk::upgrade' do
       end.converge(described_recipe)
     end
 
-    it 'stops splunk with a special service resource' do # ~FC005
-      expect(chef_run).to stop_service('splunk_stop').with(
-        'service_name' => 'splunk'
-      )
-    end
-
-    it 'ran the splunk installer' do
-      expect(chef_run).to run_splunk_installer('splunk').with(url: url)
-    end
-
-    it 'runs an unattended upgrade (starts splunk)' do
-      expect(chef_run).to run_execute('splunk-unattended-upgrade').with(
-        'command' => '/opt/splunk/bin/splunk start --accept-license --answer-yes'
-      )
+    it 'ran the splunk installer to upgrade' do
+      expect(chef_run).to upgrade_splunk_installer('splunk upgrade').with(url: url)
     end
   end
 
@@ -40,20 +28,8 @@ describe 'chef-splunk::upgrade' do
       end.converge(described_recipe)
     end
 
-    it 'stops splunk with a special service resource' do # ~FC005
-      expect(chef_run).to stop_service('splunk_stop').with(
-        'service_name' => 'splunk'
-      )
-    end
-
-    it 'ran the splunk installer' do
-      expect(chef_run).to run_splunk_installer('splunkforwarder').with(url: url)
-    end
-
-    it 'runs an unattended upgrade (starts splunk)' do
-      expect(chef_run).to run_execute('splunk-unattended-upgrade').with(
-        'command' => '/opt/splunkforwarder/bin/splunk start --accept-license --answer-yes'
-      )
+    it 'ran the splunk installer to upgrade forwarder' do
+      expect(chef_run).to upgrade_splunk_installer('splunkforwarder upgrade').with(url: url)
     end
   end
 end

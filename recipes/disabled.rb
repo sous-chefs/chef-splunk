@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: disabled
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,12 @@
 # limitations under the License.
 #
 
-unless node['splunk']['disabled']
-  Chef::Log.debug('The chef-splunk::disabled recipe was added to the node,')
-  Chef::Log.debug('but the attribute to disable splunk was not set.')
+if node['splunk']['disabled'] == false
+  log 'splunk is not disabled' do
+    message 'The chef-splunk::disabled recipe was added to the node, ' \
+            'but the attribute to disable splunk was not set.'
+    level :debug
+  end
   return
 end
 
@@ -28,13 +31,12 @@ service 'splunk' do
   action :stop
 end
 
-%w(splunk splunkforwarder).each do |pkg|
-  package pkg do
-    ignore_failure true
-    action :remove
-  end
+package %w(splunk splunkforwarder) do
+  ignore_failure true
+  action :remove
 end
 
-execute "#{splunk_dir}/bin/splunk disable boot-start" do
+execute "#{splunk_cmd} disable boot-start" do
+  user 'root'
   ignore_failure true
 end

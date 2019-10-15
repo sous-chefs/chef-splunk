@@ -17,7 +17,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 def splunk_installed?
   ::File.exist?(splunk_cmd)
 end
@@ -30,6 +29,21 @@ end
 
 def splunk_cmd
   "#{splunk_dir}/bin/splunk"
+end
+
+# a way to return the right command to stop, start, and restart the splunk
+# service based on license acceptance and run-as user
+def svc_command(action = 'start')
+  unless license_accepted?
+    Chef::Log.fatal('You did not accept the license (set node["splunk"]["accept_license"] to true)')
+    Chef::Log.fatal('Splunk is stopped and cannot be restarted until the license is accepted!')
+    raise 'Failed to upgrade'
+  end
+
+  command = "#{splunk_cmd} #{action} --answer-yes --no-prompt --accept-license"
+
+  return command if splunk_runas_user == 'root'
+  "su - #{splunk_runas_user} -c '#{command}'"
 end
 
 def splunk_dir
@@ -75,4 +89,8 @@ def splunk_service_provider
   else
     Chef::Provider::Service::Init
   end
+end
+
+def license_accepted?
+  node['splunk']['accept_license'] == true
 end

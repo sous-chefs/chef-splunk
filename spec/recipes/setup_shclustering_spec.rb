@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 describe 'chef-splunk::setup_shclustering' do
   let(:secrets) do
@@ -18,20 +18,7 @@ describe 'chef-splunk::setup_shclustering' do
       node.force_default['dev_mode'] = true
       node.force_default['splunk']['is_server'] = true
       node.force_default['splunk']['shclustering']['enabled'] = true
-    end
-  end
-
-  context 'default server settings' do
-    let(:chef_run) do
-      ChefSpec::ServerRunner.new do |node, server|
-        node.force_default['splunk']['is_server'] = true
-        # Populate mock vault data bag to the server
-        server.create_data_bag('vault', secrets)
-      end.converge(described_recipe)
-    end
-
-    it 'does nothing' do
-      expect(chef_run.resource_collection).to be_empty
+      node.force_default['splunk']['accept_license'] = true
     end
   end
 
@@ -41,6 +28,7 @@ describe 'chef-splunk::setup_shclustering' do
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['shclustering']['enabled'] = true
+        node.force_default['splunk']['accept_license'] = true
         node.force_default['splunk']['shclustering']['deployer_url'] = "https://#{deployer_node['fqdn']}:8089"
         node.force_default['splunk']['shclustering']['mgmt_uri'] = "https://#{node['fqdn']}:8089"
         node.force_default['splunk']['shclustering']['shcluster_members'] = [

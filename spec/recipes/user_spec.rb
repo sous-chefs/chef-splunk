@@ -1,4 +1,4 @@
-require_relative '../spec_helper.rb'
+require 'spec_helper'
 
 describe 'chef-splunk::user' do
   context 'os linux' do

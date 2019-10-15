@@ -23,6 +23,27 @@ cookbook doesn't support installing from networked package managers
 
 Chef 13.11 or newer
 
+
+## License Acceptance
+In the past, it was sufficient to set the `node['splunk']['accept_license']` attribute
+either in a wrapper cookbook, role, or chef environnment and the recipes in this cookbook
+will enable and run the splunk service with `--accept-license`. Starting with version 3.0.0,
+this attribute must be set to to `true`. A value resulting in anything other than boolean true will
+be considered as not accepting the splunk license agreement.
+
+For example, these will not accept the Splunk license:
+```
+node['splunk']['accept_license'] = false
+node['splunk'] = { 'accept_license' => nil }
+node['splunk']['accept_license'] = ''
+node['splunk']['accept_license'] = 'true'
+```
+
+Only this will accept the license:
+```
+node['splunk']['accept_license'] = true
+```
+
 ### Platforms
 
 This cookbook uses Test Kitchen to do cross-platform convergence and
@@ -34,6 +55,9 @@ without modification.
 * Ubuntu 16.04, 18.04
 * CentOS 6, 7
 * Redhat 6, 7
+
+By default, only 64-bit Splunk server and Splunk Universal Forwarder will be installed or upgraded by this cookbook.
+
 
 ### Cookbooks
 
@@ -262,7 +286,7 @@ node.default['splunk']['inputs_conf']['inputs'] = [
 ```
 
 The following attributes are related to upgrades in the `upgrade`
-recipe. **Note** The version is set to 4.3.7 and should be modified to
+recipe. **Note** The version is set to 6.6.0 and should be modified to
 suit in a role or wrapper, since we don't know what upgrade versions
 may be relevant. Enabling the upgrade and blindly using the default
 URLs may have undesirable consequences, hence this is not enabled, and
@@ -274,6 +298,7 @@ must be set explicitly elsewhere on the node(s).
 * `node['splunk']['upgrade']`: Sets `server_url` and `forwarder_url`
   attributes based on platform and architecture. These are only loaded
   if `upgrade_enabled` is set.
+* All URLs set in attributes must be direct download links and not redirects
 
 ## Custom Resources
 
@@ -522,7 +547,7 @@ more about Splunk search head clustering, refer to [Splunk Docs](http://docs.spl
 
 This recipe can be used to upgrade a splunk installation, for example
 from an existing 4.2.1 to 4.3.7. The default recipe can be used for
-6.0.1 after upgrading earlier versions is completed. Note that the
+7.3.2 after upgrading earlier versions is completed. Note that the
 attributes file is only loaded w/ the URLs to the splunk packages to
 upgrade if the `node['splunk']['upgrade_enabled']` attribute is set to
 true. We recommend setting the actual URL attributes needed in a

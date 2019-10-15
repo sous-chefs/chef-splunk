@@ -46,9 +46,7 @@ a.out
 # Testing #
 ###########
 .rspec
-spec/*
 spec/fixtures/*
-test/*
 features/*
 examples/*
 Procfile

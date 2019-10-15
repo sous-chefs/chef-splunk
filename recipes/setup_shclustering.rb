@@ -23,13 +23,16 @@ unless node['splunk']['shclustering']['enabled']
   return
 end
 
-# ensure that the splunk service resource is available without cloning
-# the resource (CHEF-3694). this is so the later notification works,
-# especially when using chefspec to run this cookbook's specs.
-begin
-  resources('service[splunk]')
-rescue Chef::Exceptions::ResourceNotFound
-  service 'splunk'
+# during an initial install, the start/restart commands must deal with accepting
+# the license. So, we must ensure the service[splunk] resource
+# properly deals with the license.
+edit_resource(:service, 'splunk') do
+  action :nothing
+  supports status: true, restart: true
+  stop_command svc_command('stop')
+  start_command svc_command('start')
+  restart_command svc_command('restart')
+  provider splunk_service_provider
 end
 
 include_recipe 'chef-vault'
@@ -66,7 +69,7 @@ template "#{shcluster_app_dir}/local/server.conf" do # ~FC033
   notifies :restart, 'service[splunk]', :immediately
 end
 
-# bootstrap the shcluster and elect a captain if initial_captain set to true and this is the initial shcluster build
+# bootstrap the shcluster and the node as a captain if shclustering mode is set to 'captain'
 shcluster_servers_list = node['splunk']['shclustering']['shcluster_members']
 
 # unless shcluster members are staticly assigned via the node attribute,

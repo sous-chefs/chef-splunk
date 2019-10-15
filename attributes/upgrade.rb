@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Attributes:: upgrade
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,23 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-if node['splunk']['upgrade_enabled']
-  case node['platform_family']
-  when 'rhel', 'fedora', 'amazon'
-    if node['kernel']['machine'] == 'x86_64'
-      default['splunk']['upgrade']['server_url'] = 'http://download.splunk.com/releases/4.3.7/splunk/linux/splunk-4.3.7-181874-linux-2.6-x86_64.rpm'
-      default['splunk']['upgrade']['forwarder_url'] = 'http://download.splunk.com/releases/4.3.7/universalforwarder/linux/splunkforwarder-4.3.7-181874-linux-2.6-x86_64.rpm'
-    else
-      default['splunk']['upgrade']['server_url'] = 'http://download.splunk.com/releases/4.3.7/splunk/linux/splunk-4.3.7-181874.i386.rpm'
-      default['splunk']['upgrade']['forwarder_url'] = 'http://download.splunk.com/releases/4.3.7/universalforwarder/linux/splunkforwarder-4.3.7-181874.i386.rpm'
-    end
-  when 'debian'
-    if node['kernel']['machine'] == 'x86_64'
-      default['splunk']['upgrade']['server_url'] = 'http://download.splunk.com/releases/4.3.7/splunk/linux/splunk-4.3.7-181874-linux-2.6-amd64.deb'
-      default['splunk']['upgrade']['forwarder_url'] = 'http://download.splunk.com/releases/4.3.7/universalforwarder/linux/splunkforwarder-4.3.7-181874-linux-2.6-amd64.deb'
-    else
-      default['splunk']['upgrade']['server_url'] = 'http://download.splunk.com/releases/4.3.7/splunk/linux/splunk-4.3.7-181874-linux-2.6-intel.deb'
-      default['splunk']['upgrade']['forwarder_url'] = 'http://download.splunk.com/releases/4.3.7/universalforwarder/linux/splunkforwarder-4.3.7-181874-linux-2.6-intel.deb'
-    end
-  end
-end
+# assumes x86_64 only (is there any reason to test i386 anymore?)
+default['splunk']['upgrade']['server_url'] = value_for_platform_family(
+  %w(rhel fedora amazon) => 'https://download.splunk.com/products/splunk/releases/7.3.2/linux/splunk-7.3.2-c60db69f8e32-linux-2.6-x86_64.rpm',
+  ['debian'] => 'https://download.splunk.com/products/splunk/releases/7.3.2/linux/splunk-7.3.2-c60db69f8e32-linux-2.6-amd64.deb'
+)
+
+default['splunk']['upgrade']['forwarder_url'] = value_for_platform_family(
+  %w(rhel fedora amazon) => 'https://download.splunk.com/products/universalforwarder/releases/7.3.2/linux/splunkforwarder-7.3.2-c60db69f8e32-linux-2.6-x86_64.rpm',
+  ['debian'] => 'https://download.splunk.com/products/universalforwarder/releases/7.3.2/linux/splunkforwarder-7.3.2-c60db69f8e32-linux-2.6-amd64.deb'
+)

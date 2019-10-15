@@ -13,14 +13,14 @@ provisioner:
 
 verifier:
   root_path: '/opt/verifier'
-  
+
 platforms:
-- name: debian-7
+- name: debian-9
   driver:
-    image: dokken/debian-7
-    pid_one_command: /sbin/init
+    image: dokken/debian-9
+    pid_one_command: /bin/systemd
     intermediate_instructions:
-      - RUN /usr/bin/apt-get update
+      - RUN /usr/bin/apt-get -y update
       - RUN mkdir -p /data/splunk-test
       # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
       - RUN mkdir -p /opt/splunk/etc
@@ -29,12 +29,12 @@ platforms:
         SLPUNK_WEB_NAME=splunkweb\n
         OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
-- name: debian-9
+- name: debian-10
   driver:
-    image: dokken/debian-9
-    pid_one_command: /bin/systemd
+    image: dokken/debian-10
+    pid_one_command: /sbin/init
     intermediate_instructions:
-      - RUN /usr/bin/apt-get update
+      - RUN /usr/bin/apt-get -y update
       - RUN mkdir -p /data/splunk-test
       # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
       - RUN mkdir -p /opt/splunk/etc
@@ -74,7 +74,7 @@ platforms:
     image: amazonlinux:latest
     platform: amazon
     intermediate_instructions:
-      - RUN yum -y install lsof which systemd-sysv initscripts wget net-tools
+      - RUN yum -y install sudo lsof which systemd-sysv initscripts wget net-tools
       - RUN mkdir -p /data/splunk-test
       # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
       - RUN mkdir -p /opt/splunk/etc
@@ -89,6 +89,7 @@ platforms:
     image: dokken/fedora-latest
     pid_one_command: /usr/lib/systemd/systemd
     intermediate_instructions:
+      - RUN yum install chkconfig -y
       - RUN mkdir -p /data/splunk-test
       # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
       - RUN mkdir -p /opt/splunk/etc
@@ -102,7 +103,21 @@ platforms:
     image: dokken/ubuntu-16.04
     pid_one_command: /bin/systemd
     intermediate_instructions:
-      - RUN /usr/bin/apt-get update
+      - RUN /usr/bin/apt-get -y update
+      - RUN mkdir -p /data/splunk-test
+      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      - RUN mkdir -p /opt/splunk/etc
+      - RUN printf '
+        SPLUNK_SERVER_NAME=Splunkd\n
+        SLPUNK_WEB_NAME=splunkweb\n
+        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
+
+- name: ubuntu-18.04
+  driver:
+    image: dokken/ubuntu-18.04
+    pid_one_command: /bin/systemd
+    intermediate_instructions:
+      - RUN /usr/bin/apt-get -y update
       - RUN mkdir -p /data/splunk-test
       # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
       - RUN mkdir -p /opt/splunk/etc
@@ -127,7 +142,14 @@ suites:
   - name: client
     run_list:
       - recipe[chef-splunk::default]
-      - recipe[test::default]
+    attributes:
+      dev_mode: true
+      splunk:
+        accept_license: true
+
+  - name: uninstall_forwarder
+    run_list:
+      - recipe[test::uninstall_forwarder]
     attributes:
       dev_mode: true
       splunk:
@@ -136,7 +158,6 @@ suites:
   - name: client-inputs-outputs
     run_list:
       - recipe[chef-splunk::default]
-      - recipe[test::default]
     attributes:
       dev_mode: true
       splunk:
@@ -224,10 +245,20 @@ suites:
       splunk:
         disabled: true
 
-  - name: server_lwrps
+  - name: upgrade_server
+    run_list:
+      - recipe[chef-splunk::server]
+      - recipe[chef-splunk::upgrade]
+    attributes:
+      splunk:
+        upgrade_enabled: true
+        accept_license: true
+        is_server: true
+
+  - name: server_resources
     run_list:
       - recipe[chef-splunk::default]
-      - recipe[test::default]
+      - recipe[test::splunk_app]
     attributes:
       dev_mode: true
       splunk:
@@ -236,10 +267,10 @@ suites:
         accept_license: true
         is_server: true
 
-  - name: client_lwrps
+  - name: client_resources
     run_list:
       - recipe[chef-splunk::default]
-      - recipe[test::default]
+      - recipe[test::splunk_app]
     attributes:
       dev_mode: true
       splunk:

@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 shared_examples 'a successful run' do |params|
   it 'includes chef-vault' do
@@ -7,8 +7,9 @@ shared_examples 'a successful run' do |params|
 
   it 'runs edit cluster-config with correct parameters' do
     expect(chef_run).to run_execute('setup-indexer-cluster').with(
-      'command' => '/opt/splunk/bin/splunk edit cluster-config ' +
-                    params + " -secret #{secrets['splunk__default']['secret']} -auth '#{secrets['splunk__default']['auth']}'"
+      command: '/opt/splunk/bin/splunk edit cluster-config ' +
+               params + " -secret notarealsecret -auth 'admin:notarealpassword'",
+      sensitive: true
     )
     expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
   end
@@ -19,22 +20,13 @@ shared_examples 'a successful run' do |params|
 end
 
 describe 'chef-splunk::setup_clustering' do
-  let(:secrets) do
-    {
-      'splunk__default' => {
-        'id' => 'splunk__default',
-        'auth' => 'admin:notarealpassword',
-        'secret' => 'notarealsecret',
-      },
-    }
-  end
-
   let(:chef_run_init) do
     ChefSpec::ServerRunner.new do |node, server|
       node.force_default['dev_mode'] = true
       node.force_default['splunk']['is_server'] = true
+      node.force_default['splunk']['accept_license'] = true
       # Populate mock vault data bag to the server
-      server.create_data_bag('vault', secrets)
+      create_data_bag_item(server, 'vault', 'splunk__default')
     end
   end
 
