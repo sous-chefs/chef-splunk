@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 describe 'chef-splunk::upgrade' do
   context 'is server' do
@@ -14,14 +14,6 @@ describe 'chef-splunk::upgrade' do
 
     it 'ran the splunk installer to upgrade' do
       expect(chef_run).to upgrade_splunk_installer('splunk upgrade').with(url: url)
-      resource = chef_run.splunk_installer('splunk upgrade')
-      expect(resource).to notify('service[splunk]').to(:stop).before
-      expect(resource).to notify('execute[splunk-unattended-upgrade]').to(:run).immediately
-      expect(resource).to notify('service[splunk]').to(:start).delayed
-    end
-
-    it 'runs an unattended upgrade (starts splunk)' do
-      expect(chef_run.execute('splunk-unattended-upgrade')).to do_nothing
     end
   end
 
@@ -38,14 +30,6 @@ describe 'chef-splunk::upgrade' do
 
     it 'ran the splunk installer to upgrade forwarder' do
       expect(chef_run).to upgrade_splunk_installer('splunkforwarder upgrade').with(url: url)
-      resource = chef_run.splunk_installer('splunkforwarder upgrade')
-      expect(resource).to notify('service[splunk]').to(:stop).before
-      expect(resource).to notify('execute[splunk-unattended-upgrade]').to(:run).immediately
-      expect(resource).to notify('service[splunk]').to(:start).delayed
-    end
-
-    it 'runs an unattended upgrade (starts splunk)' do
-      expect(chef_run.execute('splunk-unattended-upgrade')).to do_nothing
     end
   end
 end

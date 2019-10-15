@@ -22,13 +22,16 @@ include_recipe 'chef-splunk::install_server'
 include_recipe 'chef-splunk::service'
 include_recipe 'chef-splunk::setup_auth'
 
-# ensure that the splunk service resource is available without cloning
-# the resource (CHEF-3694). this is so the later notification works,
-# especially when using chefspec to run this cookbook's specs.
-begin
-  resources('service[splunk]')
-rescue Chef::Exceptions::ResourceNotFound
-  service 'splunk'
+# during an initial install, the start/restart commands must deal with accepting
+# the license. So, we must ensure the service[splunk] resource
+# properly deals with the license.
+edit_resource(:service, 'splunk') do
+  action node['init_package'] == 'systemd' ? %i(start enable) : :start
+  supports status: true, restart: true
+  stop_command svc_command('stop')
+  start_command svc_command('start')
+  restart_command svc_command('restart')
+  provider splunk_service_provider
 end
 
 # We can rely on loading the chef_vault_item here, as `setup_auth`

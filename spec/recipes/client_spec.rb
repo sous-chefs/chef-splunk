@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 describe 'chef-splunk::client' do
   before(:each) do
@@ -33,10 +33,15 @@ describe 'chef-splunk::client' do
       ChefSpec::ServerRunner.new do |node, server|
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['server']['runasroot'] = false
+        node.force_default['splunk']['accept_license'] = true
         # Publish mock indexer nodes to the server
         server.create_node(splunk_indexer1)
         server.create_node(splunk_indexer2)
       end.converge(described_recipe)
+    end
+
+    it 'created the service[splunk] resource' do
+      expect(chef_run).to start_service('splunk')
     end
 
     it 'creates the local system directory' do # ~FC005
@@ -71,7 +76,12 @@ describe 'chef-splunk::client' do
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['server_list'] = 'indexers.splunkcloud.com:9997'
         node.force_default['splunk']['server']['runasroot'] = false
+        node.force_default['splunk']['accept_license'] = true
       end.converge(described_recipe)
+    end
+
+    it 'created the service[splunk] resource' do
+      expect(chef_run).to start_service('splunk')
     end
 
     it 'creates the local system directory' do # ~FC005
@@ -102,7 +112,12 @@ describe 'chef-splunk::client' do
       ChefSpec::ServerRunner.new do |node|
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['inputs_conf']['host'] = 'localhost'
+        node.force_default['splunk']['accept_license'] = true
       end.converge(described_recipe)
+    end
+
+    it 'created the service[splunk] resource' do
+      expect(chef_run).to start_service('splunk')
     end
 
     it 'creates an inputs template in the local system directory if it has hosts' do

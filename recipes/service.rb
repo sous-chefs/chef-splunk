@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-if node['splunk']['accept_license'] != true
+unless license_accepted?
   Chef::Log.fatal('You did not accept the license (set node["splunk"]["accept_license"] to true)')
   raise 'Splunk license was not accepted'
 end
@@ -48,8 +48,9 @@ if node['splunk']['is_server']
 end
 
 # ftr = first time run file created by a splunk install
-execute "#{splunk_cmd} enable boot-start" do
-  command "#{splunk_cmd} enable boot-start --accept-license --answer-yes --no-prompt"
+execute 'splunk enable boot-start' do
+  user 'root'
+  command "#{splunk_cmd} enable boot-start --answer-yes --no-prompt#{license_accepted? ? ' --accept-license' : ''}"
   only_if { File.exist? "#{splunk_dir}/ftr" }
   notifies :create, 'template[/etc/init.d/splunk]'
 end
@@ -58,16 +59,11 @@ end
 # files if a few specific files are root owned.
 ruby_block 'splunk_fix_file_ownership' do
   block do
-    checkowner = []
-    checkowner << "#{splunk_dir}/etc/users"
-    checkowner << "#{splunk_dir}/etc/myinstall/splunkd.xml"
-    checkowner << "#{splunk_dir}/"
-    checkowner.each do |dir|
-      next unless File.exist? dir
-      FileUtils.chown_R(splunk_runas_user, splunk_runas_user, splunk_dir) if File.stat(dir).uid.eql?(0)
-    end
+    FileUtils.chown_R(splunk_runas_user, splunk_runas_user, splunk_dir)
+    FileUtils.chmod(0750, Dir.glob("#{splunk_dir}/**/*/"))
   end
-  not_if { node['splunk']['server']['runasroot'] }
+  subscribes :run, 'service[splunk]', :before
+  not_if { node['splunk']['server']['runasroot'] == true }
 end
 
 Chef::Log.info("Node init package: #{node['init_package']}")
@@ -78,7 +74,8 @@ template '/etc/systemd/system/splunkd.service' do
   variables(
     splunkdir: splunk_dir,
     splunkcmd: splunk_cmd,
-    runasroot: node['splunk']['server']['runasroot']
+    runasroot: node['splunk']['server']['runasroot'] == true,
+    accept_license: license_accepted?
   )
   notifies :run, 'execute[systemctl daemon-reload]', :immediately
   only_if { node['init_package'] == 'systemd' }
@@ -86,6 +83,7 @@ end
 
 execute 'systemctl daemon-reload' do
   action :nothing
+  only_if { node['init_package'] == 'systemd' }
 end
 
 template '/etc/init.d/splunk' do
@@ -95,14 +93,21 @@ template '/etc/init.d/splunk' do
     splunkdir: splunk_dir,
     splunkuser: splunk_runas_user,
     splunkcmd: splunk_cmd,
-    runasroot: node['splunk']['server']['runasroot'] == true
+    runasroot: node['splunk']['server']['runasroot'] == true,
+    accept_license: license_accepted?
   )
   notifies :run, 'execute[systemctl daemon-reload]', :immediately
   notifies :restart, 'service[splunk]'
 end
 
-service 'splunk' do
-  supports status: true, restart: true
-  provider splunk_service_provider
+# during an initial install, the start/restart commands must deal with accepting
+# the license. So, we must ensure the service[splunk] resource
+# properly deals with the license.
+edit_resource(:service, 'splunk') do
   action node['init_package'] == 'systemd' ? %i(start enable) : :start
+  supports status: true, restart: true
+  stop_command svc_command('stop')
+  start_command svc_command('start')
+  restart_command svc_command('restart')
+  provider splunk_service_provider
 end

@@ -19,9 +19,9 @@ RETVAL=0
 splunk_start() {
   echo Starting Splunk...
 <% if @runasroot %>
-  <%= @splunkcmd %> start --no-prompt --answer-yes
+  <%= @splunkcmd %> start --answer-yes --no-prompt
 <% else %>
-  su - <%= @splunkuser %> -c '<%= @splunkcmd %> start --no-prompt --answer-yes'
+  su - <%= @splunkuser %> -c '<%= @splunkcmd %> start --answer-yes --no-prompt'
 <% end %>
   RETVAL=$?
 }

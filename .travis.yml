@@ -18,10 +18,36 @@ services: docker
 
 env:
   matrix:
+    - INSTANCE=server-runas-splunk-debian-9
+    - INSTANCE=client-inputs-outputs-debian-9
+    - INSTANCE=upgrade-server-debian-9
+    - INSTANCE=server-runas-root-debian-9
+    - INSTANCE=client-debian-9
+    - INSTANCE=server-runas-splunk-debian-10
+    - INSTANCE=client-inputs-outputs-debian-10
+    - INSTANCE=upgrade-server-debian-10
+    - INSTANCE=server-runas-root-debian-10
+    - INSTANCE=client-debian-10
     - INSTANCE=server-runas-splunk-ubuntu-1604
     - INSTANCE=client-inputs-outputs-ubuntu-1604
+    - INSTANCE=upgrade-server-ubuntu-1604
+    - INSTANCE=server-runas-root-ubuntu-1604
+    - INSTANCE=client-ubuntu-1604
+    - INSTANCE=server-runas-splunk-ubuntu-1804
+    - INSTANCE=client-inputs-outputs-ubuntu-1804
+    - INSTANCE=upgrade-server-ubuntu-1804
+    - INSTANCE=server-runas-root-ubuntu-1804
+    - INSTANCE=client-ubuntu-1804
+    - INSTANCE=server-runas-splunk-centos-6
+    - INSTANCE=client-inputs-outputs-centos-6
+    - INSTANCE=upgrade-server-centos-6
+    - INSTANCE=server-runas-root-centos-6
+    - INSTANCE=client-centos-6
     - INSTANCE=server-runas-splunk-centos-7
     - INSTANCE=client-inputs-outputs-centos-7
+    - INSTANCE=upgrade-server-centos-7
+    - INSTANCE=server-runas-root-centos-7
+    - INSTANCE=client-centos-7
 
 before_script:
   - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )

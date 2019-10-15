@@ -17,9 +17,12 @@
 # limitations under the License.
 #
 
-unless node['splunk']['disabled']
-  Chef::Log.debug('The chef-splunk::disabled recipe was added to the node,')
-  Chef::Log.debug('but the attribute to disable splunk was not set.')
+if node['splunk']['disabled'] == false
+  log 'splunk is not disabled' do
+    message 'The chef-splunk::disabled recipe was added to the node, ' \
+            'but the attribute to disable splunk was not set.'
+    level :debug
+  end
   return
 end
 
@@ -33,6 +36,7 @@ package %w(splunk splunkforwarder) do
   action :remove
 end
 
-execute "#{splunk_dir}/bin/splunk disable boot-start" do
+execute "#{splunk_cmd} disable boot-start" do
+  user 'root'
   ignore_failure true
 end

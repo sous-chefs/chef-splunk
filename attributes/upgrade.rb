@@ -19,10 +19,10 @@
 # assumes x86_64 only (is there any reason to test i386 anymore?)
 default['splunk']['upgrade']['server_url'] = value_for_platform_family(
   %w(rhel fedora amazon) => 'https://download.splunk.com/products/splunk/releases/7.3.2/linux/splunk-7.3.2-c60db69f8e32-linux-2.6-x86_64.rpm',
-  ['debian'] => 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=7.3.2&product=splunk&filename=splunk-7.3.2-c60db69f8e32-linux-2.6-amd64.deb&wget=true'
+  ['debian'] => 'https://download.splunk.com/products/splunk/releases/7.3.2/linux/splunk-7.3.2-c60db69f8e32-linux-2.6-amd64.deb'
 )
 
 default['splunk']['upgrade']['forwarder_url'] = value_for_platform_family(
   %w(rhel fedora amazon) => 'https://download.splunk.com/products/universalforwarder/releases/7.3.2/linux/splunkforwarder-7.3.2-c60db69f8e32-linux-2.6-x86_64.rpm',
-  ['debian'] => 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=7.3.2&product=universalforwarder&filename=splunkforwarder-7.3.2-c60db69f8e32-linux-2.6-amd64.deb&wget=true'
+  ['debian'] => 'https://download.splunk.com/products/universalforwarder/releases/7.3.2/linux/splunkforwarder-7.3.2-c60db69f8e32-linux-2.6-amd64.deb'
 )

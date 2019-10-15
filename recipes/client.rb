@@ -37,13 +37,16 @@ end.join(', ')
 # fallback to statically defined server list as alternative to search
 server_list = node['splunk']['server_list'] if server_list.empty?
 
-# ensure that the splunk service resource is available without cloning
-# the resource (CHEF-3694). this is so the later notification works,
-# especially when using chefspec to run this cookbook's specs.
-begin
-  resources('service[splunk]')
-rescue Chef::Exceptions::ResourceNotFound
-  service 'splunk'
+# during an initial install, the start/restart commands must deal with accepting
+# the license. So, we must ensure the service[splunk] resource
+# properly deals with the license.
+edit_resource(:service, 'splunk') do
+  action node['init_package'] == 'systemd' ? %i(start enable) : :start
+  supports status: true, restart: true
+  stop_command svc_command('stop')
+  start_command svc_command('start')
+  restart_command svc_command('restart')
+  provider splunk_service_provider
 end
 
 directory "#{splunk_dir}/etc/system/local" do

@@ -12,7 +12,7 @@ User=splunk
 Group=splunk
 <% end %>
 LimitNOFILE=65536
-ExecStart=<%= @splunkcmd %> start --accept-license --answer-yes --no-prompt
+ExecStart=<%= @splunkcmd %> start --answer-yes --no-prompt
 ExecStop=<%= @splunkcmd %> stop
 ExecReload=<%= @splunkcmd %> restart
 PIDFile=<%= @splunkdir %>/var/run/splunk/splunkd.pid
