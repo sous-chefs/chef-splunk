@@ -37,7 +37,7 @@ def svc_command(action = 'start')
   unless license_accepted?
     Chef::Log.fatal('You did not accept the license (set node["splunk"]["accept_license"] to true)')
     Chef::Log.fatal('Splunk is stopped and cannot be restarted until the license is accepted!')
-    raise 'Failed to upgrade'
+    raise "Failed to #{action}"
   end
 
   command = "#{splunk_cmd} #{action} --answer-yes --no-prompt --accept-license"
