@@ -2,7 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 3.0.0 (TBD)
+## 3.0.0 (2019-10-15)
+
+- This release is brought to you by @haidangwa. Thanks!
 - Added `upgrade` action to `splunk_installer` resource
 - Fixed `chef-splunk::upgrade` recipe to actually upgrade splunk
 - Fixed issue [#122](https://github.com/chef-cookbooks/chef-splunk/issues/122) removed `initial_captain` reference from comment
