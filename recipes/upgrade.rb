@@ -28,5 +28,6 @@ url_type = node['splunk']['is_server'] == true ? 'server' : 'forwarder'
 
 splunk_installer "#{splunk_package} upgrade" do
   action :upgrade
-  url node['splunk']['upgrade']["#{url_type}_url"]
+  url node['splunk'][url_type]['upgrade']['url']
+  version node['splunk'][url_type]['upgrade']['version']
 end

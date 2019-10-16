@@ -15,15 +15,21 @@
 #
 resource_name :splunk_installer
 
-property :url, String, name_property: true
+property :url, String
+property :package_name, String, name_property: true
+property :version, String
 
 action_class do
   def package_file
-    splunk_file(new_resource.url)
+    if new_resource.url.empty? || new_resource.url.nil?
+      "#{new_resource.package_name}-#{new_resource.version}"
+    else
+      splunk_file(new_resource.url)
+    end
   end
 
   def package_version
-    package_file[/#{new_resource.name}-([^-]+)/, 1]
+    new_resource.version || package_file[/#{new_resource.name}-([^-]+)/, 1]
   end
 
   def cached_package
@@ -63,11 +69,16 @@ action :run do
     use_conditional_get true
     use_etag true
     action :create
+    not_if { new_resource.url.empty? || new_resource.url.nil? }
   end
 
   declare_resource local_package_resource, new_resource.name do
-    source cached_package.gsub(/\.Z/, '')
-    version package_version
+    package_name new_resource.package_name
+    if new_resource.url.empty? || new_resource.url.nil?
+      version package_version
+    else
+      source cached_package.gsub(/\.Z/, '')
+    end
     notifies :start, 'service[splunk]'
   end
 end
@@ -95,12 +106,17 @@ action :upgrade do
     use_conditional_get true
     use_etag true
     action :create
+    not_if { new_resource.url.empty? || new_resource.url.nil? }
   end
 
   declare_resource local_package_resource, new_resource.name do
     action :upgrade
-    source cached_package.gsub(/\.Z/, '')
-    version package_version
+    package_name new_resource.package_name
+    if new_resource.url.empty? || new_resource.url.nil?
+      version package_version
+    else
+      source cached_package.gsub(/\.Z/, '')
+    end
     notifies :stop, 'service[splunk]', :before
     # forwarders can be restarted immediately; otherwise, wait until the end
     if package_file =~ /splunkforwarder/
