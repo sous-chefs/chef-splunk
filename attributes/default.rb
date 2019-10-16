@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Attributes:: default
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -87,16 +87,21 @@ default['splunk']['inputs_conf']['ports'] = []
 # because we don't want to rely on automagic.
 default['splunk']['user']['home'] = '/opt/splunk' if node['splunk']['is_server']
 
-default['splunk']['server']['runasroot'] = true
-
 default['splunk']['splunk_servers'] = []
 
-default['splunk']['forwarder']['url'] = value_for_platform_family(
-  %w(rhel fedora suse amazon) => 'https://download.splunk.com/products/universalforwarder/releases/6.6.0/linux/splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-x86_64.rpm',
-  ['debian'] => 'https://download.splunk.com/products/universalforwarder/releases/6.6.0/linux/splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb'
-)
+default['splunk']['forwarder'] = {
+  'url' => value_for_platform_family(
+    %w(rhel fedora suse amazon) => 'https://download.splunk.com/products/universalforwarder/releases/6.6.0/linux/splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-x86_64.rpm',
+    ['debian'] => 'https://download.splunk.com/products/universalforwarder/releases/6.6.0/linux/splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb'
+  ),
+  'version' => '6.6.0',
+}
 
-default['splunk']['server']['url'] = value_for_platform_family(
-  %w(rhel fedora suse amazon) => 'https://download.splunk.com/products/splunk/releases/6.6.0/linux/splunk-6.6.0-1c4f3bbe1aea-linux-2.6-x86_64.rpm',
-  ['debian'] => 'https://download.splunk.com/products/splunk/releases/6.6.0/linux/splunk-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb'
-)
+default['splunk']['server'] = {
+  'runasroot' => true,
+  'url' => value_for_platform_family(
+    %w(rhel fedora suse amazon) => 'https://download.splunk.com/products/splunk/releases/6.6.0/linux/splunk-6.6.0-1c4f3bbe1aea-linux-2.6-x86_64.rpm',
+    ['debian'] => 'https://download.splunk.com/products/splunk/releases/6.6.0/linux/splunk-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb'
+  ),
+  'version' => '6.6.0',
+}

@@ -26,10 +26,10 @@ Chef 13.11 or newer
 
 ## License Acceptance
 In the past, it was sufficient to set the `node['splunk']['accept_license']` attribute
-either in a wrapper cookbook, role, or chef environnment and the recipes in this cookbook
-will enable and run the splunk service with `--accept-license`. Starting with version 3.0.0,
-this attribute must be set to to `true`. A value resulting in anything other than boolean true will
-be considered as not accepting the splunk license agreement.
+either in a wrapper cookbook, role, or chef environment, and the recipes in this cookbook
+would enable and run the splunk service with `--accept-license`. Starting with version 3.0.0,
+this attribute must be set to boolean `true`. A value resulting in anything other than boolean true will
+be considered as not accepting the Splunk EULA.
 
 For example, these will not accept the Splunk license:
 ```
@@ -74,7 +74,7 @@ used.
 General attributes:
 
 * `node['splunk']['accept_license']`: Whether to accept the Splunk
-  EULA. Default is false. This *must* be set to true for Splunk to be
+  EULA. Default is false. This *must* be set to boolean true for Splunk to be
   functional with this cookbook, which means end users must read the
   EULA and agree to the terms.
 * `node['splunk']['is_server']`: Set this to true if the node is a
@@ -95,10 +95,23 @@ General attributes:
 The two URL attributes below are selected by platform and architecture
 by default.
 
-* `node['splunk']['forwarder']['url']`: The URL to the Splunk
-  Universal Forwarder package file.
-* `node['splunk']['server']['url']`: The URL to the Splunk Enterprise
-  package file.
+* `node['splunk']['forwarder']['url']`: The URL to the Splunk Universal Forwarder package file.
+* `node['splunk']['server']['url']`: The URL to the Splunk Enterprise package file.
+* `node['splunk']['forwarder']['version']`: specifies the splunk universal forwarder version to install. This is ignored if forwarder URL is provided. (Default: 6.6.0)
+* `node['splunk']['server']['version']`: specifies the splunk server version to install. This is ignored if server URL is provided. (Default: 6.6.0)
+* Set these attributes to `nil` or empty string `''` to force installing the packages from the
+  OS package managers. In doing so, server owners are responsible for properly configuring their
+  package manager so chef can install the package.
+
+  For example, each line below will force the chef-client to install Splunk's Universal Forwarder
+  and server from the local package manager:
+  ```
+  node.force_default['splunk']['forwarder']['url'] = ''
+  node.force_default['splunk']['server']['url'] = ''
+  node.force_default['splunk']['forwarder']['url'] = nil
+  node.force_default['splunk']['server']['url'] = nil
+  ```
+
 
 Special attributes for managing the Splunk user:
 
@@ -286,19 +299,33 @@ node.default['splunk']['inputs_conf']['inputs'] = [
 ```
 
 The following attributes are related to upgrades in the `upgrade`
-recipe. **Note** The version is set to 6.6.0 and should be modified to
+recipe. **Note** The default upgrade version is set to 7.3.2 and should be modified to
 suit in a role or wrapper, since we don't know what upgrade versions
 may be relevant. Enabling the upgrade and blindly using the default
 URLs may have undesirable consequences, hence this is not enabled, and
 must be set explicitly elsewhere on the node(s).
 
-* `node['splunk']['upgrade_enabled']`: Controls whether the upgrade is
-  enabled and the `attributes/upgrade.rb` file should be loaded. Set
-  this in a role or wrapper cookbook to perform an upgrade.
-* `node['splunk']['upgrade']`: Sets `server_url` and `forwarder_url`
-  attributes based on platform and architecture. These are only loaded
-  if `upgrade_enabled` is set.
+* `node['splunk']['upgrade_enabled']`: Controls whether the upgrade is enabled and the `attributes/upgrade.rb` file should be loaded. Set this in a role or wrapper cookbook to perform an upgrade.
+
+* `node['splunk']['server']['upgrade']['url']`: This is the URL to the desired server upgrade package only if `upgrade_enabled` is set.
+* `node['splunk']['server']['upgrade']['version']`: specifies the target splunk server version for an upgrade. This is ignored if server upgrade URL is provided. (Default: 7.3.2)
+* `node['splunk']['forwarder']['upgrade']['url']`: This is the URL to the desired forwarder upgrade package only if `upgrade_enabled` is set.
+* `node['splunk']['forwarder']['upgrade']['version']`: specifies the target splunk universal forwarder version for an upgrade. This is ignored if forwarder upgrade URL is provided. (Default: 7.3.2)
+
 * All URLs set in attributes must be direct download links and not redirects
+* Set these attributes to `nil` or empty string `''` to force installing the packages from the
+  OS package managers. In doing so, server owners are responsible for properly configuring their
+  package manager so chef can install the package.
+
+  For example, each line below will force the chef-client to install Splunk's Universal Forwarder and server
+  from the local package manager:
+  ```
+  node.force_default['splunk']['forwarder']['upgrade']['url'] = ''
+  node.force_default['splunk']['server']['upgrade']['url'] = ''
+  node.force_default['splunk']['forwarder']['upgrade']['url'] = nil
+  node.force_default['splunk']['server']['upgrade']['url'] = nil
+  ```
+
 
 ## Custom Resources
 
@@ -318,13 +345,17 @@ Package files will be downloaded to Chef's file cache path (e.g.,
 default).
 
 #### Actions
-* `:run`: install the client and universal forwarder
-* `:remove`: uninstall the client and universal forwarder
+* `:run`: install the splunk server or splunk universal forwarder
+* `:remove`: uninstall the splunk server or splunk universal forwarder
+* `:upgrade`: upgrade an existing splunk or splunk universal forwarder package
 
 The custom resource has two parameters.
 
 * `name`: The name of the package (e.g., `splunk`, `splunkforwarder`).
 * `url`: The URL to the package file.
+* `package_name`: This is the name of the package to install, if it is different from
+  the resource name.
+* `version`: install/upgrade to this version, if `url` is not given
 
 #### Examples
 

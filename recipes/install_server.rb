@@ -19,4 +19,5 @@
 
 splunk_installer 'splunk' do
   url node['splunk']['server']['url']
+  version node['splunk']['server']['version']
 end
