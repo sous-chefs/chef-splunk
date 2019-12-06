@@ -3,7 +3,7 @@ maintainer 'Chef Software, Inc.'
 maintainer_email 'cookbooks@chef.io'
 license 'Apache-2.0'
 description 'Manage Splunk Enterprise or Splunk Universal Forwarder'
-version '3.1.0'
+version '3.1.1'
 
 supports 'debian', '>= 8.9'
 supports 'ubuntu', '>= 16.04'

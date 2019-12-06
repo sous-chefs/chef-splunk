@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: server
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ node.default['splunk']['is_server'] = true
 include_recipe 'chef-splunk::user'
 include_recipe 'chef-splunk::install_server'
 include_recipe 'chef-splunk::service'
-include_recipe 'chef-splunk::setup_auth'
+include_recipe 'chef-splunk::setup_auth' if node['splunk']['setup_auth'] == true
 
 # during an initial install, the start/restart commands must deal with accepting
 # the license. So, we must ensure the service[splunk] resource
