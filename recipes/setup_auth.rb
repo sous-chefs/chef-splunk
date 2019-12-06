@@ -38,12 +38,4 @@ template 'user-seed.conf' do
   mode '600'
   sensitive true
   variables user: user, password: pw
-  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_#{user}_password") }
-end
-
-file "#{splunk_dir}/etc/.setup_#{user}_password" do
-  content 'true\n'
-  owner splunk_runas_user
-  group splunk_runas_user
-  mode '600'
 end
