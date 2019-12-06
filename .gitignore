@@ -30,6 +30,7 @@ tmtags
 .project
 .settings
 mkmf.log
+*.swp
 
 ## COMPILED ##
 ##############
