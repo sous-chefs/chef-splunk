@@ -30,6 +30,18 @@ include_recipe 'chef-vault'
 splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['auth']
 user, pw = splunk_auth_info.split(':')
 
+# during an initial install, the start/restart commands must deal with accepting
+# the license. So, we must ensure the service[splunk] resource
+# properly deals with the license.
+edit_resource(:service, 'splunk') do
+  action node['init_package'] == 'systemd' ? %i(start enable) : :start
+  supports status: true, restart: true
+  stop_command svc_command('stop')
+  start_command svc_command('start')
+  restart_command svc_command('restart')
+  provider splunk_service_provider
+end
+
 template 'user-seed.conf' do
   path "#{splunk_dir}/etc/system/local/user-seed.conf"
   source 'user-seed-conf.erb'
@@ -38,4 +50,5 @@ template 'user-seed.conf' do
   mode '600'
   sensitive true
   variables user: user, password: pw
+  notifies :restart, 'service[splunk]', :immediately
 end
