@@ -2,12 +2,14 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 3,1.1 (2019-12-5)
+## 3.1.1 (2019-12-05)
+
 - Fixes [#125](https://github.com/chef-cookbooks/chef-splunk/issues/125) adds conditional expressions when `node['splunk']['setup_auth']`
 is `false` to bypass the `chef-splunk::setup_auth` recipe.
 - Fixes [#126](https://github.com/chef-cookbooks/chef-splunk/issues/126) creates `$SPLUNK_HOME/etc/system/local/user-seed.conf`
 
 ## 3.1.0 (2019-10-16)
+
 - Fixes [#50](https://github.com/chef-cookbooks/chef-splunk/issues/50) `splunk_installer` now allows for installing the package bundle from OS package managers by specifying `package_name` and `version`
 
 ## 3.0.0 (2019-10-15)
