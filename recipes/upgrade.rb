@@ -23,8 +23,8 @@ unless node['splunk']['upgrade_enabled']
   raise 'Failed to upgrade'
 end
 
-splunk_package = node['splunk']['is_server'] == true ? 'splunk' : 'splunkforwarder'
-url_type = node['splunk']['is_server'] == true ? 'server' : 'forwarder'
+splunk_package = is_server? ? 'splunk' : 'splunkforwarder'
+url_type = is_server? ? 'server' : 'forwarder'
 
 splunk_installer "#{splunk_package} upgrade" do
   action :upgrade

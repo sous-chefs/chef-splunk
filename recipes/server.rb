@@ -55,7 +55,7 @@ execute 'enable-splunk-receiver-port' do
     begin
       ::TCPSocket.new(node['ipaddress'], node['splunk']['receiver_port'])
     rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
-      false
+      true
     end
   end
 end

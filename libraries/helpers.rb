@@ -94,3 +94,8 @@ end
 def license_accepted?
   node['splunk']['accept_license'] == true
 end
+
+# a splunkd instance is either a splunk client (runs universal forwarder only) or a complete server
+def is_server?
+  node['splunk']['is_server'] == true
+end
