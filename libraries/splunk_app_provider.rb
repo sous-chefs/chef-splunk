@@ -105,7 +105,7 @@ class Chef
       end
 
       action :enable do
-        unless app_enabled? # ~FC023
+        unless app_enabled? 
           splunk_service
           execute "splunk-enable-#{new_resource.app_name}" do
             sensitive true
@@ -116,7 +116,7 @@ class Chef
       end
 
       action :disable do
-        if app_enabled? # ~FC023
+        if app_enabled? 
           splunk_service
           execute "splunk-disable-#{new_resource.app_name}" do
             sensitive true

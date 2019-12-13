@@ -44,7 +44,7 @@ describe 'chef-splunk::client' do
       expect(chef_run).to start_service('splunk')
     end
 
-    it 'creates the local system directory' do # ~FC005
+    it 'creates the local system directory' do 
       expect(chef_run).to create_directory('/opt/splunkforwarder/etc/system/local').with(
         'recursive' => true,
         'owner' => 'splunk',
@@ -84,7 +84,7 @@ describe 'chef-splunk::client' do
       expect(chef_run).to start_service('splunk')
     end
 
-    it 'creates the local system directory' do # ~FC005
+    it 'creates the local system directory' do 
       expect(chef_run).to create_directory('/opt/splunkforwarder/etc/system/local').with(
         'recursive' => true,
         'owner' => 'splunk',

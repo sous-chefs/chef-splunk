@@ -56,7 +56,7 @@ directory "#{shcluster_app_dir}/local" do
   mode '755'
 end
 
-template "#{shcluster_app_dir}/local/server.conf" do # ~FC033
+template "#{shcluster_app_dir}/local/server.conf" do 
   source 'shclustering/server.conf.erb'
   mode '600'
   owner splunk_runas_user
@@ -76,7 +76,7 @@ shcluster_servers_list = node['splunk']['shclustering']['shcluster_members']
 # try to find the other shcluster members via Chef search
 if node['splunk']['shclustering']['mode'] == 'captain' &&
    node['splunk']['shclustering']['shcluster_members'].empty?
-  search( # ~FC003
+  search( 
     :node,
     "\
     splunk_shclustering_enabled:true AND \
