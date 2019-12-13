@@ -51,7 +51,7 @@ end
 execute 'splunk enable boot-start' do
   user 'root'
   command "#{splunk_cmd} enable boot-start --answer-yes --no-prompt#{license_accepted? ? ' --accept-license' : ''}"
-  only_if { File.exist? "#{splunk_dir}/ftr" }
+  only_if { ::File.exist? "#{splunk_dir}/ftr" }
   notifies :create, 'template[/etc/init.d/splunk]'
 end
 
