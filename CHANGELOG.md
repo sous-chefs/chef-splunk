@@ -2,11 +2,12 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 3.2.0 (2019-1209)
+## 3.2.0 (TBD)
 - Fixed logic that checks whether a port is listening when enabling splunk ports
 - in `chef-splunk::client`, do not install the forwarder if the server config is being installed
   on a splunkd server
-- adds helper method: `#is_server?` that will return true when the chef node is a splunkd server
+- adds helper method: `#server?` that will return true if the chef node is a splunkd server
+- adds helper method: `#port_open?` that will return true if the local node has a specified port open
 
 ## 3.1.1 (2019-12-05)
 

@@ -21,7 +21,7 @@
 # server (with node['splunk']['is_server'] true). The recipes can be
 # used on their own composed in your own wrapper cookbook or role.
 include_recipe 'chef-splunk::user'
-include_recipe 'chef-splunk::install_forwarder' unless is_server?
+include_recipe 'chef-splunk::install_forwarder' unless server?
 
 splunk_servers = search(
   :node,
@@ -31,13 +31,13 @@ splunk_servers = search(
 end
 
 server_list = if !(node['splunk']['server_list'].nil? || node['splunk']['server_list'].empty?)
-  # fallback to statically defined server list as alternative to search
-  node['splunk']['server_list']
-else
-  splunk_servers.map do |s|
-    "#{s['fqdn'] || s['ipaddress']}:#{s['splunk']['receiver_port']}"
-  end.join(', ')
-end
+                # fallback to statically defined server list as alternative to search
+                node['splunk']['server_list']
+              else
+                splunk_servers.map do |s|
+                  "#{s['fqdn'] || s['ipaddress']}:#{s['splunk']['receiver_port']}"
+                end.join(', ')
+              end
 
 # during an initial install, the start/restart commands must deal with accepting
 # the license. So, we must ensure the service[splunk] resource

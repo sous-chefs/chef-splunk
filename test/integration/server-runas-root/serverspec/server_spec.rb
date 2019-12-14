@@ -6,8 +6,8 @@ describe 'chef-splunk::server should run as "root" user' do
   end
 end
 
-describe 'chef-splunk::server should listen on web_port 443' do
-  describe port(443) do
+describe 'chef-splunk::server should listen on web_port 80' do
+  describe port(80) do
     it { should be_listening.with('tcp') }
   end
 end

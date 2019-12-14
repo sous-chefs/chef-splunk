@@ -10,6 +10,13 @@ provisioner:
     dev_mode: true
     splunk:
       accept_license: true
+      enable_ssl: false
+      ssl_options:
+        enableSplunkWebSSL: 0
+        httpport: 8000
+        startwebserver: 1
+
+      web_port: 80
 
 platforms:
   - name: centos-6
@@ -76,8 +83,8 @@ suites:
           runasroot: false
         is_server: true
         ssl_options:
-          enable_ssl: true
-        web_port: 8443
+          enable_ssl: false
+        web_port: 80
 
   - name: server-cluster-master
     run_list:
@@ -106,8 +113,8 @@ suites:
         shclustering:
           enabled: true
         ssl_options:
-          enable_ssl: true
-        web_port: 8443
+          enable_ssl: false
+        web_port: 80
 
   - name: disabled
     run_list:

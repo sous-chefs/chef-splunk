@@ -188,7 +188,7 @@ suites:
         is_server: true
         accept_license: true
         ssl_options:
-          enable_ssl: true
+          enable_ssl: false
 
   - name: server-runas-splunk
     run_list:
@@ -201,8 +201,8 @@ suites:
         is_server: true
         accept_license: true
         ssl_options:
-          enable_ssl: true
-        web_port: 8443
+          enable_ssl: false
+        web_port: 80
 
   - name: server-cluster-master
     run_list:
@@ -220,7 +220,7 @@ suites:
           replication_factor: 5
           search_factor: 3
         ssl_options:
-          enable_ssl: true
+          enable_ssl: false
 
   - name: server-shcluster-member
     run_list:
@@ -235,8 +235,8 @@ suites:
         shclustering:
           enabled: true
         ssl_options:
-          enable_ssl: true
-        web_port: 8443
+          enable_ssl: false
+        web_port: 80
 
   - name: disabled
     run_list:

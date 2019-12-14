@@ -17,6 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+require 'socket'
+require 'mixlib/shellout'
+
 def splunk_installed?
   ::File.exist?(splunk_cmd)
 end
@@ -96,6 +99,25 @@ def license_accepted?
 end
 
 # a splunkd instance is either a splunk client (runs universal forwarder only) or a complete server
-def is_server?
+def server?
   node['splunk']['is_server'] == true
+end
+
+def port_open?(port, ip = '127.0.0.1')
+  # TCPSocket will return a file descriptor if it can open the connection,
+  # and raise Errno::ECONNREFUSED or Errno::ETIMEDOUT if it can't. We rescue
+  # that exception and return false.
+  begin
+    ::TCPSocket.new(ip, port)
+  rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
+    return false
+  end
+  true
+end
+
+def current_mgmt_port
+  splunk = Mixlib::ShellOut.new("#{splunk_cmd} show splunkd-port | awk -F: '{print$NF}'")
+  splunk.run_command
+  splunk.error! # Raise an exception if it didn't exit with 0
+  splunk.stdout.strip
 end

@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+require 'socket'
 node.default['splunk']['is_server'] = true
 include_recipe 'chef-splunk::user'
 include_recipe 'chef-splunk::install_server'
@@ -41,23 +42,14 @@ splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['a
 execute 'update-splunk-mgmt-port' do
   command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{splunk_auth_info}'"
   sensitive true
-  not_if "#{splunk_cmd} show splunkd-port -auth '#{splunk_auth_info}' | grep ': #{node['splunk']['mgmt_port']}'"
+  not_if { current_mgmt_port == node['splunk']['mgmt_port'] }
   notifies :restart, 'service[splunk]'
 end
 
 execute 'enable-splunk-receiver-port' do
   command "#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth '#{splunk_auth_info}'"
   sensitive true
-  not_if do
-    # TCPSocket will return a file descriptor if it can open the connection,
-    # and raise Errno::ECONNREFUSED or Errno::ETIMEDOUT if it can't. We rescue
-    # that exception and return false so not_if works proper-like.
-    begin
-      ::TCPSocket.new(node['ipaddress'], node['splunk']['receiver_port'])
-    rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
-      true
-    end
-  end
+  not_if { port_open?(node['splunk']['receiver_port']) }
 end
 
 include_recipe 'chef-splunk::setup_ssl' if node['splunk']['ssl_options']['enable_ssl']
