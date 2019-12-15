@@ -560,7 +560,7 @@ On the first Chef run on a node with `splunk_shclustering_mode:captain`, this re
 will build and execute the Splunk command to bootstrap the search head cluster and
 initiate the captain election process.
 
-In addition to use this recipe for configuring the search head cluster members, you
+In addition to using this recipe for configuring the search head cluster members, you
 will also have to manually configure a search head instance to serve as the
 search head cluster's deployer. This is done by adding a `[shclustering]` stanza to
 that instance's `etc/system/local/server.conf` with the same `pass4SymmKey = <secret>`
@@ -602,8 +602,8 @@ this is a conflicting UID/GID, then modify the attribute as required.
 
 #### Splunk Secrets & Admin User Authentication
 
-Splunk secret key and admin user authentication information should be stored in an
-encrypted data bag item. Create a data bag
+Splunk secret key and admin user authentication information should be stored in a
+data bag item that is encrypted using Chef Vault. Create a data bag
 named `vault`, with an item `splunk_CHEF-ENVIRONMENT`, where
 `CHEF-ENVIRONMENT` is the `node.chef_environment` that the Splunk
 Enterprise server will be assigned. If environments are not used, use
@@ -653,12 +653,14 @@ the defaults from the attributes:
       }
     }
 
-Like the authentication credentials above, run encrypt the data bag item using
-your organization's chef secrete file:
+Like the authentication credentials above, run the `knife encrypt`
+command. Note the search here is for the splunk server only:
 
-```
-knife data bag from file vault data_bags/vault/splunk_certificates.json --secret-file ~/.chef/encrypted_data_bag_key
-```
+      knife encrypt create vault splunk_certificates \
+          --json data_bags/vault/splunk_certificates.json \
+          --search 'splunk_is_server:true' --admins 'yourusername' \
+          --mode client
+
 
 ## License and Authors
 
