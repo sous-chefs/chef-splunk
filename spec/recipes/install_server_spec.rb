@@ -23,21 +23,32 @@ describe 'chef-splunk::install_server' do
       let(:url) { platform_under_test[:url] }
 
       let(:chef_run) do
-        ChefSpec::ServerRunner.new(platform_under_test[:runner])
+        ChefSpec::ServerRunner.new(platform_under_test[:runner]) do |node|
+          node.force_default['splunk']['server']['version'] = '8.0.1'
+          node.force_default['splunk']['is_server'] = true
+        end
       end
 
-      it 'ran the splunk installer' do
-        chef_run.node.force_default['splunk']['server']['url'] = url
+      it 'enables boot-start' do
         chef_run.converge(described_recipe)
-        expect(chef_run).to run_splunk_installer('splunk').with(url: url)
+        expect(chef_run).to run_execute('enable boot-start')
       end
 
-      context 'install from package manager' do
-        it 'should install splunk forwarder from local repo' do
-          chef_run.node.force_default['splunk']['server']['url'] = ''
-          chef_run.node.force_default['splunk']['server']['version'] = '6.6.0'
+      context 'url value exists' do
+        it 'install splunk server from package downloaded from URL' do
+          chef_run.node.force_default['splunk']['server']['url'] = url
           chef_run.converge(described_recipe)
-          expect(chef_run).to run_splunk_installer('splunk').with(version: '6.6.0')
+          expect(chef_run).to run_splunk_installer('splunk')
+            .with(url: url, version: '8.0.1')
+        end
+      end
+
+      context 'url attribute is empty' do
+        it 'should install splunk server from local repo' do
+          chef_run.node.force_default['splunk']['server']['url'] = ''
+          chef_run.converge(described_recipe)
+          expect(chef_run).to run_splunk_installer('splunk')
+            .with(url: '', version: '8.0.1')
         end
       end
     end

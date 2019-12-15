@@ -16,6 +16,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+if node['splunk'].attribute?('upgrade') && node['splunk']['upgrade'].attribute?('server_url')
+  msg = "DEPRECATED: node['splunk']['upgrade']['server_url'] was found. This attribute will be removed in a future version. " \
+        "Please use node['splunk']['server']['upgrade']['url'] instead"
+  log msg do
+    level :warn
+  end
+end
+
+if node['splunk'].attribute?('upgrade') && node['splunk']['upgrade'].attribute?('forwarder_url')
+  msg = "DEPRECATED: node['splunk']['upgrade']['forwarder_url'] was found. This attribute will be removed in a future version. " \
+        "Please use node['splunk']['forwarder']['upgrade']['url'] instead"
+  log msg do
+    level :warn
+  end
+end
+
 unless node['splunk']['upgrade_enabled']
   Chef::Log.fatal('The chef-splunk::upgrade recipe was added to the node,')
   Chef::Log.fatal('but the attribute `node["splunk"]["upgrade_enabled"]` was not set.')
@@ -23,8 +39,8 @@ unless node['splunk']['upgrade_enabled']
   raise 'Failed to upgrade'
 end
 
-splunk_package = node['splunk']['is_server'] == true ? 'splunk' : 'splunkforwarder'
-url_type = node['splunk']['is_server'] == true ? 'server' : 'forwarder'
+splunk_package = server? ? 'splunk' : 'splunkforwarder'
+url_type = server? ? 'server' : 'forwarder'
 
 splunk_installer "#{splunk_package} upgrade" do
   action :upgrade

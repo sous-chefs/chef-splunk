@@ -24,6 +24,7 @@ default['splunk']['mgmt_port']      = '8089'
 default['splunk']['web_port']       = '443'
 default['splunk']['ratelimit_kilobytessec'] = '2048'
 default['splunk']['disabled'] = false
+default['splunk']['data_bag'] = 'vault'
 
 default['splunk']['setup_auth'] = true
 default['splunk']['user'] = {
@@ -91,17 +92,17 @@ default['splunk']['splunk_servers'] = []
 
 default['splunk']['forwarder'] = {
   'url' => value_for_platform_family(
-    %w(rhel fedora suse amazon) => 'https://download.splunk.com/products/universalforwarder/releases/6.6.0/linux/splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-x86_64.rpm',
-    ['debian'] => 'https://download.splunk.com/products/universalforwarder/releases/6.6.0/linux/splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb'
+    %w(rhel fedora suse) => 'https://download.splunk.com/products/universalforwarder/releases/8.0.1/linux/splunkforwarder-8.0.1-6db836e2fb9e-linux-2.6-x86_64.rpm',
+    'debian' => 'https://download.splunk.com/products/universalforwarder/releases/8.0.1/linux/splunkforwarder-8.0.1-6db836e2fb9e-linux-2.6-amd64.deb'
   ),
-  'version' => '6.6.0',
+  'version' => '8.0.1',
 }
 
 default['splunk']['server'] = {
   'runasroot' => true,
   'url' => value_for_platform_family(
-    %w(rhel fedora suse amazon) => 'https://download.splunk.com/products/splunk/releases/6.6.0/linux/splunk-6.6.0-1c4f3bbe1aea-linux-2.6-x86_64.rpm',
-    ['debian'] => 'https://download.splunk.com/products/splunk/releases/6.6.0/linux/splunk-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb'
+    %w(redhat fedora suse) => 'https://download.splunk.com/products/splunk/releases/8.0.1/linux/splunk-8.0.1-6db836e2fb9e-linux-2.6-x86_64.rpm',
+    'debian' => 'https://download.splunk.com/products/splunk/releases/8.0.1/linux/splunk-8.0.1-6db836e2fb9e-linux-2.6-amd64.deb'
   ),
-  'version' => '6.6.0',
+  'version' => '8.0.1',
 }

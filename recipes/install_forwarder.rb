@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: install_forwarder
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,4 +20,15 @@
 splunk_installer 'splunkforwarder' do
   url node['splunk']['forwarder']['url']
   version node['splunk']['forwarder']['version']
+  not_if { server? }
+end
+
+# The init scripts are deprecated.  Splunk
+# now includes the ability to update the system boot configuration on its own.
+# to run "splunk enable boot-start".  This will create an
+# init script (or other configuration change) appropriate for your OS.
+execute 'enable boot-start' do
+  user 'root'
+  command "#{splunk_cmd} enable boot-start --answer-yes --no-prompt#{license_accepted? ? ' --accept-license' : ''}"
+  creates '/etc/init.d/splunk'
 end

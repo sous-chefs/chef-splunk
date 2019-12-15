@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: client
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 # server (with node['splunk']['is_server'] true). The recipes can be
 # used on their own composed in your own wrapper cookbook or role.
 include_recipe 'chef-splunk::user'
-include_recipe 'chef-splunk::install_forwarder'
+include_recipe 'chef-splunk::install_forwarder' unless server?
 
 splunk_servers = search(
   :node,
@@ -30,12 +30,14 @@ splunk_servers = search(
   a.name <=> b.name
 end
 
-server_list = splunk_servers.map do |s|
-  "#{s['fqdn'] || s['ipaddress']}:#{s['splunk']['receiver_port']}"
-end.join(', ')
-
-# fallback to statically defined server list as alternative to search
-server_list = node['splunk']['server_list'] if server_list.empty?
+server_list = if !(node['splunk']['server_list'].nil? || node['splunk']['server_list'].empty?)
+                # fallback to statically defined server list as alternative to search
+                node['splunk']['server_list']
+              else
+                splunk_servers.map do |s|
+                  "#{s['fqdn'] || s['ipaddress']}:#{s['splunk']['receiver_port']}"
+                end.join(', ')
+              end
 
 # during an initial install, the start/restart commands must deal with accepting
 # the license. So, we must ensure the service[splunk] resource

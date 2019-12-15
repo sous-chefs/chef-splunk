@@ -1,25 +1,36 @@
 require 'spec_helper'
 
 describe 'chef-splunk::setup_ssl' do
+  let(:vault_item) do
+    {
+      'data' => {
+        'self-signed.example.com.key' => '-----BEGIN RSA PRIVATE KEY-----',
+        'self-signed.example.com.crt' => '-----BEGIN CERTIFICATE----'
+      }
+    }
+  end
+
   context 'ssl enabled' do
+    let(:runner) do
+      ChefSpec::ServerRunner.new do |node, server|
+        node.force_default['splunk']['ssl_options']['enable_ssl'] = true
+        node.force_default['splunk']['is_server'] = true
+        node.force_default['dev_mode'] = true
+        node.force_default['splunk']['accept_license'] = true
+      end
+    end
+
     context 'default webui port' do
       let(:chef_run) do
-        ChefSpec::ServerRunner.new do |node, server|
-          node.force_default['splunk']['ssl_options']['enable_ssl'] = true
-          node.force_default['splunk']['is_server'] = true
-          node.force_default['dev_mode'] = true
-          node.force_default['splunk']['accept_license'] = true
-          # Populate mock certs data into Chef server
-          create_data_bag_item(server, 'vault', 'splunk_certificates')
-        end.converge(described_recipe)
+        runner.converge(described_recipe)
+      end
+
+      before do
+        allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return(vault_item)
       end
 
       it 'created the service[splunk] resource' do
         expect(chef_run.service('splunk')).to do_nothing
-      end
-
-      it 'includes chef-vault' do 
-        expect(chef_run).to include_recipe('chef-vault::default')
       end
 
       it 'writes web.conf with http port 443' do
@@ -30,7 +41,7 @@ describe 'chef-splunk::setup_ssl' do
         expect(chef_run).to render_file('/opt/splunk/etc/system/local/web.conf').with_content('enableSplunkWebSSL = true')
       end
 
-      it 'writes the SSL key from the chef-vault data bag item' do
+      it 'writes the SSL key from the data bag item' do
         keyfile = '/opt/splunk/etc/auth/splunkweb/self-signed.example.com.key'
         resrc = chef_run.file(keyfile)
         expect(chef_run).to create_file(keyfile).with(
@@ -43,7 +54,7 @@ describe 'chef-splunk::setup_ssl' do
         expect(resrc).to notify('service[splunk]').to(:restart)
       end
 
-      it 'writes the SSL certificate from the chef-vault data bag item' do
+      it 'writes the SSL certificate from the data bag item' do
         certfile = '/opt/splunk/etc/auth/splunkweb/self-signed.example.com.crt'
         resrc = chef_run.file(certfile)
         expect(chef_run).to create_file(certfile).with(
@@ -59,15 +70,12 @@ describe 'chef-splunk::setup_ssl' do
 
     context 'alternative webui port' do
       let(:chef_run) do
-        ChefSpec::ServerRunner.new do |node, server|
-          node.force_default['splunk']['ssl_options']['enable_ssl'] = true
-          node.force_default['splunk']['is_server'] = true
-          node.force_default['splunk']['accept_license'] = true
-          node.force_default['dev_mode'] = true
-          node.force_default['splunk']['web_port'] = '7777'
-          # Populate mock certs data into Chef server
-          create_data_bag_item(server, 'vault', 'splunk_certificates')
-        end.converge(described_recipe)
+        runner.node.force_default['splunk']['web_port'] = '7777'
+        runner.converge(described_recipe)
+      end
+
+      before do
+        allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return(vault_item)
       end
 
       it 'created the service[splunk] resource' do

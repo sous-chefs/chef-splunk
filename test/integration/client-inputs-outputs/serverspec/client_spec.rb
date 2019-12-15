@@ -26,7 +26,7 @@ describe 'outputs config should be configured per node attributes' do
     its(:content) { should match(/sslCommonNameToCheck = sslCommonName/) }
     # it won't be the plaintext 'password' per the attribute, and may
     # differ due to salt, just make sure it looks passwordish.
-    its(:content) { should match(/sslPassword = \$1/) }
+    its(:content) { should match(/sslPassword = \$\d/) }
     its(:content) { should match(/sslRootCAPath = \$SPLUNK_HOME\/etc\/certs\/cacert.pem/) }
     its(:content) { should match(/sslVerifyServerCert = false/) }
   end

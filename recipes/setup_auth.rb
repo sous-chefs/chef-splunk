@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-if node['splunk']['setup_auth'] == false
+unless setup_auth?
   log 'setup_auth is disabled' do
     message 'The chef-splunk::setup_auth recipe was added to the node, ' \
             'but the attribute to setup splunk authentication was disabled.'
@@ -25,9 +25,7 @@ if node['splunk']['setup_auth'] == false
   return
 end
 
-include_recipe 'chef-vault'
-
-splunk_auth_info = chef_vault_item(:vault, "splunk_#{node.chef_environment}")['auth']
+splunk_auth_info = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")['auth']
 user, pw = splunk_auth_info.split(':')
 
 # during an initial install, the start/restart commands must deal with accepting
