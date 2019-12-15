@@ -14,7 +14,7 @@ describe 'chef-splunk::setup_shclustering' do
 
   context 'search head cluster member settings' do
     let(:chef_run) do
-      ChefSpec::ServerRunner.new do |node, server|
+      ChefSpec::ServerRunner.new do |node|
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['shclustering']['enabled'] = true
@@ -73,7 +73,7 @@ describe 'chef-splunk::setup_shclustering' do
 
     it 'writes server.conf with the shcluster secret' do
       expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
-        .with_content("pass4SymmKey = notarealsecret")
+        .with_content('pass4SymmKey = notarealsecret')
     end
 
     it 'does not run command to bootstrap captain' do

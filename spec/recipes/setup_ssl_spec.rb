@@ -5,14 +5,14 @@ describe 'chef-splunk::setup_ssl' do
     {
       'data' => {
         'self-signed.example.com.key' => '-----BEGIN RSA PRIVATE KEY-----',
-        'self-signed.example.com.crt' => '-----BEGIN CERTIFICATE----'
-      }
+        'self-signed.example.com.crt' => '-----BEGIN CERTIFICATE----',
+      },
     }
   end
 
   context 'ssl enabled' do
     let(:runner) do
-      ChefSpec::ServerRunner.new do |node, server|
+      ChefSpec::ServerRunner.new do |node|
         node.force_default['splunk']['ssl_options']['enable_ssl'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['dev_mode'] = true

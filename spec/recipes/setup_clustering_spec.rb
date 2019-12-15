@@ -133,8 +133,8 @@ describe 'chef-splunk::setup_clustering' do
 
       context 'multisite clustering with default settings' do
         before(:each) do
-          chef_run_init.node.normal['splunk']['clustering']['num_sites'] = 2
-          chef_run_init.node.normal['splunk']['clustering']['site'] = 'site2'
+          chef_run_init.node.force_default['splunk']['clustering']['num_sites'] = 2
+          chef_run_init.node.force_default['splunk']['clustering']['site'] = 'site2'
         end
 
         let(:chef_run) do

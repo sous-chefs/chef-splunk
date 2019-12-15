@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'chef-splunk::server' do
   let(:chef_run_init) do
-    ChefSpec::ServerRunner.new do |node, server|
+    ChefSpec::ServerRunner.new do |node|
       node.force_default['dev_mode'] = true
       node.force_default['splunk']['accept_license'] = true
     end
@@ -11,7 +11,7 @@ describe 'chef-splunk::server' do
   before(:each) do
     allow_any_instance_of(Chef::Recipe).to receive(:include_recipe).and_return(true)
     allow_any_instance_of(Chef::Resource).to receive(:current_mgmt_port).and_return('8089')
-    allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return({'auth' => 'admin:notarealpassword'})
+    allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return('auth' => 'admin:notarealpassword')
   end
 
   context 'default settings' do
