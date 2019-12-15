@@ -61,7 +61,9 @@ By default, only 64-bit Splunk server and Splunk Universal Forwarder will be ins
 
 ### Cookbooks
 
-No external cookbook dependency exist for this cookbook
+Used for managing secrets, see __Usage__:
+
+* chef-vault, `~> 3.1.1`
 
 ## Attributes
 
@@ -139,7 +141,7 @@ SSL in the `setup_ssl` recipe.
   SSL, must be set to `true` to use the `setup_ssl` recipe. Defaults
   to `false`, must be set using a boolean literal `true` or `false`.
 * `node['splunk']['ssl_options']['data_bag']`: The data bag name to
-  load, defaults to `vault` (for organizations that may have used this cookbook prior to v4.0.0).
+  load, defaults to `vault` (as chef-vault is used).
 * `node['splunk']['ssl_options']['data_bag_item']`: The data bag item
   name that contains the keyfile and crtfile, defaults to
   `splunk_certificates`.
@@ -499,9 +501,9 @@ start, stop, restart, etc commands.
 ## setup_auth
 
 This recipe loads an encrypted data bag with the Splunk user
-credentials as an `-auth` string, '`user:password`'. As of v4.0.0 of this cookbook, the
-[chef-vault cookbook](https://supermarket.chef.io/cookbooks/chef-vault) is no longer used.
-See __Usage__ for how to set an encrypted data bag for this cookbook. The recipe
+credentials as an `-auth` string, '`user:password`', using the
+[chef-vault cookbook](https://supermarket.chef.io/cookbooks/chef-vault) helper method,
+`chef_vault_item`. See __Usage__ for how to set this up. The recipe
 will edit the specified user (assuming `admin`), and then write a
 state file to `etc/.setup_admin_password` to indicate in future Chef
 runs that it has set the password. If the password should be changed,
@@ -512,9 +514,10 @@ then that file should be removed.
 This recipe sets up Splunk indexer clustering based on the node's
 clustering mode or `node['splunk']['clustering']['mode']`. The attribute
 `node['splunk']['clustering']['enabled']` must be set to true in order to
-run this recipe. Similar to `setup_auth`, this recipe loads
+run this recipe. Similar to `setup_auth`, this recipes loads
 the same encrypted data bag with the Splunk `secret` key (to be shared among
-cluster members), using the `data_bag_item`. See __Usage__ for how to set this up. The
+cluster members), using the [chef-vault cookbook](https://supermarket.chef.io/cookbooks/chef-vault)
+helper method, `chef_vault_item`. See __Usage__ for how to set this up. The
 recipe will edit the cluster configuration, and then write a state file to
 `etc/.setup_cluster_{master|slave|searchhead}` to indicate in future Chef
 runs that it has set the node's indexer clustering configuration. If cluster
@@ -536,7 +539,8 @@ This recipe sets up Splunk search head clustering. The attribute
 `node['splunk']['shclustering']['enabled']` must be set to true in order to
 run this recipe. Similar to `setup_auth`, this recipes loads
 the same encrypted data bag with the Splunk `secret` key (to be shared among
-cluster members), using the helper method `data_bag_item`. See __Usage__ for how to set this up. The
+cluster members), using the [chef-vault cookbook](https://supermarket.chef.io/cookbooks/chef-vault)
+helper method, `chef_vault_item`. See __Usage__ for how to set this up. The
 recipe will edit the cluster configuration, and then write a state file to
 `etc/.setup_shcluster` to indicate in future Chef runs that it has set the node's
 search head clustering configuration. If cluster configuration should be changed,
@@ -621,19 +625,23 @@ Or with an environment, '`production`':
       "secret": "notarealsecret"
     }
 
-Then, upload the data bag item to the Chef Server using knife and your organization's
-chef secret file:
+Then, upload the data bag item to the Chef Server using the
+`chef-vault` `knife encrypt` plugin (first example, `_default`
+environment):
 
-```
-knife data bag create vault
-knife data bag from file vault data_bags/vault/splunk__default.json --secret-file ~/.chef/encrypted_data_bag_key
-```
+    knife encrypt create vault splunk__default \
+        --json data_bags/vault/splunk__default.json \
+        --search 'splunk:*' --admins 'yourusername' \
+        --mode client
+
+More information about Chef Vault is available on the
+[GitHub Project Page](https://github.com/Nordstrom/chef-vault).
 
 #### Web UI SSL
 
 A Splunk server should have the Web UI available via HTTPS. This can
 be set up using self-signed SSL certificates, or "real" SSL
-certificates. This loaded via a data bag item with chef. Using
+certificates. This loaded via a data bag item with chef-vault. Using
 the defaults from the attributes:
 
     % cat data_bags/vault/splunk_certificates.json
