@@ -20,20 +20,12 @@
 default['splunk']['forwarder']['upgrade']['version'] = '8.0.1'
 default['splunk']['server']['upgrade']['version'] = '8.0.1'
 
-default['splunk']['server']['upgrade']['url'] = value_for_platform(
-  %w(redhat fedora suse centos amazon) => {
-    'default' => 'https://download.splunk.com/products/splunk/releases/8.0.1/linux/splunk-8.0.1-6db836e2fb9e-linux-2.6-x86_64.rpm',
-  },
-  %w(debian ubuntu) => {
-    'default' => 'https://download.splunk.com/products/splunk/releases/8.0.1/linux/splunk-8.0.1-6db836e2fb9e-linux-2.6-amd64.deb',
-  }
+default['splunk']['server']['upgrade']['url'] = value_for_platform_family(
+  %w(rhel fedora suse) => 'https://download.splunk.com/products/splunk/releases/8.0.1/linux/splunk-8.0.1-6db836e2fb9e-linux-2.6-x86_64.rpm',
+  'debian' => 'https://download.splunk.com/products/splunk/releases/8.0.1/linux/splunk-8.0.1-6db836e2fb9e-linux-2.6-amd64.deb'
 )
 
-default['splunk']['forwarder']['upgrade']['url'] = value_for_platform(
-  %w(redhat fedora suse centos amazon) => {
-    'default' => 'https://download.splunk.com/products/universalforwarder/releases/8.0.1/linux/splunkforwarder-8.0.1-6db836e2fb9e-linux-2.6-x86_64.rpm',
-  },
-  %w(debian ubuntu) => {
-    'default' => 'https://download.splunk.com/products/universalforwarder/releases/8.0.1/linux/splunkforwarder-8.0.1-6db836e2fb9e-linux-2.6-amd64.deb',
-  }
+default['splunk']['forwarder']['upgrade']['url'] = value_for_platform_family(
+  %w(rhel fedora suse) => 'https://download.splunk.com/products/universalforwarder/releases/8.0.1/linux/splunkforwarder-8.0.1-6db836e2fb9e-linux-2.6-x86_64.rpm',
+  'debian' => 'https://download.splunk.com/products/universalforwarder/releases/8.0.1/linux/splunkforwarder-8.0.1-6db836e2fb9e-linux-2.6-amd64.deb'
 )
