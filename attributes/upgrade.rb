@@ -17,26 +17,15 @@
 # limitations under the License.
 
 # assumes x86_64 only (is there any reason to test i386 anymore?)
-# the `server_url` and `forwarder_url` is deprecated, but kept here for
-# backwards-compatibility
-default['splunk']['upgrade']['server_url'] = value_for_platform_family(
-  %w(rhel fedora amazon) => 'https://download.splunk.com/products/splunk/releases/7.3.2/linux/splunk-7.3.2-c60db69f8e32-linux-2.6-x86_64.rpm',
-  ['debian'] => 'https://download.splunk.com/products/splunk/releases/7.3.2/linux/splunk-7.3.2-c60db69f8e32-linux-2.6-amd64.deb'
+default['splunk']['forwarder']['upgrade']['version'] = '8.0.1'
+default['splunk']['server']['upgrade']['version'] = '8.0.1'
+
+default['splunk']['server']['upgrade']['url'] = value_for_platform_family(
+  %w(rhel fedora suse amazon) => 'https://download.splunk.com/products/splunk/releases/8.0.1/linux/splunk-8.0.1-6db836e2fb9e-linux-2.6-x86_64.rpm',
+  'debian' => 'https://download.splunk.com/products/splunk/releases/8.0.1/linux/splunk-8.0.1-6db836e2fb9e-linux-2.6-amd64.deb'
 )
 
-default['splunk']['upgrade']['forwarder_url'] = value_for_platform_family(
-  %w(rhel fedora amazon) => 'https://download.splunk.com/products/universalforwarder/releases/7.3.2/linux/splunkforwarder-7.3.2-c60db69f8e32-linux-2.6-x86_64.rpm',
-  ['debian'] => 'https://download.splunk.com/products/universalforwarder/releases/7.3.2/linux/splunkforwarder-7.3.2-c60db69f8e32-linux-2.6-amd64.deb'
+default['splunk']['forwarder']['upgrade']['url'] = value_for_platform_family(
+  %w(rhel fedora suse amazon) => 'https://download.splunk.com/products/universalforwarder/releases/8.0.1/linux/splunkforwarder-8.0.1-6db836e2fb9e-linux-2.6-x86_64.rpm',
+  'debian' => 'https://download.splunk.com/products/universalforwarder/releases/8.0.1/linux/splunkforwarder-8.0.1-6db836e2fb9e-linux-2.6-amd64.deb'
 )
-
-# as of v3.0.1, this structure was introduced to stay in similar structure to
-# node['splunk']['server'] when specifying URL and version attributes
-default['splunk']['server']['upgrade'] = {
-  'url' => node['splunk']['upgrade']['server_url'],
-  'version' => '7.3.2',
-}
-
-default['splunk']['forwarder']['upgrade'] = {
-  'url' => node['splunk']['upgrade']['forwarder_url'],
-  'version' => '7.3.2',
-}

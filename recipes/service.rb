@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: service
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ unless license_accepted?
   raise 'Splunk license was not accepted'
 end
 
-if node['splunk']['is_server']
+if server?
   directory splunk_dir do
     owner splunk_runas_user
     group splunk_runas_user
@@ -47,14 +47,6 @@ if node['splunk']['is_server']
   end
 end
 
-# ftr = first time run file created by a splunk install
-execute 'splunk enable boot-start' do
-  user 'root'
-  command "#{splunk_cmd} enable boot-start --answer-yes --no-prompt#{license_accepted? ? ' --accept-license' : ''}"
-  only_if { ::File.exist? "#{splunk_dir}/ftr" }
-  notifies :create, 'template[/etc/init.d/splunk]'
-end
-
 # If we run as splunk user do a recursive chown to that user for all splunk
 # files if a few specific files are root owned.
 ruby_block 'splunk_fix_file_ownership' do
@@ -68,42 +60,15 @@ end
 
 Chef::Log.info("Node init package: #{node['init_package']}")
 
-template '/etc/systemd/system/splunkd.service' do
-  source 'splunk-systemd.erb'
-  mode '644'
-  variables(
-    splunkdir: splunk_dir,
-    splunkcmd: splunk_cmd,
-    runasroot: node['splunk']['server']['runasroot'] == true,
-    accept_license: license_accepted?
-  )
-  notifies :run, 'execute[systemctl daemon-reload]', :immediately
-  only_if { node['init_package'] == 'systemd' }
-end
-
 execute 'systemctl daemon-reload' do
   action :nothing
   only_if { node['init_package'] == 'systemd' }
 end
 
-template '/etc/init.d/splunk' do
-  source 'splunk-init.erb'
-  mode '700'
-  variables(
-    splunkdir: splunk_dir,
-    splunkuser: splunk_runas_user,
-    splunkcmd: splunk_cmd,
-    runasroot: node['splunk']['server']['runasroot'] == true,
-    accept_license: license_accepted?
-  )
-  notifies :run, 'execute[systemctl daemon-reload]', :immediately
-  notifies :restart, 'service[splunk]'
-end
-
 # during an initial install, the start/restart commands must deal with accepting
 # the license. So, we must ensure the service[splunk] resource
-# properly deals with the license.
-edit_resource(:service, 'splunk') do
+# properly deals with the license by way of the `svc_command` helper.
+service 'splunk' do
   action node['init_package'] == 'systemd' ? %i(start enable) : :start
   supports status: true, restart: true
   stop_command svc_command('stop')

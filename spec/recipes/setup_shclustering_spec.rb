@@ -1,16 +1,6 @@
 require 'spec_helper'
 
 describe 'chef-splunk::setup_shclustering' do
-  let(:secrets) do
-    {
-      'splunk__default' => {
-        'id' => 'splunk__default',
-        'auth' => 'admin:notarealpassword',
-        'secret' => 'notarealsecret',
-      },
-    }
-  end
-
   let(:deployer_node) do
     stub_node(platform: 'ubuntu', version: '16.04') do |node|
       node.automatic['fqdn'] = 'deploy.cluster.example.com'
@@ -24,7 +14,7 @@ describe 'chef-splunk::setup_shclustering' do
 
   context 'search head cluster member settings' do
     let(:chef_run) do
-      ChefSpec::ServerRunner.new do |node, server|
+      ChefSpec::ServerRunner.new do |node|
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['shclustering']['enabled'] = true
@@ -36,17 +26,19 @@ describe 'chef-splunk::setup_shclustering' do
           'https://shcluster-member02:8089',
           'https://shcluster-member03:8089',
         ]
-        # Populate mock vault data bag to the server
-        server.create_data_bag('vault', secrets)
       end.converge(described_recipe)
     end
 
-    it 'includes chef-vault' do
-      expect(chef_run).to include_recipe('chef-vault::default')
+    let(:vault_item) do
+      { 'auth' => 'admin:notarealpassword', 'secret' => 'notarealsecret' }
+    end
+
+    before do
+      allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return(vault_item)
     end
 
     it 'writes a file marker to ensure convergence' do
-      expect(chef_run).to render_file('/opt/splunk/etc/.setup_shcluster').with_content('true\n')
+      expect(chef_run).to render_file('/opt/splunk/etc/.setup_shcluster').with_content("true\n")
     end
 
     it 'writes server.conf with replication port' do
@@ -81,7 +73,7 @@ describe 'chef-splunk::setup_shclustering' do
 
     it 'writes server.conf with the shcluster secret' do
       expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
-        .with_content("pass4SymmKey = #{secrets['splunk__default']['secret']}")
+        .with_content('pass4SymmKey = notarealsecret')
     end
 
     it 'does not run command to bootstrap captain' do
@@ -104,8 +96,8 @@ describe 'chef-splunk::setup_shclustering' do
 
         it 'runs command to bootstrap captain with correct parameters' do
           expect(chef_run).to run_execute('bootstrap-shcluster').with(
-            'command' => "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list '#{shcluster_servers_list}' \
--auth '#{secrets['splunk__default']['auth']}'"
+            command: "/opt/splunk/bin/splunk bootstrap shcluster-captain -servers_list '#{shcluster_servers_list}'" \
+                     " -auth 'admin:notarealpassword'"
           )
           expect(chef_run.execute('bootstrap-shcluster')).to notify('service[splunk]').to(:restart)
         end

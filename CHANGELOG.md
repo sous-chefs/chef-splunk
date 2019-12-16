@@ -2,6 +2,18 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 4.0.0 (TBD)
+- Installs Enterprise Splunk 8.0.1
+- Installs Splunk Universal Forwarder 8.0.1
+- Removes unnecessary calls to `include_recipe 'chef-vault'`
+- in `chef-splunk::client`, do not install the forwarder if the server config is being installed
+  on a splunkd server
+- adds helper method: `#server?` that will return true if the chef node is a splunkd server
+- adds helper method: `#port_open?` that will return true if the local node has a specified port open
+- logs a warning message if `node['splunk']['upgrade']['server_url']` or `node['splunk']['upgrade']['forwarder_url']` exist
+- Splunk now generates its own scripts for boot starts; therefore this cookbook executes Splunk's `boot-start`
+  command
+  
 ## 3.1.1 (2019-12-05)
 
 - Fixes [#125](https://github.com/chef-cookbooks/chef-splunk/issues/125) adds conditional expressions when `node['splunk']['setup_auth']`

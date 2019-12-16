@@ -63,7 +63,7 @@ By default, only 64-bit Splunk server and Splunk Universal Forwarder will be ins
 
 Used for managing secrets, see __Usage__:
 
-* chef-vault, >= 3.1.1
+* chef-vault, `>= 3.1.1`
 
 ## Attributes
 
@@ -78,12 +78,13 @@ General attributes:
   functional with this cookbook, which means end users must read the
   EULA and agree to the terms.
 * `node['splunk']['is_server']`: Set this to true if the node is a
-  splunk server, for example in a role. Default is false.
+  splunk server, for example in a role (Default: false)
+* `node['splunk']['data_bag']`: Set this to the name of the data bag where your splunk auth
+  and other secrets are stored (Default: `vault`)
 * `node['splunk']['disabled']`: Disable the splunk agent by setting
-  this to true. Default is false.
+  this to true (Default: false)
 * `node['splunk']['receiver_port']`: The port that the receiver
-  (server) listens to. This is set to the Splunk Enterprise default,
-  9997.
+  (server) listens to. This is set to the Splunk Enterprise default, 9997.
 * `node['splunk']['mgmt_port']`: The port that splunkd service
   listens to, aka the management port. This is set to the Splunk
   Enterprise default, 8089.
@@ -97,8 +98,8 @@ by default.
 
 * `node['splunk']['forwarder']['url']`: The URL to the Splunk Universal Forwarder package file.
 * `node['splunk']['server']['url']`: The URL to the Splunk Enterprise package file.
-* `node['splunk']['forwarder']['version']`: specifies the splunk universal forwarder version to install. This is ignored if forwarder URL is provided. (Default: 6.6.0)
-* `node['splunk']['server']['version']`: specifies the splunk server version to install. This is ignored if server URL is provided. (Default: 6.6.0)
+* `node['splunk']['forwarder']['version']`: specifies the splunk universal forwarder version to install. This is ignored if forwarder URL is provided. (Default: 8.0.1)
+* `node['splunk']['server']['version']`: specifies the splunk server version to install. This is ignored if server URL is provided. (Default: 8.0.1)
 * Set these attributes to `nil` or empty string `''` to force installing the packages from the
   OS package managers. In doing so, server owners are responsible for properly configuring their
   package manager so chef can install the package.
@@ -308,9 +309,9 @@ must be set explicitly elsewhere on the node(s).
 * `node['splunk']['upgrade_enabled']`: Controls whether the upgrade is enabled and the `attributes/upgrade.rb` file should be loaded. Set this in a role or wrapper cookbook to perform an upgrade.
 
 * `node['splunk']['server']['upgrade']['url']`: This is the URL to the desired server upgrade package only if `upgrade_enabled` is set.
-* `node['splunk']['server']['upgrade']['version']`: specifies the target splunk server version for an upgrade. This is ignored if server upgrade URL is provided. (Default: 7.3.2)
+* `node['splunk']['server']['upgrade']['version']`: specifies the target splunk server version for an upgrade. This is ignored if server upgrade URL is provided. (Default: 8.0.1)
 * `node['splunk']['forwarder']['upgrade']['url']`: This is the URL to the desired forwarder upgrade package only if `upgrade_enabled` is set.
-* `node['splunk']['forwarder']['upgrade']['version']`: specifies the target splunk universal forwarder version for an upgrade. This is ignored if forwarder upgrade URL is provided. (Default: 7.3.2)
+* `node['splunk']['forwarder']['upgrade']['version']`: specifies the target splunk universal forwarder version for an upgrade. This is ignored if forwarder upgrade URL is provided. (Default: 8.0.1)
 
 * All URLs set in attributes must be direct download links and not redirects
 * Set these attributes to `nil` or empty string `''` to force installing the packages from the
@@ -501,7 +502,7 @@ start, stop, restart, etc commands.
 
 This recipe loads an encrypted data bag with the Splunk user
 credentials as an `-auth` string, '`user:password`', using the
-[chef-vault cookbook](http://ckbk.it/chef-vault) helper method,
+[chef-vault cookbook](https://supermarket.chef.io/cookbooks/chef-vault) helper method,
 `chef_vault_item`. See __Usage__ for how to set this up. The recipe
 will edit the specified user (assuming `admin`), and then write a
 state file to `etc/.setup_admin_password` to indicate in future Chef
@@ -515,7 +516,7 @@ clustering mode or `node['splunk']['clustering']['mode']`. The attribute
 `node['splunk']['clustering']['enabled']` must be set to true in order to
 run this recipe. Similar to `setup_auth`, this recipes loads
 the same encrypted data bag with the Splunk `secret` key (to be shared among
-cluster members), using the [chef-vault cookbook](http://ckbk.it/chef-vault)
+cluster members), using the [chef-vault cookbook](https://supermarket.chef.io/cookbooks/chef-vault)
 helper method, `chef_vault_item`. See __Usage__ for how to set this up. The
 recipe will edit the cluster configuration, and then write a state file to
 `etc/.setup_cluster_{master|slave|searchhead}` to indicate in future Chef
@@ -538,7 +539,7 @@ This recipe sets up Splunk search head clustering. The attribute
 `node['splunk']['shclustering']['enabled']` must be set to true in order to
 run this recipe. Similar to `setup_auth`, this recipes loads
 the same encrypted data bag with the Splunk `secret` key (to be shared among
-cluster members), using the [chef-vault cookbook](http://ckbk.it/chef-vault)
+cluster members), using the [chef-vault cookbook](https://supermarket.chef.io/cookbooks/chef-vault)
 helper method, `chef_vault_item`. See __Usage__ for how to set this up. The
 recipe will edit the cluster configuration, and then write a state file to
 `etc/.setup_shcluster` to indicate in future Chef runs that it has set the node's
@@ -577,8 +578,8 @@ more about Splunk search head clustering, refer to [Splunk Docs](http://docs.spl
   Also back up the Splunk directory, configuration, etc.
 
 This recipe can be used to upgrade a splunk installation, for example
-from an existing 4.2.1 to 4.3.7. The default recipe can be used for
-7.3.2 after upgrading earlier versions is completed. Note that the
+from an existing 7.3.2 to 8.0.1. The default recipe can be used for
+8.0.1 after upgrading earlier versions have been completed. Note that the
 attributes file is only loaded w/ the URLs to the splunk packages to
 upgrade if the `node['splunk']['upgrade_enabled']` attribute is set to
 true. We recommend setting the actual URL attributes needed in a
@@ -655,16 +656,17 @@ the defaults from the attributes:
 Like the authentication credentials above, run the `knife encrypt`
 command. Note the search here is for the splunk server only:
 
-    knife encrypt create vault splunk_certificates \
-        --json data_bags/vault/splunk_certificates.json \
-        --search 'splunk_is_server:true' --admins 'yourusername' \
-        --mode client
+      knife encrypt create vault splunk_certificates \
+          --json data_bags/vault/splunk_certificates.json \
+          --search 'splunk_is_server:true' --admins 'yourusername' \
+          --mode client
+
 
 ## License and Authors
 
 - Author: Joshua Timberman <joshua@chef.io>
 - Contributor: Dang H. Nguyen <dang.nguyen@disney.com>
-- Copyright 2013, Chef Software, Inc <legal@chef.io>
+- Copyright 2013-2019, Chef Software, Inc <legal@chef.io>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

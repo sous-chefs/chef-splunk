@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: default
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 # limitations under the License.
 #
 
-if node['splunk']['disabled'] == true
+if disabled?
   include_recipe 'chef-splunk::disabled'
   Chef::Log.debug('Splunk is disabled on this node.')
   return
 end
 
-if node['splunk']['is_server'] == true
+if server?
   include_recipe 'chef-splunk::server'
 else
   include_recipe 'chef-splunk::client'

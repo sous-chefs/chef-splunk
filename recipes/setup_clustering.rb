@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: setup_clustering
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-unless node['splunk']['clustering']['enabled']
+unless enable_clustering?
   Chef::Log.debug('The chef-splunk::setup_clustering recipe was added to the node,')
   Chef::Log.debug('but the attribute to enable clustering was not set.')
   return
@@ -34,9 +34,7 @@ edit_resource(:service, 'splunk') do
   provider splunk_service_provider
 end
 
-include_recipe 'chef-vault'
-
-passwords = chef_vault_item('vault', "splunk_#{node.chef_environment}")
+passwords = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")
 splunk_auth_info = passwords['auth']
 
 cluster_secret = passwords['secret']
@@ -90,7 +88,7 @@ execute 'setup-indexer-cluster' do
 end
 
 file "#{splunk_dir}/etc/.setup_clustering" do
-  content 'true\n'
+  content "true\n"
   owner splunk_runas_user
   group splunk_runas_user
   mode '600'
