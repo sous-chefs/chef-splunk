@@ -1,5 +1,0 @@
-# rubocop todo
-
-Style/RegexpLiteral:
-  Exclude:
-    - 'test/integration/client-inputs-outputs/serverspec/client_spec.rb'

@@ -52,7 +52,6 @@ end
 ruby_block 'splunk_fix_file_ownership' do
   block do
     FileUtils.chown_R(splunk_runas_user, splunk_runas_user, splunk_dir)
-    FileUtils.chmod(0750, Dir.glob("#{splunk_dir}/**/*/"))
   end
   subscribes :run, 'service[splunk]', :before
   not_if { node['splunk']['server']['runasroot'] == true }

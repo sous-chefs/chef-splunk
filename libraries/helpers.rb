@@ -111,8 +111,8 @@ def port_open?(port, ip = '127.0.0.1')
   true
 end
 
-def current_mgmt_port
-  splunk = Mixlib::ShellOut.new("#{splunk_cmd} show splunkd-port | awk -F: '{print$NF}'")
+def current_mgmt_port(splunk_auth_info)
+  splunk = Mixlib::ShellOut.new("#{splunk_cmd} show splunkd-port -auth #{splunk_auth_info} | awk -F: '{print$NF}'")
   splunk.run_command
   splunk.error! # Raise an exception if it didn't exit with 0
   splunk.stdout.strip

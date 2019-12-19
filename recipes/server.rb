@@ -42,7 +42,7 @@ splunk_auth_info = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.ch
 execute 'update-splunk-mgmt-port' do
   command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{splunk_auth_info}'"
   sensitive true
-  not_if { current_mgmt_port == node['splunk']['mgmt_port'] }
+  not_if { current_mgmt_port(splunk_auth_info) == node['splunk']['mgmt_port'] }
   notifies :restart, 'service[splunk]'
 end
 
