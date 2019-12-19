@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 4.0.1 (2019-12-19)
+- Fixes [#130](https://github.com/chef-cookbooks/chef-splunk/issues/130)
+  the `execute[update-splunk-mgmt-port]` resource passes splunk auth info to the `#current_mgmt_port` helper method
+
 ## 4.0.0 (2019-12-16)
 
 - Installs Enterprise Splunk 8.0.1
