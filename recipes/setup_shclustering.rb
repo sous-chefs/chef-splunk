@@ -67,8 +67,27 @@ template "#{shcluster_app_dir}/local/server.conf" do
   notifies :restart, 'service[splunk]', :immediately
 end
 
+# finish here if the server is the Splunk Search Head deployer; otherwise, continue on
+return if node['splunk']['shclustering']['mode'] == 'deployer'
+
 # bootstrap the shcluster and the node as a captain if shclustering mode is set to 'captain'
 shcluster_servers_list = node['splunk']['shclustering']['shcluster_members']
+
+# search for the fqdn of the search head deployer and set that as the deployer_url
+# if one is not given in the node attributes
+if node['splunk']['shclustering']['deployer_url'].empty?
+  search(
+    :node,
+    "\
+    splunk_shclustering_enabled:true AND \
+    splunk_shclustering_label:#{node['splunk']['shclustering']['label']} AND \
+    splunk_shclustering_mode:deployer AND \
+    chef_environment:#{node.chef_environment}",
+    filter_result: { 'deployer_fqdn' => ['fqdn'] }
+  ).each do |fqdn|
+    node.default['splunk']['shclustering']['deployer_url'] = fqdn
+  end
+end
 
 # unless shcluster members are staticly assigned via the node attribute,
 # try to find the other shcluster members via Chef search

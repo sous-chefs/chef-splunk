@@ -1,15 +1,17 @@
-# Dropped off by Chef
-
-[replication_port://<%= @shcluster_params['replication_port'] %>]
+# Managed by Chef. Changes will be reverted
 
 [shclustering]
-disabled = 0
-mgmt_uri = <%= @shcluster_params['mgmt_uri'] %>
-replication_factor = <%= @shcluster_params['replication_factor'] %>
 shcluster_label = <%= @shcluster_params['label'] %>
-<% unless @shcluster_params['deployer_url'] == '' -%>
-conf_deploy_fetch_url = <%= @shcluster_params['deployer_url'] %>
-<% end -%>
 <% unless @shcluster_secret.nil? -%>
 pass4SymmKey = <%= @shcluster_secret %>
 <% end -%>
+<% if %w(member captain).include? @shcluster_params['mode'] %>
+disabled = 0
+mgmt_uri = <%= @shcluster_params['mgmt_uri'] %>
+replication_factor = <%= @shcluster_params['replication_factor'] %>
+<% unless @shcluster_params['deployer_url'] == '' -%>
+conf_deploy_fetch_url = <%= @shcluster_params['deployer_url'] %>
+<% end -%>
+
+[replication_port://<%= @shcluster_params['replication_port'] %>]
+<% end %>

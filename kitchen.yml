@@ -101,6 +101,21 @@ suites:
         ssl_options:
           enable_ssl: true
 
+  - name: server-shdeployer
+    run_list:
+      - recipe[chef-splunk]
+    attributes:
+      splunk:
+        server:
+          runasroot: false
+        is_server: true
+        shclustering:
+          enabled: true
+          mode: deployer
+        ssl_options:
+          enable_ssl: false
+        web_port: 80
+
   - name: server-shcluster-member
     run_list:
       - recipe[chef-splunk]

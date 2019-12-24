@@ -226,6 +226,21 @@ suites:
           replication_factor: 5
           search_factor: 3
 
+  - name: server-shdeployer
+    run_list:
+      - recipe[chef-splunk]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        is_server: true
+        accept_license: true
+        shclustering:
+          enabled: true
+          mode: deployer
+        web_port: 8000
+
   - name: server-shcluster-member
     run_list:
       - recipe[chef-splunk::default]

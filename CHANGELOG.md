@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 4.0.2 (TBD)
+- Modifies the `chef-splunk::shclustering` to deploy a Splunk Search Head deployer
+
 ## 4.0.1 (2019-12-19)
 - Fixes [#130](https://github.com/chef-cookbooks/chef-splunk/issues/130)
   the `execute[update-splunk-mgmt-port]` resource passes splunk auth info to the `#current_mgmt_port` helper method
