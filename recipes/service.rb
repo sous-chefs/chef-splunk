@@ -59,9 +59,37 @@ end
 
 Chef::Log.info("Node init package: #{node['init_package']}")
 
+template '/etc/systemd/system/splunkd.service' do
+  source 'splunk-systemd.erb'
+  mode '644'
+  variables(
+    splunkdir: splunk_dir,
+    splunkcmd: splunk_cmd,
+    runasroot: false,
+    accept_license: license_accepted?
+  )
+  notifies :run, 'execute[systemctl daemon-reload]', :immediately
+  only_if { node['init_package'] == 'systemd' && node['splunk']['server']['runasroot'] == false }
+end
+
 execute 'systemctl daemon-reload' do
   action :nothing
   only_if { node['init_package'] == 'systemd' }
+end
+
+template '/etc/init.d/splunk' do
+  source 'splunk-init.erb'
+  mode '700'
+  variables(
+    splunkdir: splunk_dir,
+    splunkuser: splunk_runas_user,
+    splunkcmd: splunk_cmd,
+    runasroot: false,
+    accept_license: license_accepted?
+  )
+  not_if { node['splunk']['server']['runasroot'] == true }
+  notifies :run, 'execute[systemctl daemon-reload]', :immediately
+  notifies :restart, 'service[splunk]'
 end
 
 # during an initial install, the start/restart commands must deal with accepting
