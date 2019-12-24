@@ -7,6 +7,8 @@ This file is used to list changes made in each version of the splunk cookbook.
 - Fixes a regression made by commit 26fa04d9: when `node['splunk']['runasroot']` is false,
   splunk isn't started with a non-root user or the startup scripts are not modified to allow
   for non-root splunk commands
+- Properly stops and restarts the splunk daemon when the daemon needs to switch from running as root
+  to a non-root user
 
 ## 4.0.1 (2019-12-19)
 - Fixes [#130](https://github.com/chef-cookbooks/chef-splunk/issues/130)
