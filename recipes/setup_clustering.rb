@@ -26,7 +26,7 @@ end
 # the license. So, we must ensure the service[splunk] resource
 # properly deals with the license.
 edit_resource(:service, 'splunk') do
-  action :nothing
+  action node['init_package'] == 'systemd' ? %i(start enable) : :start
   supports status: true, restart: true
   stop_command svc_command('stop')
   start_command svc_command('start')

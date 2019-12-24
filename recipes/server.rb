@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-require 'socket'
 node.default['splunk']['is_server'] = true
 include_recipe 'chef-splunk::user'
 include_recipe 'chef-splunk::install_server'
@@ -47,10 +46,15 @@ execute 'update-splunk-mgmt-port' do
   notifies :restart, 'service[splunk]'
 end
 
-execute 'enable-splunk-receiver-port' do
-  command "#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth '#{splunk_auth_info}'"
+ruby_block 'enable-splunk-receiver-port' do
   sensitive true
+  block do
+    splunk = Mixlib::ShellOut.new("#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth #{splunk_auth_info}")
+    splunk.run_command
+    true if splunk.stderr.include?("Configuration for port #{node['splunk']['receiver_port']} already exists")
+  end
   not_if { port_open?(node['splunk']['receiver_port']) }
+  notifies :restart, 'service[splunk]'
 end
 
 include_recipe 'chef-splunk::setup_ssl' if enable_ssl?

@@ -31,4 +31,5 @@ user node['splunk']['user']['username'] do
   uid node['splunk']['user']['uid']
   home node['splunk']['user']['home']
   system true if %w(linux).include?(node['os'])
+  notifies :stop, 'service[splunk]', :before if splunk_installed?
 end
