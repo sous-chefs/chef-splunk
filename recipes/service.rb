@@ -89,6 +89,7 @@ template '/etc/init.d/splunk' do
   )
   not_if { node['splunk']['server']['runasroot'] == true }
   notifies :run, 'execute[systemctl daemon-reload]', :immediately
+  notifies :run, "execute[#{splunk_cmd} stop]", :immediately # must use this if splunk daemon is running as root and needs to switch to non-root user
   notifies :restart, 'service[splunk]'
 end
 
@@ -102,4 +103,12 @@ service 'splunk' do
   start_command svc_command('start')
   restart_command svc_command('restart')
   provider splunk_service_provider
+end
+
+# if the splunk daemon is running as root, executing a normal service restart or stop will fail if the boot
+# start script has been modified to execute splunk as a non-root user.
+# So, the splunk daemon must be run this way instead
+execute "#{splunk_cmd} stop" do
+  action :nothing
+  not_if { node['splunk']['server']['runasroot'] == true }
 end
