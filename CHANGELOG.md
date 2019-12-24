@@ -9,6 +9,7 @@ This file is used to list changes made in each version of the splunk cookbook.
   for non-root splunk commands
 - Properly stops and restarts the splunk daemon when the daemon needs to switch from running as root
   to a non-root user
+- Sets the splunk user home directory to the appropriate path when `node['splunk']['is_server']` is true
 
 ## 4.0.1 (2019-12-19)
 - Fixes [#130](https://github.com/chef-cookbooks/chef-splunk/issues/130)

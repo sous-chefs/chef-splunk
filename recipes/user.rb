@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: user
 #
-# Copyright:: 2014-2016, Chef Software, Inc.
+# Copyright:: 2014-2020, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ group node['splunk']['user']['username'] do
   gid node['splunk']['user']['uid'].to_i # CHEF-4927
   system true if %w(linux).include?(node['os'])
 end
+
+node.default['splunk']['user']['home'] = splunk_dir
 
 user node['splunk']['user']['username'] do
   comment node['splunk']['user']['comment']
