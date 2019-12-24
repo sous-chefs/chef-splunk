@@ -102,6 +102,7 @@ service 'splunk' do
   stop_command svc_command('stop')
   start_command svc_command('start')
   restart_command svc_command('restart')
+  status_command svc_command('status')
   provider splunk_service_provider
 end
 
