@@ -59,7 +59,7 @@ default['splunk']['clustering'] = {
 
 default['splunk']['shclustering'] = {
   'enabled' => false,
-  'mode' => 'member', # member|captain
+  'mode' => 'member', # member|captain|deployer
   'label' => 'shcluster1',
   'replication_factor' => 3,
   'replication_port' => 9900,

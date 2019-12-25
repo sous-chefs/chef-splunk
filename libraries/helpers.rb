@@ -138,3 +138,10 @@ end
 def enable_shclustering?
   node['splunk']['shclustering']['enabled'] == true
 end
+
+# returns true if the splunkd process is owned by the correct "run-as" user
+def correct_runas_user?
+  splunk = Mixlib::ShellOut.new("ps -ef|grep splunk|grep -v grep|awk '{print$1}'|uniq")
+  splunk.run_command
+  splunk_runas_user == splunk.stdout
+end

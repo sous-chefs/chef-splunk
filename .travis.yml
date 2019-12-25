@@ -60,9 +60,9 @@ matrix:
     - before_script:
       - chef --version
       - cookstyle --version
-      - foodcritic --version
     - script:
-      - delivery local all
+      - delivery local lint
+      - delivery local unit
       env:
         - UNIT_AND_LINT=1
         - CHEF_LICENSE=accept

@@ -29,9 +29,7 @@ describe 'chef-splunk::setup_ssl' do
         allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return(vault_item)
       end
 
-      it 'created the service[splunk] resource' do
-        expect(chef_run.service('splunk')).to do_nothing
-      end
+      it_behaves_like 'splunk daemon'
 
       it 'writes web.conf with http port 443' do
         expect(chef_run).to render_file('/opt/splunk/etc/system/local/web.conf').with_content('httpport = 443')
@@ -78,9 +76,7 @@ describe 'chef-splunk::setup_ssl' do
         allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return(vault_item)
       end
 
-      it 'created the service[splunk] resource' do
-        expect(chef_run.service('splunk')).to do_nothing
-      end
+      it_behaves_like 'splunk daemon'
 
       it 'writes web.conf with a non-default port for https' do
         expect(chef_run).to render_file('/opt/splunk/etc/system/local/web.conf').with_content('httpport = 7777')

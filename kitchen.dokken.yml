@@ -94,20 +94,6 @@ platforms:
         OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
     pid_one_command: /sbin/init
 
-- name: fedora-latest
-  driver:
-    image: dokken/fedora-latest
-    pid_one_command: /usr/lib/systemd/systemd
-    intermediate_instructions:
-      - RUN yum install chkconfig -y
-      - RUN mkdir -p /data/splunk-test
-      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-      - RUN mkdir -p /opt/splunk/etc
-      - RUN printf '
-        SPLUNK_SERVER_NAME=Splunkd\n
-        SLPUNK_WEB_NAME=splunkweb\n
-        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
-
 - name: ubuntu-16.04
   driver:
     image: dokken/ubuntu-16.04
@@ -129,18 +115,6 @@ platforms:
     intermediate_instructions:
       - RUN /usr/bin/apt-get -y update
       - RUN mkdir -p /data/splunk-test
-      # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-      - RUN mkdir -p /opt/splunk/etc
-      - RUN printf '
-        SPLUNK_SERVER_NAME=Splunkd\n
-        SLPUNK_WEB_NAME=splunkweb\n
-        OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
-
-- name: opensuse-leap
-  driver:
-    image: dokken/opensuse-leap
-    pid_one_command: /bin/systemd
-    intermediate_instructions:
       # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
       - RUN mkdir -p /opt/splunk/etc
       - RUN printf '
@@ -225,6 +199,21 @@ suites:
           mode: master
           replication_factor: 5
           search_factor: 3
+
+  - name: server-shdeployer
+    run_list:
+      - recipe[chef-splunk]
+    attributes:
+      dev_mode: true
+      splunk:
+        server:
+          runasroot: false
+        is_server: true
+        accept_license: true
+        shclustering:
+          enabled: true
+          mode: deployer
+        web_port: 8000
 
   - name: server-shcluster-member
     run_list:

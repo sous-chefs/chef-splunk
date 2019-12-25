@@ -2,6 +2,18 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 4.0.2 (TBD)
+- Modifies the `chef-splunk::shclustering` to deploy a Splunk Search Head deployer
+- Fixes a regression made by commit 26fa04d9: when `node['splunk']['runasroot']` is false,
+  splunk isn't started with a non-root user or the startup scripts are not modified to allow
+  for non-root splunk commands
+- Properly stops and restarts the splunk daemon when the daemon needs to switch from running as root
+  to a non-root user
+- Sets the splunk user home directory to the appropriate path when `node['splunk']['is_server']` is true
+- Stops the splunk service, if installed, before modifying the splunk user account settings
+- ensures the splunk service resources are always starting the daemon
+- Ensures the splunk daemon is always running as the correct user
+
 ## 4.0.1 (2019-12-19)
 - Fixes [#130](https://github.com/chef-cookbooks/chef-splunk/issues/130)
   the `execute[update-splunk-mgmt-port]` resource passes splunk auth info to the `#current_mgmt_port` helper method

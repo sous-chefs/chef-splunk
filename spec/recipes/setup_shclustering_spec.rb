@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 describe 'chef-splunk::setup_shclustering' do
+  let(:splunk_local_dir) { '/opt/splunk/etc/apps/0_autogen_shcluster_config/local' }
+  let(:server_conf_file) { "#{splunk_local_dir}/server.conf" }
+
+  let(:vault_item) do
+    { 'auth' => 'admin:notarealpassword', 'secret' => 'notarealsecret' }
+  end
+
   let(:deployer_node) do
     stub_node(platform: 'ubuntu', version: '16.04') do |node|
       node.automatic['fqdn'] = 'deploy.cluster.example.com'
@@ -10,6 +17,24 @@ describe 'chef-splunk::setup_shclustering' do
       node.force_default['splunk']['shclustering']['enabled'] = true
       node.force_default['splunk']['accept_license'] = true
     end
+  end
+
+  context 'search head deployer' do
+    let(:chef_run) do
+      ChefSpec::ServerRunner.new do |node|
+        node.force_default['dev_mode'] = true
+        node.force_default['splunk']['is_server'] = true
+        node.force_default['splunk']['shclustering']['enabled'] = true
+        node.force_default['splunk']['accept_license'] = true
+        node.force_default['splunk']['shclustering']['mode'] = 'deployer'
+      end.converge(described_recipe)
+    end
+
+    before do
+      allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return(vault_item)
+    end
+
+    it_behaves_like 'common server.conf settings'
   end
 
   context 'search head cluster member settings' do
@@ -29,51 +54,34 @@ describe 'chef-splunk::setup_shclustering' do
       end.converge(described_recipe)
     end
 
-    let(:vault_item) do
-      { 'auth' => 'admin:notarealpassword', 'secret' => 'notarealsecret' }
-    end
-
     before do
       allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return(vault_item)
     end
+
+    it_behaves_like 'common server.conf settings'
 
     it 'writes a file marker to ensure convergence' do
       expect(chef_run).to render_file('/opt/splunk/etc/.setup_shcluster').with_content("true\n")
     end
 
     it 'writes server.conf with replication port' do
-      expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+      expect(chef_run).to render_file(server_conf_file)
         .with_content("[replication_port://#{chef_run.node['splunk']['shclustering']['replication_port']}]")
     end
 
-    it 'writes server.conf with a shclustering stanza' do
-      expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
-        .with_content('[shclustering]')
-    end
-
     it 'writes server.conf with the deployer url' do
-      expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+      expect(chef_run).to render_file(server_conf_file)
         .with_content("conf_deploy_fetch_url = #{chef_run.node['splunk']['shclustering']['deployer_url']}")
     end
 
     it 'writes server.conf with the node mgmt uri' do
-      expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+      expect(chef_run).to render_file(server_conf_file)
         .with_content("mgmt_uri = #{chef_run.node['splunk']['shclustering']['mgmt_uri']}")
     end
 
     it 'writes server.conf with the shcluster replication factor' do
-      expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
+      expect(chef_run).to render_file(server_conf_file)
         .with_content("replication_factor = #{chef_run.node['splunk']['shclustering']['replication_factor']}")
-    end
-
-    it 'writes server.conf with the shcluster label' do
-      expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
-        .with_content("shcluster_label = #{chef_run.node['splunk']['shclustering']['label']}")
-    end
-
-    it 'writes server.conf with the shcluster secret' do
-      expect(chef_run).to render_file('/opt/splunk/etc/apps/0_autogen_shcluster_config/local/server.conf')
-        .with_content('pass4SymmKey = notarealsecret')
     end
 
     it 'does not run command to bootstrap captain' do

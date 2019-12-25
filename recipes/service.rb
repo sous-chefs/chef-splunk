@@ -59,9 +59,38 @@ end
 
 Chef::Log.info("Node init package: #{node['init_package']}")
 
+template '/etc/systemd/system/splunkd.service' do
+  source 'splunk-systemd.erb'
+  mode '644'
+  variables(
+    splunkdir: splunk_dir,
+    splunkcmd: splunk_cmd,
+    runasroot: false,
+    accept_license: license_accepted?
+  )
+  notifies :run, 'execute[systemctl daemon-reload]', :immediately
+  only_if { node['init_package'] == 'systemd' && node['splunk']['server']['runasroot'] == false }
+end
+
 execute 'systemctl daemon-reload' do
   action :nothing
   only_if { node['init_package'] == 'systemd' }
+end
+
+template '/etc/init.d/splunk' do
+  source 'splunk-init.erb'
+  mode '700'
+  variables(
+    splunkdir: splunk_dir,
+    splunkuser: splunk_runas_user,
+    splunkcmd: splunk_cmd,
+    runasroot: false,
+    accept_license: license_accepted?
+  )
+  not_if { node['splunk']['server']['runasroot'] == true }
+  notifies :run, 'execute[systemctl daemon-reload]', :immediately
+  notifies :run, "execute[#{splunk_cmd} stop]", :immediately # must use this if splunk daemon is running as root and needs to switch to non-root user
+  notifies :restart, 'service[splunk]'
 end
 
 # during an initial install, the start/restart commands must deal with accepting
@@ -73,5 +102,15 @@ service 'splunk' do
   stop_command svc_command('stop')
   start_command svc_command('start')
   restart_command svc_command('restart')
+  status_command svc_command('status')
+  notifies :run, "execute[#{splunk_cmd} stop]", :before unless correct_runas_user?
   provider splunk_service_provider
+end
+
+# if the splunk daemon is running as root, executing a normal service restart or stop will fail if the boot
+# start script has been modified to execute splunk as a non-root user.
+# So, the splunk daemon must be run this way instead
+execute "#{splunk_cmd} stop" do
+  action :nothing
+  not_if { node['splunk']['server']['runasroot'] == true }
 end
