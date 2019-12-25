@@ -53,8 +53,6 @@ examples/*
 Procfile
 .kitchen*
 .rubocop.yml
-spec/*
-.travis.yml
 .foodcritic
 appveyor.yml
 
@@ -73,7 +71,6 @@ appveyor.yml
 
 # Berkshelf #
 #############
-Berksfile
 Berksfile.lock
 cookbooks/*
 tmp

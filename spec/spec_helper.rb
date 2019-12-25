@@ -1,6 +1,6 @@
 require 'chefspec'
 require 'chefspec/berkshelf'
-require_relative 'shared_examples'
+require 'shared_examples'
 
 RSpec.configure do |config|
   config.color = true               # Use color in STDOUT
