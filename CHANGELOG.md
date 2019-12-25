@@ -12,6 +12,7 @@ This file is used to list changes made in each version of the splunk cookbook.
 - Sets the splunk user home directory to the appropriate path when `node['splunk']['is_server']` is true
 - Stops the splunk service, if installed, before modifying the splunk user account settings
 - ensures the splunk service resources are always starting the daemon
+- Ensures the splunk daemon is always running as the correct user
 
 ## 4.0.1 (2019-12-19)
 - Fixes [#130](https://github.com/chef-cookbooks/chef-splunk/issues/130)

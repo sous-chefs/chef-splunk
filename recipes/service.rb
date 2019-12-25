@@ -103,6 +103,7 @@ service 'splunk' do
   start_command svc_command('start')
   restart_command svc_command('restart')
   status_command svc_command('status')
+  notifies :run, "execute[#{splunk_cmd} stop]", :before unless correct_runas_user?
   provider splunk_service_provider
 end
 
