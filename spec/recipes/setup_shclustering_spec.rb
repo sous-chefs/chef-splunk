@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_examples'
 
 describe 'chef-splunk::setup_shclustering' do
   let(:splunk_local_dir) { '/opt/splunk/etc/apps/0_autogen_shcluster_config/local' }

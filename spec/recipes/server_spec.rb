@@ -24,10 +24,7 @@ describe 'chef-splunk::server' do
     end
 
     it 'enables receiver port' do
-      expect(chef_run).to run_execute('enable-splunk-receiver-port').with(
-        command: "/opt/splunk/bin/splunk enable listen 9997 -auth 'admin:notarealpassword'",
-        sensitive: true
-      )
+      expect(chef_run).to run_ruby_block('enable-splunk-receiver-port').with(sensitive: true)
     end
   end
 
@@ -37,6 +34,10 @@ describe 'chef-splunk::server' do
       chef_run_init.node.force_default['splunk']['accept_license'] = true
       chef_run_init.node.force_default['splunk']['mgmt_port'] = '9089'
       chef_run_init.converge(described_recipe)
+    end
+
+    before do
+      allow_any_instance_of(Chef::Resource).to receive(:port_open?).and_return(false)
     end
 
     it 'updates splunkd management port' do
@@ -52,10 +53,7 @@ describe 'chef-splunk::server' do
     end
 
     it 'enables receiver port' do
-      expect(chef_run).to run_execute('enable-splunk-receiver-port').with(
-        command: "/opt/splunk/bin/splunk enable listen 9997 -auth 'admin:notarealpassword'",
-        sensitive: true
-      )
+      expect(chef_run).to run_ruby_block('enable-splunk-receiver-port').with(sensitive: true)
     end
   end
 end
