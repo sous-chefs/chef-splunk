@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 4.0.2 (TBD)
+## 4.0.2 (2020-01-02)
 - Modifies the `chef-splunk::shclustering` to deploy a Splunk Search Head deployer
 - Fixes a regression made by commit 26fa04d9: when `node['splunk']['runasroot']` is false,
   splunk isn't started with a non-root user or the startup scripts are not modified to allow
