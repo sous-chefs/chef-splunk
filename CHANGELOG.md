@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 4.0.3 (2020-01-02)
+- Changes the chef-vault cookbook dependency to `~> 4.0`. This version of chef-vault skips the gem installation
+  via the cookbook, because the gem is included out of the box in Chef Infra Client 13.4+.
+
 ## 4.0.2 (2020-01-02)
 - Modifies the `chef-splunk::shclustering` to deploy a Splunk Search Head deployer
 - Fixes a regression made by commit 26fa04d9: when `node['splunk']['runasroot']` is false,
