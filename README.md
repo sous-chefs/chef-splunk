@@ -63,7 +63,8 @@ By default, only 64-bit Splunk server and Splunk Universal Forwarder will be ins
 
 Used for managing secrets, see __Usage__:
 
-* chef-vault, `>= 3.1.1`
+* chef-vault, `~> 4.0`
+
 
 ## Attributes
 
