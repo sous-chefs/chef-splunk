@@ -108,7 +108,7 @@ else
 end
 
 execute 'bootstrap-shcluster' do
-  command "#{splunk_cmd} bootstrap shcluster-captain -servers_list '#{shcluster_servers_list.join(';')}' -auth '#{splunk_auth_info}'"
+  command "#{splunk_cmd} bootstrap shcluster-captain -servers_list '#{shcluster_servers_list.join(',')}' -auth '#{splunk_auth_info}'"
   sensitive true
   not_if { ::File.exist?("#{splunk_dir}/etc/.setup_shcluster") }
   only_if { node['splunk']['shclustering']['mode'] == 'captain' }

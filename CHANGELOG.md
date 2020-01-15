@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 4.0.5 (2020-01-15)
+- Adds a state file and a guard that prevents the `template[user-seed.conf]` resource idempotent
+- Fixes the shcluster-captain bootstrap command where `--servers_list` was provided a semi-colon separated
+  list instead of a comma-separated list
+
 ## 4.0.4 (2020-01-14)
 - Fixes [#134](https://github.com/chef-cookbooks/chef-splunk/issues/134)
 

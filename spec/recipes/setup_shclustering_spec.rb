@@ -99,7 +99,7 @@ describe 'chef-splunk::setup_shclustering' do
         end
 
         let(:shcluster_servers_list) do
-          chef_run.node.force_default['splunk']['shclustering']['shcluster_members'].join(';')
+          chef_run.node.force_default['splunk']['shclustering']['shcluster_members'].join(',')
         end
 
         it 'runs command to bootstrap captain with correct parameters' do

@@ -21,6 +21,12 @@ describe 'chef-splunk::setup_auth' do
           .with(mode: '600', sensitive: true, owner: 'root', group: 'root')
         expect(chef_run.template('user-seed.conf')).to notify('service[splunk]').to(:restart).immediately
       end
+
+      it 'created .user-seed.conf' do
+        chef_run.converge(described_recipe)
+        expect(chef_run).to create_file('.user-seed.conf')
+          .with(mode: '600', owner: 'root', group: 'root')
+      end
     end
 
     context 'setup auth is false' do
