@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 4.0.4 (2020-01-14)
+- Fixes [#134](https://github.com/chef-cookbooks/chef-splunk/issues/134)
+
 ## 4.0.3 (2020-01-02)
 - Changes the chef-vault cookbook dependency to `~> 4.0`. This version of chef-vault skips the gem installation
   via the cookbook, because the gem is included out of the box in Chef Infra Client 13.4+.

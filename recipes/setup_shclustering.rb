@@ -72,7 +72,7 @@ end
 return if node['splunk']['shclustering']['mode'] == 'deployer'
 
 # bootstrap the shcluster and the node as a captain if shclustering mode is set to 'captain'
-shcluster_servers_list = node['splunk']['shclustering']['shcluster_members']
+shcluster_servers_list = []
 
 # search for the fqdn of the search head deployer and set that as the deployer_url
 # if one is not given in the node attributes
@@ -103,6 +103,8 @@ if node['splunk']['shclustering']['mode'] == 'captain' &&
   ).each do |result|
     shcluster_servers_list << result['splunk']['shclustering']['mgmt_uri']
   end
+else
+  shcluster_servers_list = node['splunk']['shclustering']['shcluster_members']
 end
 
 execute 'bootstrap-shcluster' do
