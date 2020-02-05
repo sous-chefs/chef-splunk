@@ -54,7 +54,7 @@ describe 'chef-splunk::setup_clustering' do
       end
 
       it 'raises an error' do
-        expect{ chef_run.converge(described_recipe) }.to raise_error(RuntimeError, 'Failed to setup clustering: invalid clustering mode')
+        expect { chef_run.converge(described_recipe) }.to raise_error(RuntimeError, 'Failed to setup clustering: invalid clustering mode')
       end
     end
 
