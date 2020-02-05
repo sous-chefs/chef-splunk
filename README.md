@@ -201,6 +201,8 @@ clustering in the `setup_shclustering` recipe:
 
 * `node['splunk']['shclustering']`: A hash of search head clustering configurations
   used in the `setup_shclustering` recipe
+* `node['splunk']['shclustering']['app_dir']`: the path where search head clustering configuration will
+  be installed (Default: /opt/splunk/etc/apps/0_autogen_shcluster_config)
 * `node['splunk']['shclustering']['enabled']`: Whether to enable search head clustering,
   must be set to `true` to use the `setup_shclustering` recipe. Defaults to `false`,
   must be a boolean literal `true` or `false`.
@@ -331,10 +333,83 @@ must be set explicitly elsewhere on the node(s).
 
 ## Custom Resources
 
+### splunk_app
+
+This resource will install a Splunk app or deployment app into the appropriate locations
+on a Splunk Enterprise server. Some custom "apps" simply install with a few files to override
+default Splunk settings. The latter is desirable for maintaining settings after an upgrade of the
+Splunk Enterprise server software.
+
+#### Actions
+* `:enable`: Enables a Splunk app after it has been disabled or newly installed
+* `:disable`: Disables a Splunk app and leaves it installed
+* `:install`: Installs a Splunk app or deployment app
+* `:update`: Updates a Splunk app that was previously installed. If the app is not installed, this action will
+  go ahead and install the app as if `:install` was specified.
+* `:remove`: Completely removes a Splunk app or deployment app from the Splunk Enterprise server
+
+#### Properties
+# TODO: document the rest of the splunk_app properties
+
+* `cookbook`: Used in conjunction with the `templates` property, this specifies the cookbook where templates will be sourced
+
+* `templates`: This is either an array of template names or a Hash consisting of a target destination path and template names
+  For example: `['server.conf.erb']` or `{ 'etc/deployment-apps' => 'server.conf.erb' }`.
+
+* `template_variables`: This is a Hash with embedded Hash to specify variables that can be passed into the templates keyed by
+  the name of the template, matching the template names in `templates` property above. The format of this Hash is such that
+  a `default` Hash can specify variables/values passed to all templates or it can specify different variables/values for any and all
+  templates.
+
+  For example, this will pass the default Hash of variables/values into all of the templates, but the `foo.erb` template will
+  be fed a unique Hash of variables/values.
+  ```ruby
+  splunk_app 'my app' do
+    templates %w(foo.erb bar.erb server.conf.erb app.conf.erb outputs.conf.erb)
+    template_variables {
+      {
+        'default' => { 'var1' => 'value1', 'var2' => 'value2' },
+        'foo.erb' => { 'x' => 'snowflake template' }
+      }
+    }
+  end
+  ```
+
+
+#### Examples
+
+Install and enable a deployment client configuration that overrides default Splunk Enterprise configurations
+
+- Given a wrapper cookbook called MyDeploymentClientBase with a folder structure as below:
+```
+MyDeploymentClientBase
+    /templates
+        /MyDeploymentClientBase
+            deploymentclient.conf.erb
+```
+
+```ruby
+splunk_auth_info = data_bag_item('vault', "splunk_#{node.chef_environment}")['auth']
+
+splunk_app 'MyDeploymentClientBase' do
+  splunk_auth splunk_auth_info
+  templates ['deploymentclient.conf.erb']
+  cookbook 'MyDeploymentClientBase'
+  action %i(install enable)
+end
+```
+
+The Splunk Enterprise server will have a filesystem created, as follows:
+```
+/opt/splunk/etc/apps/MyDeploymentClientBase/local/deploymentclient.conf
+```
+
+
+
 ### splunk_installer
 
 The Splunk Enterprise and Splunk Universal Forwarder package
-installation is the same save the name of the package and the URL to
+installation is the same, save for the name of the package and the URL to
 download. This custom resource abstracts the package installation to a
 common baseline. Any new platform installation support should be added
 by modifying the custom resource as appropriate. One goal of this

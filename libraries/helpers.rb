@@ -3,7 +3,8 @@
 # Libraries:: helpers
 #
 # Author: Joshua Timberman <joshua@chef.io>
-# Copyright:: 2014-2016, Chef Software, Inc <legal@chef.io>
+# Contributor: Dang H. Nguyen <dang.nguyen@disney.com>
+# Copyright:: 2014-2020, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +19,8 @@
 # limitations under the License.
 #
 require 'socket'
-require 'mixlib/shellout'
+require 'chef/mixin/shell_out'
+include Chef::Mixin::ShellOut
 
 def splunk_installed?
   ::File.exist?(splunk_cmd)
@@ -111,8 +113,8 @@ def port_open?(port, ip = '127.0.0.1')
   true
 end
 
-def current_mgmt_port(splunk_auth_info)
-  splunk = Mixlib::ShellOut.new("#{splunk_cmd} show splunkd-port -auth #{splunk_auth_info} | awk -F: '{print$NF}'")
+def current_mgmt_port
+  splunk = shell_out("#{splunk_cmd} show splunkd-port -auth #{node.run_state['splunk_auth_info']} | awk -F: '{print$NF}'")
   splunk.run_command
   splunk.error! # Raise an exception if it didn't exit with 0
   splunk.stdout.strip
@@ -141,7 +143,36 @@ end
 
 # returns true if the splunkd process is owned by the correct "run-as" user
 def correct_runas_user?
-  splunk = Mixlib::ShellOut.new("ps -ef|grep splunk|grep -v grep|awk '{print$1}'|uniq")
+  splunk = shell_out("ps -ef|grep splunk|grep -v grep|awk '{print$1}'|uniq")
   splunk.run_command
   splunk_runas_user == splunk.stdout
+end
+
+def multisite_clustering?
+  node['splunk']['clustering']['num_sites'] > 1
+end
+
+def cluster_master?
+  node['splunk']['clustering']['mode'] == 'master'
+end
+
+def init_shcluster_member?
+  list_member_info = shell_out("#{splunk_cmd} list shcluster-member-info -auth #{node.run_state['splunk_auth_info']}")
+  list_member_info.run_command
+  list_member_info.error?
+end
+
+def shcluster_members_ipv4
+  splunk = shell_out("#{splunk_cmd} list shcluster-members -auth #{node.run_state['splunk_auth_info']} | grep host_port_pair | awk -F: '{print$2}'")
+  splunk.stdout.split
+end
+
+def shcaptain_elected?
+  splunk = shell_out("#{splunk_cmd} list shcluster-members -auth #{node.run_state['splunk_auth_info']} | grep is_captain:1")
+  splunk.exitstatus == 0
+end
+
+def search_heads_peered?
+  list_search_server = shell_out("#{splunk_cmd} list search-server -auth #{node.run_state['splunk_auth_info']}")
+  list_search_server.stdout.match?(/(^Server at URI \".*\" with status as \"Up\")+/)
 end

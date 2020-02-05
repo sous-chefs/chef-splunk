@@ -37,19 +37,21 @@ end
 
 # We can rely on loading the chef_vault_item here, as `setup_auth`
 # above would have failed if there were another issue.
-splunk_auth_info = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")['auth']
+vault_item = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")
+node.run_state['splunk_auth_info'] = vault_item['auth']
+node.run_state['splunk_secret'] = vault_item['secret']
 
 execute 'update-splunk-mgmt-port' do
-  command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{splunk_auth_info}'"
+  command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{node.run_state['splunk_auth_info']}'"
   sensitive true
-  not_if { current_mgmt_port(splunk_auth_info) == node['splunk']['mgmt_port'] }
+  not_if { current_mgmt_port(node.run_state['splunk_auth_info']) == node['splunk']['mgmt_port'] }
   notifies :restart, 'service[splunk]'
 end
 
 ruby_block 'enable-splunk-receiver-port' do
   sensitive true
   block do
-    splunk = Mixlib::ShellOut.new("#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth #{splunk_auth_info}")
+    splunk = Mixlib::ShellOut.new("#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth #{node.run_state['splunk_auth_info']}")
     splunk.run_command
     true if splunk.stderr.include?("Configuration for port #{node['splunk']['receiver_port']} already exists")
   end

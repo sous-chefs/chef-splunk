@@ -46,6 +46,7 @@ default['splunk']['ssl_options'] = {
 default['splunk']['clustering'] = {
   'enabled' => false,
   'num_sites' => 1,   # multisite is true if num_sites > 1
+  'mgmt_uri' => "https://#{node['fqdn']}:8089",
   'mode' => 'master', # master|slave|searchhead
   'replication_port' => '9887',
   # Following two params only applicable if num_sites = 1 (multisite is false)
@@ -58,13 +59,14 @@ default['splunk']['clustering'] = {
 }
 
 default['splunk']['shclustering'] = {
+  'app_dir' => '/opt/splunk/etc/apps/0_autogen_shcluster_config',
+  'deployer_url' => '',
   'enabled' => false,
-  'mode' => 'member', # member|captain|deployer
   'label' => 'shcluster1',
+  'mgmt_uri' => "https://#{node['fqdn']}:8089",
+  'mode' => 'member', # member|captain|deployer
   'replication_factor' => 3,
   'replication_port' => 9900,
-  'deployer_url' => '',
-  'mgmt_uri' => "https://#{node['fqdn']}:8089",
   'shcluster_members' => [],
 }
 

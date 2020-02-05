@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: setup_clustering
 #
-# Copyright:: 2014-2019, Chef Software, Inc.
+# Copyright:: 2014-2020, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,54 +35,53 @@ edit_resource(:service, 'splunk') do
   provider splunk_service_provider
 end
 
-passwords = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")
-splunk_auth_info = passwords['auth']
+Chef::Log.debug("Current node clustering mode: #{node['splunk']['clustering']['mode']}")
 
-cluster_secret = passwords['secret']
-cluster_params = node['splunk']['clustering']
-cluster_mode = cluster_params['mode']
-is_multisite = cluster_params['num_sites'] > 1
-
-Chef::Log.debug("Current node clustering mode: #{cluster_mode}")
-
-cluster_master = search(
-  :node,
-  "\
-  splunk_clustering_enabled:true AND \
-  splunk_clustering_mode:master AND \
-  chef_environment:#{node.chef_environment}"
-).first unless cluster_mode == 'master'
-
-case cluster_mode
-when 'master'
-  splunk_cmd_params = '-mode master'
-  if is_multisite
-    available_sites = (1..cluster_params['num_sites']).to_a.map { |i| 'site' + i.to_s }.join(',')
-    splunk_cmd_params <<
-      " -multisite true -available_sites #{available_sites} -site #{cluster_params['site']}" \
-      " -site_replication_factor #{cluster_params['site_replication_factor']}" \
-      " -site_search_factor #{cluster_params['site_search_factor']}"
-  else
-    splunk_cmd_params <<
-      " -replication_factor #{cluster_params['replication_factor']}" \
-      " -search_factor #{cluster_params['search_factor']}"
+unless cluster_master?
+  search(
+    :node,
+    "\
+    splunk_clustering_enabled:true AND \
+    splunk_clustering_mode:master AND \
+    chef_environment:#{node.chef_environment}",
+    filter_result: {
+      'cluster_master_mgmt_uri' => %w(splunk clustering mgmt_uri),
+    }
+  ).each do |result|
+    node.default['splunk']['clustering']['mgmt_uri'] = result['cluster_master_mgmt_uri']
   end
-when 'slave', 'searchhead'
-  splunk_cmd_params = "-mode #{cluster_mode}"
-  splunk_cmd_params << " -site #{cluster_params['site']}" if is_multisite
-  splunk_cmd_params <<
-    " -master_uri https://#{cluster_master['ipaddress'] || cluster_master['fqdn']}:#{cluster_master['splunk']['mgmt_port']}" \
-    " -replication_port #{cluster_params['replication_port']}"
-else
-  Chef::Log.fatal("You have set an incorrect clustering mode: #{cluster_mode}")
-  Chef::Log.fatal("Set `node['splunk']['clustering']['mode']` to master|slave|searchhead, and try again.")
-  raise 'Failed to setup clustering'
 end
 
-splunk_cmd_params << " -secret #{cluster_secret}" if cluster_secret
+case node['splunk']['clustering']['mode']
+when 'master'
+  splunk_cmd_params = '-mode master'
+  if multisite_clustering?
+    available_sites = (1..node['splunk']['clustering']['num_sites']).to_a.map { |i| 'site' + i.to_s }.join(',')
+    splunk_cmd_params <<
+      " -multisite true -available_sites #{available_sites} -site #{node['splunk']['clustering']['site']}" \
+      " -site_replication_factor #{node['splunk']['clustering']['site_replication_factor']}" \
+      " -site_search_factor #{node['splunk']['clustering']['site_search_factor']}"
+  else
+    splunk_cmd_params <<
+      " -replication_factor #{node['splunk']['clustering']['replication_factor']}" \
+      " -search_factor #{node['splunk']['clustering']['search_factor']}"
+  end
+when 'slave', 'searchhead'
+  splunk_cmd_params = "-mode #{node['splunk']['clustering']['mode']}"
+  splunk_cmd_params << " -site #{node['splunk']['clustering']['site']}" if multisite_clustering?
+  splunk_cmd_params <<
+    " -master_uri #{node.default['splunk']['clustering']['mgmt_uri']}" \
+    " -replication_port #{node['splunk']['clustering']['replication_port']}"
+else
+  Chef::Log.error("You have set an incorrect clustering mode: #{node['splunk']['clustering']['mode']}")
+  Chef::Log.error("Set `node['splunk']['clustering']['mode']` to master|slave|searchhead, and try again.")
+  raise 'Failed to setup clustering: invalid clustering mode'
+end
+
+splunk_cmd_params << " -secret #{node.run_state['splunk_secret']}" if node.run_state['splunk_secret']
 
 execute 'setup-indexer-cluster' do
-  command "#{splunk_cmd} edit cluster-config #{splunk_cmd_params} -auth '#{splunk_auth_info}'"
+  command "#{splunk_cmd} edit cluster-config #{splunk_cmd_params} -auth '#{node.run_state['splunk_auth_info']}'"
   sensitive true
   not_if { ::File.exist?("#{splunk_dir}/etc/.setup_clustering") }
   notifies :restart, 'service[splunk]'
