@@ -144,10 +144,17 @@ class Chef
               group splunk_runas_user
             end
 
+            # TODO: DRY this handling of template_variables with that of lines 173-188
+            template_variables = if new_resource.template_variables.key?(destination)
+                                   new_resource.template_variables[destination]
+                                 else
+                                   new_resource.template_variables['default']
+                                 end
+
             template "#{dir}/#{destination}" do
               source source
               cookbook new_resource.cookbook
-              variables new_resource.template_variables['default']
+              variables template_variables
               owner splunk_runas_user
               group splunk_runas_user
               mode '644'
