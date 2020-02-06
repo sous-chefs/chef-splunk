@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 4.1.0 (TBD)
+## 4.1.0 (2020-02-06)
 - Adds attribute `node['splunk']['shclustering']['app_dir']` to take the place of local ruby
   variable to set the search head clustering application directory.
 - Uses the splunk CLI to add search head cluster members instead of the app server.conf file
