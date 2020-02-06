@@ -2,7 +2,7 @@
 driver:
   name: dokken
   privileged: true # because Docker and SystemD/Upstart
-  chef_version: <%= ENV['CHEF_VERSION'] || 'current' %>
+  chef_version: <%= ENV['CHEF_VERSION'] || 'stable' %>
   chef_license: accept-no-persist
 
 transport:
@@ -239,7 +239,7 @@ suites:
 
   - name: upgrade_server
     run_list:
-      - recipe[chef-splunk::server]
+      - recipe[chef-splunk::default]
       - recipe[chef-splunk::upgrade]
     attributes:
       splunk:

@@ -25,8 +25,8 @@ unless setup_auth?
   return
 end
 
-splunk_auth_info = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")['auth']
-user, pw = splunk_auth_info.split(':')
+include_recipe 'chef-splunk'
+user, pw = node.run_state['splunk_auth_info'].split(':')
 
 # during an initial install, the start/restart commands must deal with accepting
 # the license. So, we must ensure the service[splunk] resource
@@ -50,7 +50,7 @@ template 'user-seed.conf' do
   sensitive true
   variables user: user, password: pw
   notifies :restart, 'service[splunk]', :immediately
-  not_if { File.exist?("#{splunk_dir}/etc/system/local/.user-seed.conf") }
+  not_if { ::File.exist?("#{splunk_dir}/etc/system/local/.user-seed.conf") }
 end
 
 file '.user-seed.conf' do

@@ -5,6 +5,8 @@ describe 'chef-splunk::server' do
     ChefSpec::ServerRunner.new do |node|
       node.force_default['dev_mode'] = true
       node.force_default['splunk']['accept_license'] = true
+      node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
+      node.run_state['splunk_secret'] = 'notarealsecret'
     end
   end
 

@@ -7,6 +7,8 @@ describe 'chef-splunk::setup_auth' do
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['accept_license'] = true
+        node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
+        node.run_state['splunk_secret'] = 'notarealsecret'
       end
     end
 
