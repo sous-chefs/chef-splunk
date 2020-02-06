@@ -145,8 +145,8 @@ class Chef
             end
 
             # TODO: DRY this handling of template_variables with that of lines 173-188
-            template_variables = if new_resource.template_variables.key?(destination)
-                                   new_resource.template_variables[destination]
+            template_variables = if new_resource.template_variables.key?(source)
+                                   new_resource.template_variables[source]
                                  else
                                    new_resource.template_variables['default']
                                  end
