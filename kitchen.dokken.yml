@@ -239,7 +239,7 @@ suites:
 
   - name: upgrade_server
     run_list:
-      - recipe[chef-splunk::server]
+      - recipe[chef-splunk::default]
       - recipe[chef-splunk::upgrade]
     attributes:
       splunk:

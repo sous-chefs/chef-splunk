@@ -27,7 +27,7 @@ end
 # We can rely on loading the chef_vault_item here into the run_state so other
 # recipes don't have to keep going back to the chef server to access the vault/data bag item
 vault_item = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")
-node.run_state['splunk_auth_info'] = vault_item['auth']
+node.run_state['splunk_auth_info'] = splunk_auth(vault_item['auth'])
 node.run_state['splunk_secret'] = vault_item['secret']
 
 if server?

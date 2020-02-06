@@ -25,6 +25,7 @@ unless setup_auth?
   return
 end
 
+include_recipe 'chef-splunk'
 user, pw = node.run_state['splunk_auth_info'].split(':')
 
 # during an initial install, the start/restart commands must deal with accepting
