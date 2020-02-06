@@ -15,5 +15,8 @@ shared_context 'command stubs' do
     stubs_for_resource('execute[bootstrap-shcluster-captain]') do |resource|
       allow(resource).to receive_shell_out('/opt/splunk/bin/splunk list shcluster-members -auth admin:notarealpassword | grep is_captain:1')
     end
+    stubs_for_resource("execute[update-splunk-mgmt-port]") do |resource|
+      allow(resource).to receive_shell_out("/opt/splunk/bin/splunk show splunkd-port -auth admin:notarealpassword | awk -F: '{print$NF}'")
+    end
   end
 end
