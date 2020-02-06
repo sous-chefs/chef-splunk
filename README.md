@@ -175,6 +175,10 @@ clustering in the `setup_clustering` recipe:
 * `node['splunk']['clustering']['replication_port']`: The replication port
   of the cluster peer member. Only valid when `node['splunk']['clustering']['mode']='slave'`.
   Defaults to 9887.
+* `node['splunk']['clustering']['mgmt_uri']` (Default: https://fqdn:8089)
+  This attribute is for the indexer cluster members and cluster master. The cluster master
+  will set this node attribute to itself, while all cluster members will perform a chef search
+  to get the value from the cluster master's node data.
 
 * For single-site clustering (`node['splunk']['clustering']['num_sites']` = 1):
   * `node['splunk']['clustering']['replication_factor']`: The replication factor

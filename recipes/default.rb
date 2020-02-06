@@ -2,6 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: default
 #
+# Author: Dang H. Nguyen <dang.nguyen@disney.com>
 # Copyright:: 2014-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +23,12 @@ if disabled?
   Chef::Log.debug('Splunk is disabled on this node.')
   return
 end
+
+# We can rely on loading the chef_vault_item here into the run_state so other
+# recipes don't have to keep going back to the chef server to access the vault/data bag item
+vault_item = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")
+node.run_state['splunk_auth_info'] = vault_item['auth']
+node.run_state['splunk_secret'] = vault_item['secret']
 
 if server?
   include_recipe 'chef-splunk::server'
