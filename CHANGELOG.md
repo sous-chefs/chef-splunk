@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 5.0.0 (TBD)
+## 5.0.0 (2020-02-10)
 - `splunk_app` no longer uses the `splunk install app` and `splunk disable app` commands; preference
   to managing the files in <splunk_dir>/etc/apps, or the alternative directories, directly, and restarting/reloading
   Splunk, as needed.
