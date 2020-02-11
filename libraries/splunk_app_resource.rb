@@ -24,15 +24,15 @@ class Chef
       self.resource_name = 'splunk_app'
 
       # Actions correspond to splunk commands pertaining to apps.
-      actions :enable, :disable, :install, :update, :remove
-      default_action :enable
-      state_attrs :enabled, :installed
+      actions :install, :remove
+      default_action :install
+      state_attrs :installed
 
       attribute :app_name, kind_of: String, name_attribute: true
       attribute :app_dir, kind_of: String, default: nil
       attribute :remote_file, kind_of: String, default: nil
       attribute :cookbook_file, kind_of: String, default: nil
-      attribute :cookbook, kind_of: String, default: nil
+      attribute :local_file, kind_of: String, default: nil
       attribute :checksum, kind_of: String, default: nil
       attribute :remote_directory, kind_of: String, default: nil
       attribute :splunk_auth, kind_of: [String, Array], required: true
@@ -43,7 +43,6 @@ class Chef
       # each template named in the templates property, above, with each template having its
       # unique set of variables and values
       attribute :template_variables, kind_of: Hash, default: { 'default' => {} }
-      attribute :enabled, kind_of: [TrueClass, FalseClass, NilClass], default: false
       attribute :installed, kind_of: [TrueClass, FalseClass, NilClass], default: false
     end
   end

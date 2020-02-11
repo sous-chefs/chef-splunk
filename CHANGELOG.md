@@ -2,6 +2,20 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 5.0.0 (TBD)
+- `splunk_app` no longer uses the `splunk install app` and `splunk disable app` commands; preference
+  to managing the files in <splunk_dir>/etc/apps, or the alternative directories, directly, and restarting/reloading
+  Splunk, as needed.
+- Removes these actions from `splunk_app`: `:disable`, `:enable`, and `:update`
+- `splunk_app` now has two actions only: `:install` (default) and `:remove`
+  - `:install` action will also update app config files, as needed
+- Fixes Issue [#111](https://github.com/chef-cookbooks/chef-splunk/issues/111)
+  * with so many ways to "unpack" a compressed bundle file (e.g., tar.gz, zip, bz2), this feature
+    will not attempt to support any/all of the possibilities. In contrast, this feature will support
+    installing an app from any local source on the chef node and into the /opt/splunk/etc/apps directory, unless
+    otherwise specified by the `app_dir` property.
+- The `sensitive` property is honored by the `splunk_app` resource.
+
 ## 4.1.0 (2020-02-06)
 - Adds attribute `node['splunk']['shclustering']['app_dir']` to take the place of local ruby
   variable to set the search head clustering application directory.

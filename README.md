@@ -345,17 +345,16 @@ default Splunk settings. The latter is desirable for maintaining settings after 
 Splunk Enterprise server software.
 
 #### Actions
-* `:enable`: Enables a Splunk app after it has been disabled or newly installed
-* `:disable`: Disables a Splunk app and leaves it installed
-* `:install`: Installs a Splunk app or deployment app
-* `:update`: Updates a Splunk app that was previously installed. If the app is not installed, this action will
-  go ahead and install the app as if `:install` was specified.
+* `:install`: Installs a Splunk app or deployment app. This action will also update existing app config files, as needed
 * `:remove`: Completely removes a Splunk app or deployment app from the Splunk Enterprise server
 
 #### Properties
-# TODO: document the rest of the splunk_app properties
+### TODO: document the rest of the splunk_app properties
 
-* `cookbook`: Used in conjunction with the `templates` property, this specifies the cookbook where templates will be sourced
+* `app_dir`: Specifies the application's installation path. Apps installed with this property will be done relative
+  to the Splunk installation directory (Default: /opt/splunk).
+* `local_file`: specifies a local path where an app will be sourced. This will not download an app from a remote
+  source, as it assumes the file or bundle has been done so outside of this resource. With so many ways to "unpack" a compressed bundle file (e.g., tar.gz, zip, bz2), this feature will not attempt to support any/all of the possibilities. In contrast, this feature will support installing an app from any local source on the chef node and into the /opt/splunk/etc/apps directory, unless otherwise specified by the `app_dir` property.
 
 * `templates`: This is either an array of template names or a Hash consisting of a target destination path and template names
   For example: `['server.conf.erb']` or `{ 'etc/deployment-apps' => 'server.conf.erb' }`.
