@@ -14,6 +14,7 @@ This file is used to list changes made in each version of the splunk cookbook.
     will not attempt to support any/all of the possibilities. In contrast, this feature will support
     installing an app from any local source on the chef node and into the /opt/splunk/etc/apps directory, unless
     otherwise specified by the `app_dir` property.
+- The `sensitive` property is honored by the `splunk_app` resource.
 
 ## 4.1.0 (2020-02-06)
 - Adds attribute `node['splunk']['shclustering']['app_dir']` to take the place of local ruby
