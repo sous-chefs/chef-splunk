@@ -18,8 +18,6 @@
 require 'pathname'
 require 'chef/provider/lwrp_base'
 require_relative './helpers.rb'
-require 'chef/mixin/shell_out'
-include Chef::Mixin::ShellOut
 
 # Creates a provider for the splunk_app resource.
 class Chef
@@ -30,18 +28,6 @@ class Chef
       action :install do
         splunk_service
         setup_app_dir
-        install
-        custom_app_configs
-      end
-
-      action :update do
-        splunk_service
-        setup_app_dir
-        if app_installed?
-          install(true)
-        else
-          install
-        end
         custom_app_configs
       end
 
@@ -56,70 +42,64 @@ class Chef
         end
       end
 
-      action :enable do
-        # delay in case an install was previously executed prior to enable, so
-        # splunk can catch up
-        5.times do |i|
-          break if app_installed?
-          ::Chef::Log.info "Waiting for Splunk App Install: retries #{4 - i}/5 left"
-          sleep 30
-        end
-
-        if app_enabled?
-          ::Chef::Log.debug "#{new_resource.app_name} is enabled"
-          return
-        end
-
-        splunk_service
-        execute "splunk-enable-#{new_resource.app_name}" do
-          sensitive false
-          command "#{splunk_cmd} enable app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}"
-          notifies :restart, 'service[splunk]'
-        end
-      end
-
-      action :disable do
-        return unless app_enabled?
-        splunk_service
-        execute "splunk-disable-#{new_resource.app_name}" do
-          sensitive false
-          command "#{splunk_cmd} disable app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}"
-          not_if { ::File.exist?("#{splunk_dir}/etc/disabled-apps/#{new_resource.app_name}") }
-          notifies :restart, 'service[splunk]'
-        end
-      end
-
       private
 
       def setup_app_dir
-        dir = app_dir # this grants chef resources access to the private `#app_dir`
+        dir = app_dir # this grants chef resources access to the value returned by private method `#app_dir`
 
-        install_dependencies unless new_resource.app_dependencies.empty?
         return if [new_resource.cookbook_file, new_resource.remote_file, new_resource.remote_directory].compact.empty?
+        install_dependencies unless new_resource.app_dependencies.empty?
+
+        directory dir do
+          recursive true
+          mode '755'
+          owner splunk_runas_user
+          group splunk_runas_user
+        end
+
+        directory "#{dir}/local" do
+          recursive true
+          mode '755'
+          owner splunk_runas_user
+          group splunk_runas_user
+        end if new_resource.cookbook_file || new_resource.remote_file
 
         if new_resource.cookbook_file
-          app_package = local_file(new_resource.cookbook_file)
-          cookbook_file app_package do
+          app_package = "#{dir}/local/#{::File.basename(new_resource.cookbook_file)}"
+
+          cookbook_file new_resource.cookbook_file do
+            path app_package
             source new_resource.cookbook_file
+            sensitive new_resource.sensitive
             cookbook new_resource.cookbook
             checksum new_resource.checksum
             owner splunk_runas_user
             group splunk_runas_user
-            notifies :run, "execute[splunk-install-#{new_resource.app_name}]", :immediately
+            notifies :restart, 'service[splunk]'
           end
-        elsif new_resource.remote_file
-          app_package = local_file(new_resource.remote_file)
-          remote_file app_package do
-            source new_resource.remote_file
+        elsif new_resource.remote_file || new_resource.local_file
+          app_package = "#{dir}/local/#{::File.basename(new_resource.remote_file)}"
+          source = new_resource.remote_file
+
+          if new_resource.local_file
+            app_package = "#{dir}/local/#{::File.basename(new_resource.local_file)}"
+            source = "file://#{new_resource.local_file}"
+          end
+
+          remote_file new_resource.remote_file do
+            path app_package
+            source source
             checksum new_resource.checksum
+            sensitive new_resource.sensitive
             owner splunk_runas_user
             group splunk_runas_user
-            notifies :run, "execute[splunk-install-#{new_resource.app_name}]", :immediately
+            notifies :restart, 'service[splunk]'
           end
         elsif new_resource.remote_directory
           remote_directory dir do
             source new_resource.remote_directory
             cookbook new_resource.cookbook
+            sensitive new_resource.sensitive
             owner splunk_runas_user
             group splunk_runas_user
             files_owner splunk_runas_user
@@ -155,6 +135,7 @@ class Chef
               source source
               cookbook new_resource.cookbook
               variables template_variables
+              sensitive new_resource.sensitive
               owner splunk_runas_user
               group splunk_runas_user
               mode '644'
@@ -181,6 +162,7 @@ class Chef
               source "#{new_resource.app_name}/#{t}.erb"
               cookbook new_resource.cookbook
               variables template_variables
+              sensitive new_resource.sensitive
               owner splunk_runas_user
               group splunk_runas_user
               mode '644'
@@ -190,43 +172,12 @@ class Chef
         end
       end
 
-      def install(update = false)
-        dir = app_dir # this grants chef resources access to the private `#app_dir`
-        command = if app_installed? && update == true
-                    "#{splunk_cmd} install app #{dir} -update 1 -auth #{splunk_auth(new_resource.splunk_auth)}"
-                  elsif !app_installed? && update == false
-                    "#{splunk_cmd} install app #{dir} -auth #{splunk_auth(new_resource.splunk_auth)}"
-                  end
-        execute "splunk-install-#{new_resource.app_name}" do
-          sensitive false
-          command command
-          not_if { command.nil? }
-        end
-      end
-
       def app_dir
         new_resource.app_dir || "#{splunk_dir}/etc/apps/#{new_resource.app_name}"
       end
 
-      def local_file(source)
-        "#{Chef::Config[:file_cache_path]}/#{Pathname(source).basename}"
-      end
-
-      def app_enabled?
-        s = shell_out("#{splunk_cmd} display app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}")
-        s.exitstatus == 0 && s.stdout.split[2] == 'ENABLED'
-      end
-
       def app_installed?
-        s = shell_out("#{splunk_cmd} display app #{new_resource.app_name} -auth #{splunk_auth(new_resource.splunk_auth)}")
-        return_val = s.exitstatus == 0 && s.stdout.match?(/^#{new_resource.app_name}/)
-
-        ::Chef::Log.debug s.stdout
-        ::Chef::Log.debug s.stderr
-        ::Chef::Log.debug s.exitstatus
-        ::Chef::Log.debug "return: #{return_val}"
-
-        return_val
+        ::File.exist?(app_dir)
       end
 
       def splunk_service
