@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 5.0.1 (2020-02-10)
+- Fixes Issue [#146](https://github.com/chef-cookbooks/chef-splunk/issues/146)
+
 ## 5.0.0 (2020-02-10)
 - `splunk_app` no longer uses the `splunk install app` and `splunk disable app` commands; preference
   to managing the files in <splunk_dir>/etc/apps, or the alternative directories, directly, and restarting/reloading
