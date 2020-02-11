@@ -71,7 +71,6 @@ class Chef
             path app_package
             source new_resource.cookbook_file
             sensitive new_resource.sensitive
-            cookbook new_resource.cookbook
             checksum new_resource.checksum
             owner splunk_runas_user
             group splunk_runas_user
@@ -98,7 +97,6 @@ class Chef
         elsif new_resource.remote_directory
           remote_directory dir do
             source new_resource.remote_directory
-            cookbook new_resource.cookbook
             sensitive new_resource.sensitive
             owner splunk_runas_user
             group splunk_runas_user
@@ -133,7 +131,6 @@ class Chef
 
             template "#{dir}/#{destination}" do
               source source
-              cookbook new_resource.cookbook
               variables template_variables
               sensitive new_resource.sensitive
               owner splunk_runas_user
@@ -160,7 +157,6 @@ class Chef
 
             template "#{dir}/local/#{t}" do
               source "#{new_resource.app_name}/#{t}.erb"
-              cookbook new_resource.cookbook
               variables template_variables
               sensitive new_resource.sensitive
               owner splunk_runas_user
