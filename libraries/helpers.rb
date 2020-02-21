@@ -115,7 +115,6 @@ end
 
 def current_mgmt_port
   splunk = shell_out("#{splunk_cmd} show splunkd-port -auth #{node.run_state['splunk_auth_info']} | awk -F: '{print$NF}'")
-  splunk.run_command
   splunk.error! # Raise an exception if it didn't exit with 0
   splunk.stdout.strip
 end
@@ -144,7 +143,6 @@ end
 # returns true if the splunkd process is owned by the correct "run-as" user
 def correct_runas_user?
   splunk = shell_out("ps -ef|grep splunk|grep -v grep|awk '{print$1}'|uniq")
-  splunk.run_command
   splunk_runas_user == splunk.stdout
 end
 
@@ -158,7 +156,6 @@ end
 
 def init_shcluster_member?
   list_member_info = shell_out("#{splunk_cmd} list shcluster-member-info -auth #{node.run_state['splunk_auth_info']}")
-  list_member_info.run_command
   list_member_info.error?
 end
 

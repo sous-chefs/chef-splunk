@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 5.0.2 (2020-02-20)
+- removes unnecessary `#run_command` calls when `shell_out` is used
+
 ## 5.0.1 (2020-02-10)
 - Fixes Issue [#146](https://github.com/chef-cookbooks/chef-splunk/issues/146)
 
