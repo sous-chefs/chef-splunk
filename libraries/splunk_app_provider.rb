@@ -154,9 +154,10 @@ class Chef
                                    new_resource.template_variables['default']
                                  end
             t = t.match?(/(\.erb)*/) ? ::File.basename(t, '.erb') : t
+            template_source_dir = new_resource.template_sources.empty? ? new_resource.app_name : new_resource.template_sources[t]
 
             template "#{dir}/local/#{t}" do
-              source "#{new_resource.app_name}/#{t}.erb"
+              source "#{template_source_dir}/#{t}.erb"
               variables template_variables
               sensitive new_resource.sensitive
               owner splunk_runas_user

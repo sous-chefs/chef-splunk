@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 5.0.3 (2020-02-24)
+- `splunk_app` resource adds new property: `template_sources`
+
 ## 5.0.2 (2020-02-20)
 - removes unnecessary `#run_command` calls when `shell_out` is used
 

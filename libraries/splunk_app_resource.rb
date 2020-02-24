@@ -39,10 +39,11 @@ class Chef
       attribute :app_dependencies, kind_of: Array, default: []
       attribute :templates, kind_of: [Array, Hash], default: []
 
-      # template_variables is a Hash referencing
+      # template_variables and template_sources are Hashes referencing
       # each template named in the templates property, above, with each template having its
-      # unique set of variables and values
+      # unique set of variables and values and the source, respectively.
       attribute :template_variables, kind_of: Hash, default: { 'default' => {} }
+      attribute :template_sources, kind_of: Hash, default: {}
       attribute :installed, kind_of: [TrueClass, FalseClass, NilClass], default: false
     end
   end

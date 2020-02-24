@@ -378,6 +378,18 @@ Splunk Enterprise server software.
   end
   ```
 
+* `template_sources`: This is a Hash to specify the source file to use for each template.
+
+For example, this will use a server.conf.erb template file located in templates/custom/server.conf.erb of this cookbook:
+```ruby
+splunk_app 'my app' do
+  templates %w(server.conf.erb)
+  template_sources {
+    'server.conf.erb' => 'custom'
+  }
+end
+```
+
 
 #### Examples
 
