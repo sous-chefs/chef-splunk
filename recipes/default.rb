@@ -17,7 +17,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 if disabled?
   include_recipe 'chef-splunk::disabled'
   Chef::Log.debug('Splunk is disabled on this node.')

@@ -22,6 +22,8 @@ require 'socket'
 require 'chef/mixin/shell_out'
 include Chef::Mixin::ShellOut
 
+@shcluster_server_size = nil
+
 def splunk_installed?
   ::File.exist?(splunk_cmd)
 end
@@ -159,14 +161,67 @@ def init_shcluster_member?
   list_member_info.error?
 end
 
+def shcluster_servers_list
+  # search head cluster member list needed to bootstrap the shcluster captain
+  servers = [node['splunk']['shclustering']['mgmt_uri']]
+
+  # unless shcluster members are staticly assigned via the node attribute,
+  # try to find the other shcluster members via Chef search
+  # if node['splunk']['shclustering']['mode'] == 'captain' &&
+  if node['splunk']['shclustering']['shcluster_members'].empty?
+    search(
+      :node,
+      "\
+      splunk_shclustering_enabled:true AND \
+      splunk_shclustering_label:#{node['splunk']['shclustering']['label']} AND \
+      splunk_shclustering_mode:member AND \
+      chef_environment:#{node.chef_environment}",
+      filter_result: { 'member_mgmt_uri' => %w(splunk shclustering mgmt_uri) }
+    ).each do |result|
+      servers << result['member_mgmt_uri']
+    end
+  else
+    servers = node['splunk']['shclustering']['shcluster_members']
+  end
+  servers
+end
+
+def shcluster_servers_size
+  @shcluster_server_size ||= shcluster_servers_list.size
+end
+
 def shcluster_members_ipv4
   splunk = shell_out("#{splunk_cmd} list shcluster-members -auth #{node.run_state['splunk_auth_info']} | grep host_port_pair | awk -F: '{print$2}'")
+  return [] if splunk.stdout.strip == 'Encountered some errors while trying to obtain shcluster status.'
   splunk.stdout.split
 end
 
+def shcluster_member?
+  splunk = shell_out("#{splunk_cmd} show shcluster-status -auth #{node.run_state['splunk_auth_info']}")
+  splunk.stdout.strip != 'Encountered some errors while trying to obtain shcluster status.'
+end
+
 def shcaptain_elected?
-  splunk = shell_out("#{splunk_cmd} list shcluster-members -auth #{node.run_state['splunk_auth_info']} | grep is_captain:1")
-  splunk.exitstatus == 0
+  election_result = false
+  search(
+    :node,
+    "\
+    splunk_shclustering_enabled:true AND \
+    splunk_shclustering_label:#{node['splunk']['shclustering']['label']} AND \
+    splunk_shclustering_mode:captain AND \
+    chef_environment:#{node.chef_environment}",
+    filter_result: { 'captain_elected' => %w(splunk shclustering captain_elected) }
+  ).each { |result| election_result = result['captain_elected'] }
+  node.override['splunk']['shclustering']['captain_elected'] = election_result
+  election_result == true
+end
+
+def ok_to_bootstrap_captain?
+  node['splunk']['shclustering']['mode'] == 'captain' && node['splunk']['shclustering']['captain_elected'] == false && shcluster_servers_size > 2
+end
+
+def ok_to_add_member?
+  node['splunk']['shclustering']['mode'] == 'member' && shcaptain_elected? && !shcluster_member?
 end
 
 def search_heads_peered?

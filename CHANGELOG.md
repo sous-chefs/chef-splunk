@@ -2,6 +2,18 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 5.0.3 (TBD)
+- fixes minimum number of search head cluster members required to bootstrap the captain
+- fixes search head cluster captain discovery
+- fixes the logic that determines when a search head cluster captain can be bootstrapped
+- fixes the logic that determines when a search head cluster member can be added to its cluster
+- adds helper methods:
+  * `#shcluster_member?`
+  * `#shcaptain_elected?`
+  * `#ok_to_bootstrap_captain?`
+  * `#ok_to_add_member?`
+  * `#shcluster_servers_list`
+
 ## 5.0.2 (2020-02-20)
 - removes unnecessary `#run_command` calls when `shell_out` is used
 

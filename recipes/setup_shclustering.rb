@@ -53,10 +53,6 @@ directory "#{node['splunk']['shclustering']['app_dir']}/local" do
   only_if { node['splunk']['shclustering']['mode'] == 'deployer' }
 end
 
-# use the internal ec2 hostname for splunk-to-splunk communications
-# this type traffic is usually free in AWS
-node.force_default['splunk']['shclustering']['mgmt_uri'] = "https://#{node['ec2']['local_hostname']}:8089" if node.attribute?('ec2')
-
 if node['splunk']['shclustering']['mode'] == 'deployer'
   template "#{node['splunk']['shclustering']['app_dir']}/local/server.conf" do
     source 'shclustering/server.conf.erb'
@@ -103,29 +99,7 @@ end
 # converged, then a shcluster member should only initialize itself and wait until future
 # chef runs to add itself as a member.
 
-# search head cluster member list needed to bootstrap the shcluster captain
-shcluster_servers_list = [node['splunk']['shclustering']['mgmt_uri']]
-
-# unless shcluster members are staticly assigned via the node attribute,
-# try to find the other shcluster members via Chef search
-# if node['splunk']['shclustering']['mode'] == 'captain' &&
-if node['splunk']['shclustering']['shcluster_members'].empty?
-  search(
-    :node,
-    "\
-    splunk_shclustering_enabled:true AND \
-    splunk_shclustering_label:#{node['splunk']['shclustering']['label']} AND \
-    splunk_shclustering_mode:member AND \
-    chef_environment:#{node.chef_environment}",
-    filter_result: { 'member_mgmt_uri' => %w(splunk shclustering mgmt_uri) }
-  ).each do |result|
-    shcluster_servers_list << result['member_mgmt_uri']
-  end
-else
-  shcluster_servers_list = node['splunk']['shclustering']['shcluster_members']
-end
-
-if shcluster_servers_list.size < 3
+if shcluster_servers_size < 3
   log 'A minimum of three search head cluster members are required for distributed search. Nothing to do this time.' do
     level :warn
   end
@@ -147,7 +121,15 @@ execute 'initialize search head cluster member' do
   only_if { init_shcluster_member? }
 end
 
-if shcluster_servers_list.size >= 2 && node['splunk']['shclustering']['mode'] == 'captain'
+ruby_block 'captain elected' do
+  block do
+    node.override['splunk']['shclustering']['captain_elected'] = true
+  end
+  action :nothing
+  subscribes :run, 'execute[bootstrap-shcluster-captain]'
+end
+
+if ok_to_bootstrap_captain?
   execute 'bootstrap-shcluster-captain' do
     sensitive true
     command "#{splunk_cmd} bootstrap shcluster-captain -auth '#{node.run_state['splunk_auth_info']}' " \
@@ -155,7 +137,7 @@ if shcluster_servers_list.size >= 2 && node['splunk']['shclustering']['mode'] ==
     notifies :restart, 'service[splunk]', :immediately
     not_if { shcaptain_elected? }
   end
-elsif shcaptain_elected? && !shcluster_members_ipv4.include?(node['ipaddress'])
+elsif ok_to_add_member?
   captain_mgmt_uri = nil
   search(
     :node,
@@ -183,7 +165,7 @@ search(
   splunk_clustering_mode:master AND \
   chef_environment:#{node.chef_environment}",
   filter_result: {
-    'cluster_master_mgmt_uri' => %w(splunk shclustering mgmt_uri),
+    'cluster_master_mgmt_uri' => %w(splunk clustering mgmt_uri),
     'cluster_master_site' => %w(splunk clustering site),
     'cluster_num_sites' => %w(splunk clustering num_sites),
   }
