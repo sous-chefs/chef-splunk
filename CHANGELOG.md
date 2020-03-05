@@ -13,6 +13,8 @@ This file is used to list changes made in each version of the splunk cookbook.
   * `#ok_to_bootstrap_captain?`
   * `#ok_to_add_member?`
   * `#shcluster_servers_list`
+  * `#hash_password`
+- To prevent overzealous restarts of splunkd, detects when the pass4symmkey has already been encrypted by splunkd
 
 ## 5.0.2 (2020-02-20)
 - removes unnecessary `#run_command` calls when `shell_out` is used

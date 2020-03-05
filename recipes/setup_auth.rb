@@ -26,6 +26,7 @@ unless setup_auth?
 end
 
 include_recipe 'chef-splunk'
+
 user, pw = node.run_state['splunk_auth_info'].split(':')
 
 # during an initial install, the start/restart commands must deal with accepting
@@ -41,14 +42,19 @@ edit_resource(:service, 'splunk') do
   provider splunk_service_provider
 end
 
+file "#{splunk_dir}/etc/passwd" do
+  action :nothing
+end
+
 template 'user-seed.conf' do
   path "#{splunk_dir}/etc/system/local/user-seed.conf"
   source 'user-seed-conf.erb'
   owner splunk_runas_user
   group splunk_runas_user
   mode '600'
-  sensitive true
-  variables user: user, password: pw
+  sensitive false
+  variables user: user, hashed_password: lazy { hash_passwd(pw) }
+  notifies :delete, "file[#{splunk_dir}/etc/passwd]", :immediately
   notifies :restart, 'service[splunk]', :immediately
   not_if { ::File.exist?("#{splunk_dir}/etc/system/local/.user-seed.conf") }
 end
