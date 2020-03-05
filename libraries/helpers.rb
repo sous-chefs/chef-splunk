@@ -84,6 +84,7 @@ end
 # returns the output of splunk's HASHED_PASSWORD command
 # this command produces a hash of a clear-text password that can be stored in user-seed.conf, for example
 def hash_passwd(pw)
+  return pw if pw.match?(/^\$\d*\$/)
   hash = shell_out("#{splunk_cmd} hash-passwd #{pw}")
   hash.stdout.strip
 end
