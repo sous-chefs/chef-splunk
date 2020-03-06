@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 5.0.3 (TBD)
+## 5.0.3 (2020-03-06)
 - fixes minimum number of search head cluster members required to bootstrap the captain
 - fixes search head cluster captain discovery
 - fixes the logic that determines when a search head cluster captain can be bootstrapped
