@@ -45,6 +45,7 @@ default['splunk']['ssl_options'] = {
 
 default['splunk']['clustering'] = {
   'enabled' => false,
+  'label' => 'cluster1',
   'num_sites' => 1,   # multisite is true if num_sites > 1
   'mgmt_uri' => "https://#{node['fqdn']}:8089",
   'mode' => 'master', # master|slave|searchhead
@@ -60,6 +61,7 @@ default['splunk']['clustering'] = {
 
 default['splunk']['shclustering'] = {
   'app_dir' => '/opt/splunk/etc/apps/0_autogen_shcluster_config',
+  'captain_elected' => false,
   'deployer_url' => '',
   'enabled' => false,
   'label' => 'shcluster1',
