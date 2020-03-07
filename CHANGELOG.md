@@ -5,6 +5,8 @@ This file is used to list changes made in each version of the splunk cookbook.
 ## 6.0.0 (2020-03-07)
 - Changes the restart behavior of `splunk_app` to eliminate sub-resources of the resource from
   initiating restarts of service[splunk]
+- Fixes Issue [#59](https://github.com/chef-cookbooks/chef-splunk/issues/59)
+  * converts `splunk_app` resource to modern style
 
 ## 5.0.4 (2020-03-07)
 - Fixes Issue [#152](https://github.com/chef-cookbooks/chef-splunk/issues/152)
