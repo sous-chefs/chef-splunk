@@ -36,19 +36,17 @@ property :template_variables, kind_of: Hash, default: { 'default' => {} }
 
 action_class do
   def setup_app_dir
-    dir = app_dir # this grants chef resources access to the value returned by private method `#app_dir`
-
     return if [new_resource.cookbook_file, new_resource.remote_file, new_resource.remote_directory].compact.empty?
     install_dependencies unless new_resource.app_dependencies.empty?
 
-    directory dir do
+    directory app_dir do
       recursive true
       mode '755'
       owner splunk_runas_user
       group splunk_runas_user
     end
 
-    directory "#{dir}/local" do
+    directory "#{app_dir}/local" do
       recursive true
       mode '755'
       owner splunk_runas_user
@@ -56,7 +54,7 @@ action_class do
     end if new_resource.cookbook_file || new_resource.remote_file
 
     if new_resource.cookbook_file
-      app_package = "#{dir}/local/#{::File.basename(new_resource.cookbook_file)}"
+      app_package = "#{app_dir}/local/#{::File.basename(new_resource.cookbook_file)}"
 
       cookbook_file new_resource.cookbook_file do
         path app_package
@@ -67,11 +65,11 @@ action_class do
         group splunk_runas_user
       end
     elsif new_resource.remote_file || new_resource.local_file
-      app_package = "#{dir}/local/#{::File.basename(new_resource.remote_file)}"
+      app_package = "#{app_dir}/local/#{::File.basename(new_resource.remote_file)}"
       source = new_resource.remote_file
 
       if new_resource.local_file
-        app_package = "#{dir}/local/#{::File.basename(new_resource.local_file)}"
+        app_package = "#{app_dir}/local/#{::File.basename(new_resource.local_file)}"
         source = "file://#{new_resource.local_file}"
       end
 
@@ -84,7 +82,7 @@ action_class do
         group splunk_runas_user
       end
     elsif new_resource.remote_directory
-      remote_directory dir do
+      remote_directory app_dir do
         source new_resource.remote_directory
         sensitive new_resource.sensitive
         owner splunk_runas_user
@@ -96,28 +94,26 @@ action_class do
   end
 
   def custom_app_configs
-    dir = app_dir # this grants chef resources access to the private `#app_dir`
-
     if new_resource.templates.class == Hash
       # create the templates with destination paths relative to the target app_dir
       # Hash should be key/value where the key indicates a destination path (including file name),
       # and value is the name of the template source
       new_resource.templates.each do |destination, source|
-        directory "#{dir}/#{::File.dirname(destination)}" do
+        directory "#{app_dir}/#{::File.dirname(destination)}" do
           recursive true
           mode '755'
           owner splunk_runas_user
           group splunk_runas_user
         end
 
-        # TODO: DRY this handling of template_variables with that of lines 173-188
+        # TODO: DRY this handling of template_variables with that of lines 134-138
         template_variables = if new_resource.template_variables.key?(source)
                                new_resource.template_variables[source]
                              else
                                new_resource.template_variables['default']
                              end
 
-        template "#{dir}/#{destination}" do
+        template "#{app_dir}/#{destination}" do
           source source
           variables template_variables
           sensitive new_resource.sensitive
@@ -127,7 +123,7 @@ action_class do
         end
       end
     else
-      directory "#{dir}/local" do
+      directory "#{app_dir}/local" do
         recursive true
         mode '755'
         owner splunk_runas_user
@@ -142,7 +138,7 @@ action_class do
                              end
         t = t.match?(/(\.erb)*/) ? ::File.basename(t, '.erb') : t
 
-        template "#{dir}/local/#{t}" do
+        template "#{app_dir}/local/#{t}" do
           source "#{new_resource.app_name}/#{t}.erb"
           variables template_variables
           sensitive new_resource.sensitive
@@ -173,9 +169,7 @@ action :install do
 end
 
 action :remove do
-  dir = app_dir # this grants chef resources access to the private `#app_dir`
-
-  directory dir do
+  directory app_dir do
     action :delete
     recursive true
   end
