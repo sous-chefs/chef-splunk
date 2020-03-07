@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 5.0.4 (2020-03-07)
+- Fixes Issue [#152](https://github.com/chef-cookbooks/chef-splunk/issues/152)
+  * Removes `splunk_auth` property from the `splunk_app` resources (no longer required)
+
 ## 5.0.3 (2020-03-06)
 - fixes minimum number of search head cluster members required to bootstrap the captain
 - fixes search head cluster captain discovery
