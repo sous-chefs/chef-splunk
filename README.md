@@ -344,6 +344,9 @@ on a Splunk Enterprise server. Some custom "apps" simply install with a few file
 default Splunk settings. The latter is desirable for maintaining settings after an upgrade of the
 Splunk Enterprise server software.
 
+* Breaking Change *
+As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify restarts to the `service[splunk]` resource. Restarts of the service must be handled explicitly by the `splunk_app` caller. This allows end-users of the resource more control of when splunkd gets restarted; especially in cases where an app does not require a restart when its files are updated.
+
 #### Actions
 * `:install`: Installs a Splunk app or deployment app. This action will also update existing app config files, as needed
 * `:remove`: Completely removes a Splunk app or deployment app from the Splunk Enterprise server

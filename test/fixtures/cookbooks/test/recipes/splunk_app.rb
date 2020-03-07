@@ -2,13 +2,13 @@ splunk_app 'bistro' do
   splunk_auth 'admin:notarealpassword'
   cookbook_file 'bistro-1.0.2.spl'
   checksum '862e2c4422eee93dd50bd93aa73a44045d02cb6232f971ba390a2f1c15bdb79f'
-  action %i(install enable)
+  action :install
 end
 
 splunk_app 'bistro-disable' do
   app_name 'bistro'
   splunk_auth 'admin:notarealpassword'
-  action %i(disable remove)
+  action :remove
 end
 
 splunk_app 'sanitycheck' do
