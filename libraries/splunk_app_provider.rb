@@ -26,7 +26,6 @@ class Chef
       provides :splunk_app
 
       action :install do
-        splunk_service
         setup_app_dir
         custom_app_configs
       end
@@ -34,11 +33,9 @@ class Chef
       action :remove do
         dir = app_dir # this grants chef resources access to the private `#app_dir`
 
-        splunk_service
         directory dir do
           action :delete
           recursive true
-          notifies :restart, 'service[splunk]'
         end
       end
 
@@ -74,7 +71,6 @@ class Chef
             checksum new_resource.checksum
             owner splunk_runas_user
             group splunk_runas_user
-            notifies :restart, 'service[splunk]'
           end
         elsif new_resource.remote_file || new_resource.local_file
           app_package = "#{dir}/local/#{::File.basename(new_resource.remote_file)}"
@@ -92,7 +88,6 @@ class Chef
             sensitive new_resource.sensitive
             owner splunk_runas_user
             group splunk_runas_user
-            notifies :restart, 'service[splunk]'
           end
         elsif new_resource.remote_directory
           remote_directory dir do
@@ -102,7 +97,6 @@ class Chef
             group splunk_runas_user
             files_owner splunk_runas_user
             files_group splunk_runas_user
-            notifies :restart, 'service[splunk]'
           end
         end
       end
@@ -136,7 +130,6 @@ class Chef
               owner splunk_runas_user
               group splunk_runas_user
               mode '644'
-              notifies :restart, 'service[splunk]'
             end
           end
         else
@@ -162,7 +155,6 @@ class Chef
               owner splunk_runas_user
               group splunk_runas_user
               mode '644'
-              notifies :restart, 'service[splunk]'
             end
           end
         end
@@ -174,21 +166,6 @@ class Chef
 
       def app_installed?
         ::File.exist?(app_dir)
-      end
-
-      def splunk_service
-        # during an initial install, the start/restart commands must deal with accepting
-        # the license. So, we must ensure the service[splunk] resource
-        # properly deals with the license.
-        edit_resource(:service, 'splunk') do
-          action node['init_package'] == 'systemd' ? %i(start enable) : :start
-          supports status: true, restart: true
-          stop_command svc_command('stop')
-          start_command svc_command('start')
-          restart_command svc_command('restart')
-          status_command svc_command('status')
-          provider splunk_service_provider
-        end
       end
 
       def install_dependencies

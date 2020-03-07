@@ -44,22 +44,27 @@ action_class do
       :dpkg_package
     end
   end
+
+  def splunk_service
+    # during an initial install, the start/restart commands must deal with accepting
+    # the license. So, we must ensure the service[splunk] resource
+    # properly deals with the license.
+    edit_resource(:service, 'splunk') do
+      action node['init_package'] == 'systemd' ? %i(start enable) : :start
+      supports status: true, restart: true
+      stop_command svc_command('stop')
+      start_command svc_command('start')
+      restart_command svc_command('restart')
+      status_command svc_command('status')
+      provider splunk_service_provider
+    end
+  end
 end
 
 action :run do
   return if splunk_installed?
 
-  # during an initial install, the start/restart commands must deal with accepting
-  # the license. So, we must ensure the service[splunk] resource
-  # properly deals with the license.
-  edit_resource(:service, 'splunk') do
-    action :nothing
-    supports status: true, restart: true
-    stop_command svc_command('stop')
-    start_command svc_command('start')
-    restart_command svc_command('restart')
-    provider splunk_service_provider
-  end
+  splunk_service
 
   remote_file package_file do
     backup false
@@ -86,17 +91,7 @@ end
 action :upgrade do
   return unless splunk_installed?
 
-  # during an upgrade, the start/restart commands must deal with accepting
-  # the license. So, we must ensure the service[splunk] resource
-  # properly deals with the license.
-  edit_resource(:service, 'splunk') do
-    action :stop
-    supports status: true, restart: true
-    stop_command svc_command('stop')
-    start_command svc_command('start')
-    restart_command svc_command('restart')
-    provider splunk_service_provider
-  end
+  splunk_service
 
   remote_file package_file do
     backup false

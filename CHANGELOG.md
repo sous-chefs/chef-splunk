@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.0.0 (2020-03-07)
+- Changes the restart behavior of `splunk_app` to eliminate sub-resources of the resource from
+  initiating restarts of service[splunk]
+
 ## 5.0.3 (2020-03-06)
 - fixes minimum number of search head cluster members required to bootstrap the captain
 - fixes search head cluster captain discovery
