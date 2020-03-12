@@ -3,7 +3,6 @@ driver:
   name: dokken
   privileged: true # because Docker and SystemD/Upstart
   chef_version: <%= ENV['CHEF_VERSION'] || 'stable' %>
-  chef_license: accept-no-persist
 
 transport:
   name: dokken
@@ -11,6 +10,7 @@ transport:
 provisioner:
   name: dokken
   deprecations_as_errors: true
+  chef_license: accept
   attributes:
     dev_mode: true
     splunk:
