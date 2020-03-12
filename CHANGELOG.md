@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.0 (2020-03-11)
+- Fixes Issue [#64](https://github.com/chef-cookbooks/chef-splunk/issues/64)
+  * Adds custom resource, `splunk_monitor`
+  * Adds custom resource, `splunk_index`
+- Disables STDOUT/STDERR suppression for execute resources when Chef Infra Client is run in `:debug` mode
+
 ## 6.0.0 (2020-03-07)
 - Changes the restart behavior of `splunk_app` to eliminate sub-resources of the resource from
   initiating restarts of service[splunk]

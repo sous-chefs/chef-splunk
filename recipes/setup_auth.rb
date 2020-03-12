@@ -52,7 +52,7 @@ template 'user-seed.conf' do
   owner splunk_runas_user
   group splunk_runas_user
   mode '600'
-  sensitive true
+  sensitive true unless Chef::Log.debug?
   variables user: user, hashed_password: lazy { hash_passwd(pw) }
   notifies :delete, "file[#{splunk_dir}/etc/passwd]", :immediately
   notifies :restart, 'service[splunk]', :immediately
