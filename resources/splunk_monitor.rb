@@ -159,7 +159,7 @@ end
 action :create do
   @document ||= IniParse.parse(::File.read(new_resource.inputs_conf_path))
   @stanza_title = new_resource.monitor_name
-  save_doc if do_create
+  save_doc(new_resource.inputs_conf_path) if do_create
 end
 
 action :remove do

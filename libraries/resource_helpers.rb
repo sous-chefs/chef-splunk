@@ -44,68 +44,6 @@ module Splunk
         @document.delete(section)
       end
 
-      def do_create(options)
-        updated = []
-
-        unless @document.has_section?(@stanza_title)
-          converge_by("Adding stanza [#{@stanza_title}]") do
-            add_new_section
-            updated << true if @document.has_section?(@stanza_title)
-          end
-        end
-
-        case options.class
-        when Array
-          options.each do |option|
-            value = new_resource.send(option)
-            if @document[@stanza_title].lines.keys.include?(option) && (value.nil? || !property_is_set?(option.to_sym))
-              converge_by("removing #{option} from [#{@stanza_title}]") do
-                remove_option_from_section(option)
-                updated << true unless @document[@stanza_title].has_option?(option)
-              end
-            elsif !@document[@stanza_title].has_option?(option) && property_is_set?(option.to_sym)
-              converge_by("adding '#{option} = #{value}' in [#{@stanza_title}]") do
-                new_value_to_option(option)
-                updated << true if @document[@stanza_title].has_option?(option) && value == @document[@stanza_title][option]
-              end
-            elsif @document[@stanza_title].has_option?(option) && value != @document[@stanza_title][option]
-              converge_by("updating '#{option} = #{value}' in [#{@stanza_title}]") do
-                new_value_to_option(option)
-                updated << true if value == @document[@stanza_title][option]
-              end
-            end
-          end
-        when Hash
-          options.each do |option, value|
-            if @document[@stanza_title].lines.keys.include?(option) && value.nil?
-              converge_by("removing #{option} from [#{@stanza_title}]") do
-                remove_option_from_section(option)
-                updated << true unless @document[@stanza_title].has_option?(option)
-              end
-            elsif !@document[@stanza_title].has_option?(option)
-              converge_by("adding '#{option} = #{value}' in [#{@stanza_title}]") do
-                new_value_to_option(option)
-                updated << true if @document[@stanza_title].has_option?(option) && value == @document[@stanza_title][option]
-              end
-            elsif @document[@stanza_title].has_option?(option) && value != @document[@stanza_title][option]
-              converge_by("updating '#{option} = #{value}' in [#{@stanza_title}]") do
-                new_value_to_option(option)
-                updated << true if value == @document[@stanza_title][option]
-              end
-            end
-          end
-        end
-
-        if @document[@stanza_title].lines.keys.empty?
-          converge_by("removing stanza [#{@stanza_title}]") do
-            remove_section(@stanza_title)
-            updated << true unless @document.has_section?(@stanza_title)
-          end
-        end
-
-        updated.any?
-      end
-
       def do_remove
         if @document.has_section?(@stanza_title)
           converge_by("Removing stanza [#{@stanza_title}]") { @document.delete(@stanza_title) }
