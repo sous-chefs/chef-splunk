@@ -9,12 +9,12 @@ end
 
 splunk_index 'linux_messages_syslog' do
   indexes_conf_path "#{indexes_dir}/local/indexes.conf"
-  options ({
+  options(
     'homePath' => '$SPLUNK_DB/syslog/db',
     'coldPath' => '$SPLUNK_DB/syslog/colddb',
     'thawedPath' => '$SPLUNK_DB/splunk/indexer_thaweddata/syslog/thaweddb',
     'frozenTimePeriodInSecs' => 31536000,
     'repFactor' => 'auto'
-  })
+  )
   only_if { ::File.exist?("#{indexes_dir}/local/indexes.conf") }
 end

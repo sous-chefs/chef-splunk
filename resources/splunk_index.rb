@@ -20,7 +20,7 @@ resource_name :splunk_index
 # and hyphens. They cannot begin with an underscore or hyphen, or contain
 # the word "kvstore".
 property :index_name, kind_of: String, name_property: true, regex: /^[^_-][0-9a-zA-Z_=]+/,
-         coerce: proc { |index| index.gsub(/kvstore/, '') }
+                      coerce: proc { |index| index.gsub(/kvstore/, '') }
 property :indexes_conf_path, kind_of: String, regex: %r{^/.*/indexes\.conf$}, desired_state: false, required: true
 property :backup, kind_of: [FalseClass, Integer], default: 5, desired_state: false
 property :options, kind_of: Hash, default: {}

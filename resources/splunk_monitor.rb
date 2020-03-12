@@ -72,7 +72,7 @@ builtin_indexes = %w(
 
 # these properties are specific to this resource
 property :monitor_name, kind_of: String, name_property: true, regex: %r{^monitor:///.*},
-         coerce: proc { |m| "monitor://#{m}" }
+                        coerce: proc { |m| "monitor://#{m}" }
 property :inputs_conf_path, kind_of: String, regex: %r{^/.*}, desired_state: false, required: true
 property :backup, kind_of: [FalseClass, Integer], default: 5, desired_state: false
 
