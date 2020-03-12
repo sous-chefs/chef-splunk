@@ -63,7 +63,7 @@ if node['splunk']['shclustering']['mode'] == 'deployer'
       shcluster_params: node['splunk']['shclustering'],
       shcluster_secret: node.run_state['splunk_secret']
     )
-    sensitive true
+    sensitive true unless Chef::Log.debug?
     notifies :restart, 'service[splunk]', :immediately
   end
 end
@@ -109,7 +109,7 @@ end
 # initialize the member and then quit until the next chef run;
 # this effectively waits until the captain is ready before adding members to the cluster
 execute 'initialize search head cluster member' do
-  sensitive true
+  sensitive true unless Chef::Log.debug?
   command "#{splunk_cmd} init shcluster-config -auth '#{node.run_state['splunk_auth_info']}' " \
     "-mgmt_uri #{node['splunk']['shclustering']['mgmt_uri']} " \
     "-replication_port #{node['splunk']['shclustering']['replication_port']} " \
@@ -131,7 +131,7 @@ end
 
 if ok_to_bootstrap_captain?
   execute 'bootstrap-shcluster-captain' do
-    sensitive true
+    sensitive true unless Chef::Log.debug?
     command "#{splunk_cmd} bootstrap shcluster-captain -auth '#{node.run_state['splunk_auth_info']}' " \
       "-servers_list \"#{shcluster_servers_list.join(',')}\""
     notifies :restart, 'service[splunk]', :immediately
@@ -150,7 +150,7 @@ elsif ok_to_add_member?
   ).each { |result| captain_mgmt_uri = result['captain_mgmt_uri'] }
 
   execute 'add member to search head cluster' do
-    sensitive true
+    sensitive true unless Chef::Log.debug?
     command "#{splunk_cmd} add shcluster-member -current_member_uri #{captain_mgmt_uri} -auth '#{node.run_state['splunk_auth_info']}'"
     only_if { node['splunk']['shclustering']['mode'] == 'member' }
     notifies :restart, 'service[splunk]'
@@ -180,7 +180,7 @@ shpeer_integration_command = "#{splunk_cmd} edit cluster-config -mode searchhead
 shpeer_integration_command += ' -site site0' if cluster_master['num_sites'] > 1
 
 execute 'search head cluster integration with indexer cluster' do
-  sensitive true
+  sensitive true unless Chef::Log.debug?
   command shpeer_integration_command
   notifies :restart, 'service[splunk]'
   not_if { search_heads_peered? }

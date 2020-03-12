@@ -55,7 +55,7 @@ file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['keyfile']}" do
   owner splunk_runas_user
   group splunk_runas_user
   mode '600'
-  sensitive true
+  sensitive true unless Chef::Log.debug?
   notifies :restart, 'service[splunk]'
 end
 
@@ -64,6 +64,6 @@ file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['crtfile']}" do
   owner splunk_runas_user
   group splunk_runas_user
   mode '600'
-  sensitive true
+  sensitive true unless Chef::Log.debug?
   notifies :restart, 'service[splunk]'
 end

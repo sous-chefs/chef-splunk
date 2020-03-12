@@ -53,10 +53,13 @@ without modification.
 
 * Debian 8, 9
 * Ubuntu 16.04, 18.04
-* CentOS 6, 7
-* Redhat 6, 7
+* CentOS 6, 7, 8
+* Redhat 6, 7, 8
 
 By default, only 64-bit Splunk server and Splunk Universal Forwarder will be installed or upgraded by this cookbook.
+
+### Debug Mode
+Since the splunk command requires authentication, many `execute` resources in this cookbook have STDOUT/STDERR suppressed (i.e., `sensitive true`). However, this setting can hide important diagnostic messages during a failed chef run when Chef Infra Client is run in normal logging levels, such as `:info` or `:auto`. In order to disable this suppression, Chef Infra Client must be run with `:debug` logging level (i.e., `chef-client -l debug`). Beware: Running Chef Infra Client this way can persist sensitive information, such as your Splunk admin user credentials, in the chef client log, and pose a security risk. *Do not leave this setting enabled on critical systems*
 
 
 ### Cookbooks
@@ -381,35 +384,76 @@ As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify r
   end
   ```
 
+  #### Examples
 
-#### Examples
+  Install and enable a deployment client configuration that overrides default Splunk Enterprise configurations
 
-Install and enable a deployment client configuration that overrides default Splunk Enterprise configurations
+  - Given a wrapper cookbook called MyDeploymentClientBase with a folder structure as below:
+  ```
+  MyDeploymentClientBase
+      /templates
+          /MyDeploymentClientBase
+              deploymentclient.conf.erb
+  ```
 
-- Given a wrapper cookbook called MyDeploymentClientBase with a folder structure as below:
-```
-MyDeploymentClientBase
-    /templates
-        /MyDeploymentClientBase
-            deploymentclient.conf.erb
-```
+  ```ruby
+  splunk_auth_info = data_bag_item('vault', "splunk_#{node.chef_environment}")['auth']
 
-```ruby
-splunk_auth_info = data_bag_item('vault', "splunk_#{node.chef_environment}")['auth']
+  splunk_app 'MyDeploymentClientBase' do
+    splunk_auth splunk_auth_info
+    templates ['deploymentclient.conf.erb']
+    cookbook 'MyDeploymentClientBase'
+    action %i(install enable)
+  end
+  ```
 
-splunk_app 'MyDeploymentClientBase' do
-  splunk_auth splunk_auth_info
-  templates ['deploymentclient.conf.erb']
-  cookbook 'MyDeploymentClientBase'
-  action %i(install enable)
-end
-```
+  The Splunk Enterprise server will have a filesystem created, as follows:
+  ```
+  /opt/splunk/etc/apps/MyDeploymentClientBase/local/deploymentclient.conf
+  ```
 
-The Splunk Enterprise server will have a filesystem created, as follows:
-```
-/opt/splunk/etc/apps/MyDeploymentClientBase/local/deploymentclient.conf
-```
 
+
+### splunk_monitor
+
+Adds a Splunk monitor stanza into a designated `inputs.conf` file in a "chef-erized" way using standard Chef DSL language. This resource also validates supported monitors and indexes as documented by Splunk. The dictionary is created from documentation on [Splunk's website](https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Listofpretrainedsourcetypes).
+
+Upon convergence, this resource will add a new stanza to the inputs.conf file, as needed, and modify or add new lines to the section based on properties given to the resource. If the current stanza in the inputs.conf file has any extra lines that are not listed as a valid property in this resource, those lines are automatically removed.
+
+#### Actions
+* `:create` - Installs or updates a `monitor://` stanza into the inputs.conf file
+* `:remove` - Removes a stanza from the inputs.conf file
+
+#### Properties
+
+These properties are specific to this resource:
+* `monitor_name` - this is the text naming each monitoring stanza (e.g., `monitor:///opt/splunk/var/log/splunk/splunkd.log`). Only the path to the file that Splunk should monitor is required in this property. The resource will prepend the necessary `monitor://` to this property.
+* `inputs_conf_path` - this is the target path and filename to the `inputs.conf`
+* `backup` - similar to the backup property of other file/template resources in chef, this specifies a number of backup files to retain or false to disable (Default: 5)
+
+These resource properties are drawn from Splunk's @documentation. Refer to https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Monitorfilesanddirectorieswithinputs.conf for more detailed description of these properties.
+* `host`
+* `index`
+* `sourcetype`
+* `queue`
+* `_TCP_ROUTING`
+* `host_regex`
+* `host_segment`
+
+The following are additional settings you can use when defining `monitor` input stanzas.
+* `source`
+* `crcSalt`
+* `ignoreOlderThan`
+* `followTail`
+* `whitelist`
+* `blacklist`
+* `alwaysOpenFile`
+* `recursive`
+* `time_before_close`
+* `followSymlink`
+
+#### Example
+A test recipe is embedded in this cookbook. Please look at `test/fixtures/cookbooks/test/recipes/splunk_monitor.rb`
 
 
 ### splunk_installer

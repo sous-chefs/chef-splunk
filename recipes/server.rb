@@ -38,13 +38,13 @@ end
 
 execute 'update-splunk-mgmt-port' do
   command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{node.run_state['splunk_auth_info']}'"
-  sensitive true
+  sensitive true unless Chef::Log.debug?
   not_if { current_mgmt_port == node['splunk']['mgmt_port'] }
   notifies :restart, 'service[splunk]'
 end
 
 ruby_block 'enable-splunk-receiver-port' do
-  sensitive true
+  sensitive true unless Chef::Log.debug?
   block do
     splunk = Mixlib::ShellOut.new("#{splunk_cmd} enable listen #{node['splunk']['receiver_port']} -auth #{node.run_state['splunk_auth_info']}")
     splunk.run_command
