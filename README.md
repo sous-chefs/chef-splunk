@@ -413,10 +413,38 @@ As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify r
   ```
 
 
+### splunk_index
+
+This resource helps manage Splunk indexes that are defined in an `indexes.conf` file in a "chef way" using standard Chef DSL vernacular. For information and specifications about Splunk indexes, please review and understand https://docs.splunk.com/Documentation/Splunk/8.0.2/Admin/Indexesconf.
+
+Upon convergence, this resource will add a new stanza to the `indexes.conf` file, as needed, and modify or add new lines to the section based on properties given to the resource. If the current stanza in the `indexes.conf` file has any extra lines that are not listed as a valid property in this resource, those lines are automatically removed.
+
+#### Actions
+* `:create` - Installs or updates a `monitor://` stanza into the inputs.conf file
+* `:remove` - Removes a stanza from the inputs.conf file
+
+#### Properties
+
+* `index_name` - this is the String naming each Splunk index. The resource will verify that the name of the index satisifies Splunk's naming requirements, which are below:
+
+>>>
+Index names must consist of only numbers, lowercase letters, underscores,
+and hyphens. They cannot begin with an underscore or hyphen, or contain
+the word "kvstore".
+>>>
+
+* `indexes_conf_path` - this is the target path and filename to the `indexes.conf`
+* `backup` - similar to the backup property of other file/template resources in chef, this specifies a number of backup files to retain or false to disable (Default: 5)
+* `options` - This is a Hash that contains all of the key/value pairs that define an index. For reference, please see Splunk's online documentation to understand what the valid options are for this property.
+
+### Example
+A test recipe is embedded in this cookbook. Please look at `test/fixtures/cookbooks/test/recipes/splunk_index.rb`.
+
+
 
 ### splunk_monitor
 
-Adds a Splunk monitor stanza into a designated `inputs.conf` file in a "chef-erized" way using standard Chef DSL language. This resource also validates supported monitors and indexes as documented by Splunk. The dictionary is created from documentation on [Splunk's website](https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Listofpretrainedsourcetypes).
+Adds a Splunk monitor stanza into a designated `inputs.conf` file in a "chef-erized" way using standard Chef DSL vernacular. This resource also validates supported monitors and indexes as documented by Splunk. The dictionary is created from documentation on [Splunk's website](https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Listofpretrainedsourcetypes).
 
 Upon convergence, this resource will add a new stanza to the inputs.conf file, as needed, and modify or add new lines to the section based on properties given to the resource. If the current stanza in the inputs.conf file has any extra lines that are not listed as a valid property in this resource, those lines are automatically removed.
 
