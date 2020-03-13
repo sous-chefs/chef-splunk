@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.1 (2020-03-12)
+- Removes iniparse gem install from metadata; this was superfluous
+
 ## 6.1.0 (2020-03-11)
 - Fixes Issue [#64](https://github.com/chef-cookbooks/chef-splunk/issues/64)
   * Adds custom resource, `splunk_monitor`
