@@ -28,7 +28,10 @@ property :local_file, kind_of: String, default: nil
 property :remote_file, kind_of: String, default: nil
 property :remote_directory, kind_of: String, default: nil
 property :templates, kind_of: [Array, Hash], default: []
-
+property :files_mode, [String, Integer, nil],
+          description: "The octal mode for a file.\n UNIX- and Linux-based systems: A quoted 3-5 character string that defines the octal mode that is passed to chmod. For example: '755', '0755', or 00755. If the value is specified as a quoted string, it works exactly as if the chmod command was passed. If the value is specified as an integer, prepend a zero (0) to the value to ensure that it is interpreted as an octal number. For example, to assign read, write, and execute rights for all users, use '0777' or '777'; for the same rights, plus the sticky bit, use 01777 or '1777'.\n Microsoft Windows: A quoted 3-5 character string that defines the octal mode that is translated into rights for Microsoft Windows security. For example: '755', '0755', or 00755. Values up to '0777' are allowed (no sticky bits) and mean the same in Microsoft Windows as they do in UNIX, where 4 equals GENERIC_READ, 2 equals GENERIC_WRITE, and 1 equals GENERIC_EXECUTE. This property cannot be used to set :full_control. This property has no effect if not specified, but when it and rights are both specified, the effects are cumulative.",
+          default_description: '0644 on *nix systems',
+          regex: /^\d{3,4}$/, default: nil
 # template_variables is a Hash referencing
 # each template named in the templates property, above, with each template having its
 # unique set of variables and values
@@ -63,6 +66,7 @@ action_class do
         checksum new_resource.checksum
         owner splunk_runas_user
         group splunk_runas_user
+        mode new_resource.files_mode unless new_resource.files_mode.nil?
       end
     elsif new_resource.remote_file || new_resource.local_file
       app_package = "#{app_dir}/local/#{::File.basename(new_resource.remote_file)}"
@@ -119,7 +123,7 @@ action_class do
           sensitive new_resource.sensitive
           owner splunk_runas_user
           group splunk_runas_user
-          mode '644'
+          mode new_resource.files_mode unless new_resource.files_mode.nil?
         end
       end
     else
@@ -144,7 +148,7 @@ action_class do
           sensitive new_resource.sensitive
           owner splunk_runas_user
           group splunk_runas_user
-          mode '644'
+          mode new_resource.files_mode unless new_resource.files_mode.nil?
         end
       end
     end
