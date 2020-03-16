@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.2 (2020-03-16)
+- adds property `files_mode` to the `splunk_app` resource that allows downstream recipes to set the mode for a template being managed by the resource.
+
 ## 6.1.1 (2020-03-12)
 - Removes iniparse gem install from metadata; this was superfluous
 
