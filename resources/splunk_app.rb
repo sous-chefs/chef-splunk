@@ -93,6 +93,7 @@ action_class do
         group splunk_runas_user
         files_owner splunk_runas_user
         files_group splunk_runas_user
+        files_mode new_resource.files_mode unless new_resource.files_mode.nil?
       end
     end
   end
