@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.4 (2020-03-26)
+- Implements a `cookbook` property for the `splunk_app` custom resource
+
 ## 6.1.3 (2020-03-16)
 - applies `files_mode` property to `remote_directory` resource used by the `splunk_app` resource
 

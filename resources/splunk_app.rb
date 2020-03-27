@@ -22,6 +22,7 @@ property :app_name, kind_of: String, name_property: true
 property :app_dependencies, kind_of: Array, default: []
 property :app_dir, kind_of: String, default: nil
 property :checksum, kind_of: String, default: nil
+property :cookbook, kind_of: String, default: nil
 property :cookbook_file, kind_of: String, default: nil
 property :installed, kind_of: [TrueClass, FalseClass, NilClass], default: false
 property :local_file, kind_of: String, default: nil
@@ -60,6 +61,7 @@ action_class do
       app_package = "#{app_dir}/local/#{::File.basename(new_resource.cookbook_file)}"
 
       cookbook_file new_resource.cookbook_file do
+        cookbook new_resource.cookbook unless new_resource.cookbook.nil?
         path app_package
         source new_resource.cookbook_file
         sensitive new_resource.sensitive
@@ -119,6 +121,7 @@ action_class do
                              end
 
         template "#{app_dir}/#{destination}" do
+          cookbook new_resource.cookbook unless new_resource.cookbook.nil?
           source source
           variables template_variables
           sensitive new_resource.sensitive
@@ -144,6 +147,7 @@ action_class do
         t = t.match?(/(\.erb)*/) ? ::File.basename(t, '.erb') : t
 
         template "#{app_dir}/local/#{t}" do
+          cookbook new_resource.cookbook unless new_resource.cookbook.nil?
           source "#{new_resource.app_name}/#{t}.erb"
           variables template_variables
           sensitive new_resource.sensitive
