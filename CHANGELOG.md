@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.5 (2020-03-30)
+- Fixes issues [#158] (https://github.com/chef-cookbooks/chef-splunk/issues/158)
+  * Removes default_description as a property field
+
 ## 6.1.4 (2020-03-26)
 - Implements a `cookbook` property for the `splunk_app` custom resource
 
