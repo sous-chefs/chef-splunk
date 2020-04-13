@@ -29,6 +29,6 @@ end
 # init script (or other configuration change) appropriate for your OS.
 execute 'enable boot-start' do
   user 'root'
-  command "#{splunk_cmd} enable boot-start --answer-yes --no-prompt#{license_accepted? ? ' --accept-license' : ''}"
+  command enable_boot_start_cmd
   creates '/etc/init.d/splunk'
 end

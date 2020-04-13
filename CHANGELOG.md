@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.6 (2020-04-02)
+- adds helper method `#enable_boot_start_cmd` to calculate the correct command to run `splunk enable boot-start` on systems running systemd
+
 ## 6.1.5 (2020-03-30)
 - Fixes issues [#158] (https://github.com/chef-cookbooks/chef-splunk/issues/158)
   * Removes default_description as a property field
