@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.6 (2020-04-28)
+- Rescues `Errno::ENOENT` in `ruby_block['splunk_fix_file_ownership']`
+
 ## 6.1.5 (2020-03-30)
 - Fixes issues [#158] (https://github.com/chef-cookbooks/chef-splunk/issues/158)
   * Removes default_description as a property field

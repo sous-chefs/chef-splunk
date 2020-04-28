@@ -51,7 +51,11 @@ end
 # files if a few specific files are root owned.
 ruby_block 'splunk_fix_file_ownership' do
   block do
-    FileUtils.chown_R(splunk_runas_user, splunk_runas_user, splunk_dir)
+    begin
+      FileUtils.chown_R(splunk_runas_user, splunk_runas_user, splunk_dir)
+    rescue Errno::ENOENT => e
+      Chef::Log.warn "Possible transient file encountered in Splunk while setting ownership:\n#{e.message}"
+    end
   end
   subscribes :run, 'service[splunk]', :before
   not_if { node['splunk']['server']['runasroot'] == true }
