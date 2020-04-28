@@ -238,7 +238,7 @@ def search_heads_peered?
 end
 
 def set_ownership
-  Dir.glob("#{splunk_dir}/**/*").select{ |e| File.file?(e) || File.directory?(e) }.each do |f|
+  Dir.glob("#{splunk_dir}/**/*").select { |e| File.file?(e) || File.directory?(e) }.each do |f|
     if File.directory?(f)
       directory f do
         owner splunk_runas_user
@@ -249,7 +249,7 @@ def set_ownership
       file f do
         owner splunk_runas_user
         group splunk_runas_user
-        only_if { File.exist?(f) } # looks redundant of the `#select`, but guards against transient splunk files causing a failed chef run
+        only_if { ::File.exist?(f) } # looks redundant of the `#select`, but guards against transient splunk files causing a failed chef run
       end
     end
   end
