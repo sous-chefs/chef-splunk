@@ -249,14 +249,14 @@ def set_ownership
       directory f do
         owner splunk_runas_user
         group splunk_runas_user
-        subscribes :run, 'service[splunk]', :before
+        subscribes :create, 'service[splunk]', :before
         only_if { File.directory?(f) }
       end
     else
       file f do
         owner splunk_runas_user
         group splunk_runas_user
-        subscribes :run, 'service[splunk]', :before
+        subscribes :create, 'service[splunk]', :before
         only_if { ::File.exist?(f) }
       end
     end
