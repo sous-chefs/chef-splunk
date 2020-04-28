@@ -237,19 +237,25 @@ def search_heads_peered?
   list_search_server.stdout.match?(/(^Server at URI \".*\" with status as \"Up\")+/)
 end
 
+def all_splunk_files_dirs
+  Find.find("#{splunk_dir}").reject do |x|
+    x.match(%r{/var/lib/splunk/kvstore}) # kvstore files are transient, so exclude them
+  end
+end
+
 def set_ownership
-  Dir.glob("#{splunk_dir}/**/*").select { |e| File.file?(e) || File.directory?(e) }.each do |f|
+  all_splunk_files_dirs.each do |f|
     if File.directory?(f)
       directory f do
         owner splunk_runas_user
         group splunk_runas_user
-        only_if { File.directory?(f) } # looks redundant of the `#select`, but guards against transient splunk files causing a failed chef run
+        only_if { File.directory?(f) }
       end
     else
       file f do
         owner splunk_runas_user
         group splunk_runas_user
-        only_if { ::File.exist?(f) } # looks redundant of the `#select`, but guards against transient splunk files causing a failed chef run
+        only_if { ::File.exist?(f) }
       end
     end
   end
