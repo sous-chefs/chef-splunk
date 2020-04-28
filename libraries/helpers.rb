@@ -238,7 +238,7 @@ def search_heads_peered?
 end
 
 def all_splunk_files_dirs
-  Find.find("#{splunk_dir}").reject do |x|
+  Find.find(splunk_dir.to_s).reject do |x|
     x.match(%r{/var/lib/splunk/kvstore}) # kvstore files are transient, so exclude them
   end
 end
