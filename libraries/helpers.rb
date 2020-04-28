@@ -236,3 +236,21 @@ def search_heads_peered?
   list_search_server = shell_out("#{splunk_cmd} list search-server -auth #{node.run_state['splunk_auth_info']}")
   list_search_server.stdout.match?(/(^Server at URI \".*\" with status as \"Up\")+/)
 end
+
+def set_ownership
+  Dir.glob("#{splunk_dir}/**/*").select{ |e| File.file?(e) || File.directory?(e) }.each do |f|
+    if File.directory?(f)
+      directory f do
+        owner splunk_runas_user
+        group splunk_runas_user
+        only_if { File.directory?(f) } # looks redundant of the `#select`, but guards against transient splunk files causing a failed chef run
+      end
+    else
+      file f do
+        owner splunk_runas_user
+        group splunk_runas_user
+        only_if { File.exist?(f) } # looks redundant of the `#select`, but guards against transient splunk files causing a failed chef run
+      end
+    end
+  end
+end

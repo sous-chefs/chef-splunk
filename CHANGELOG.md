@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.6 (2020-04-28)
+- ensures that transient files are skipped when fixing files/directories are owned by the splunk user
+
 ## 6.1.5 (2020-03-30)
 - Fixes issues [#158] (https://github.com/chef-cookbooks/chef-splunk/issues/158)
   * Removes default_description as a property field

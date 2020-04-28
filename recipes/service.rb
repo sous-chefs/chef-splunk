@@ -47,15 +47,8 @@ if server?
   end
 end
 
-# If we run as splunk user do a recursive chown to that user for all splunk
-# files if a few specific files are root owned.
-ruby_block 'splunk_fix_file_ownership' do
-  block do
-    FileUtils.chown_R(splunk_runas_user, splunk_runas_user, splunk_dir)
-  end
-  subscribes :run, 'service[splunk]', :before
-  not_if { node['splunk']['server']['runasroot'] == true }
-end
+# If we run as a splunk user, ensure proper file and directory ownership
+set_ownership unless node['splunk']['server']['runasroot'] == true
 
 Chef::Log.info("Node init package: #{node['init_package']}")
 

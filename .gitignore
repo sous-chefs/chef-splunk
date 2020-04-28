@@ -29,6 +29,7 @@ Gemfile.lock
 *.gem
 coverage
 spec/reports
+spec/examples.txt
 
 # YARD / rdoc artifacts
 .yardoc
