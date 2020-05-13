@@ -165,6 +165,7 @@ def cluster_master?
 end
 
 def init_shcluster_member?
+  return false unless splunk_installed?
   list_member_info = shell_out("#{splunk_cmd} list shcluster-member-info -auth #{node.run_state['splunk_auth_info']}")
   list_member_info.error?
 end

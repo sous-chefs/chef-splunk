@@ -5,6 +5,7 @@ lib/bundler/man
 pkg
 test/tmp
 test/version_tmp
+spec/examples.txt
 tmp
 _Store
 *~
