@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.7 (2020-05-13)
+- Fixes `#init_shcluster_member?` exception when splunk is not installed; will return false when splunk hasn't been installed
+
 ## 6.1.6 (2020-04-28)
 - Rescues `Errno::ENOENT` in `ruby_block['splunk_fix_file_ownership']`
 
