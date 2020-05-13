@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.1.8 (2020-05-13)
+- gracefully handles return value when splunk hasn't been installed for these helper methods:
+  * `#shcaptain_elected?`
+  * `#ok_to_bootstrap_captain?`
+  * `#ok_to_add_member?`
+  * `#search_heads_peered?`
+  
 ## 6.1.7 (2020-05-13)
 - Fixes `#init_shcluster_member?` exception when splunk is not installed; will return false when splunk hasn't been installed
 

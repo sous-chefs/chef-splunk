@@ -211,6 +211,8 @@ def shcluster_member?
 end
 
 def shcaptain_elected?
+  return false unless splunk_installed?
+
   election_result = false
   search(
     :node,
@@ -226,14 +228,17 @@ def shcaptain_elected?
 end
 
 def ok_to_bootstrap_captain?
+  return false unless splunk_installed?
   node['splunk']['shclustering']['mode'] == 'captain' && node['splunk']['shclustering']['captain_elected'] == false && shcluster_servers_size > 2
 end
 
 def ok_to_add_member?
+  return false unless splunk_installed?
   node['splunk']['shclustering']['mode'] == 'member' && shcaptain_elected? && !shcluster_member?
 end
 
 def search_heads_peered?
+  return false unless splunk_installed?
   list_search_server = shell_out("#{splunk_cmd} list search-server -auth #{node.run_state['splunk_auth_info']}")
   list_search_server.stdout.match?(/(^Server at URI \".*\" with status as \"Up\")+/)
 end
