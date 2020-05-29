@@ -129,30 +129,19 @@ ruby_block 'captain elected' do
   subscribes :run, 'execute[bootstrap-shcluster-captain]'
 end
 
-if ok_to_bootstrap_captain?
+if splunk_installed? && ok_to_bootstrap_captain?
   execute 'bootstrap-shcluster-captain' do
     sensitive true unless Chef::Log.debug?
     command "#{splunk_cmd} bootstrap shcluster-captain -auth '#{node.run_state['splunk_auth_info']}' " \
       "-servers_list \"#{shcluster_servers_list.join(',')}\""
     notifies :restart, 'service[splunk]', :immediately
-    not_if { shcaptain_elected? }
   end
-elsif ok_to_add_member?
-  captain_mgmt_uri = nil
-  search(
-    :node,
-    "\
-    splunk_shclustering_enabled:true AND \
-    splunk_shclustering_label:#{node['splunk']['shclustering']['label']} AND \
-    splunk_shclustering_mode:captain AND \
-    chef_environment:#{node.chef_environment}",
-    filter_result: { 'captain_mgmt_uri' => %w(splunk shclustering mgmt_uri) }
-  ).each { |result| captain_mgmt_uri = result['captain_mgmt_uri'] }
+elsif splunk_installed? && ok_to_add_member?
+  captain_mgmt_uri = "https://#{shcluster_captain}:8089"
 
   execute 'add member to search head cluster' do
     sensitive true unless Chef::Log.debug?
     command "#{splunk_cmd} add shcluster-member -current_member_uri #{captain_mgmt_uri} -auth '#{node.run_state['splunk_auth_info']}'"
-    only_if { node['splunk']['shclustering']['mode'] == 'member' }
     notifies :restart, 'service[splunk]'
   end
 end
