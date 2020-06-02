@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## Unreleased
+
+- resolved cookstyle error: resources/splunk_app.rb:19:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+- resolved cookstyle error: resources/splunk_index.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+- resolved cookstyle error: resources/splunk_installer.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+- resolved cookstyle error: resources/splunk_monitor.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+
 ## 6.1.8 (2020-05-13)
 - gracefully handles return value when splunk hasn't been installed for these helper methods:
   * `#shcaptain_elected?`
