@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-resource_name :splunk_installer
+provides :splunk_installer
 
 property :url, String
 property :package_name, String, name_property: true
