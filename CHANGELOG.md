@@ -2,12 +2,14 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## Unreleased
+## 6.1.9 (2020-06-02)
 
-- resolved cookstyle error: resources/splunk_app.rb:19:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
-- resolved cookstyle error: resources/splunk_index.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
-- resolved cookstyle error: resources/splunk_installer.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
-- resolved cookstyle error: resources/splunk_monitor.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+- Standardise files with files in chef-cookbooks/repo-management - [@xorimabot](https://github.com/xorimabot)
+- Chef Infra Client 16 compatibility fixes - [@xorimabot](https://github.com/xorimabot)
+  - resolved cookstyle error: resources/splunk_app.rb:19:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+  - resolved cookstyle error: resources/splunk_index.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+  - resolved cookstyle error: resources/splunk_installer.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+  - resolved cookstyle error: resources/splunk_monitor.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
 
 ## 6.1.8 (2020-05-13)
 - gracefully handles return value when splunk hasn't been installed for these helper methods:
