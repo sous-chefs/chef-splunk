@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.2.0 (2020-06-09)
+- [PR#170](https://github.com/chef-cookbooks/chef-splunk/pull/170) - Support systemd natively (@mfortin)
+
 ## 6.1.9 (2020-06-02)
 
 - Standardise files with files in chef-cookbooks/repo-management - [@xorimabot](https://github.com/xorimabot)
