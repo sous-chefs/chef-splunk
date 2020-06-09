@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 provides :splunk_index
+resource_name :splunk_index
 
 # Index names must consist of only numbers, lowercase letters, underscores,
 # and hyphens. They cannot begin with an underscore or hyphen, or contain
