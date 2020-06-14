@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.2.2 (2020-06-14)
+- Fixes systemd error: `Failed to enable unit: File /etc/systemd/system/splunk.service already exists.` This changes the systemd alias to `splunkd.service`
+
 ## 6.2.1 (2020-06-14)
 - Removes `execute['enable boot-start']` resource that was conflicting with this cookbook's own templates for system start scripts
 
