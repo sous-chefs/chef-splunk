@@ -22,13 +22,3 @@ splunk_installer 'splunk' do
   version node['splunk']['server']['version']
   only_if { server? }
 end
-
-# The init scripts are deprecated.  Splunk
-# now includes the ability to update the system boot configuration on its own.
-# to run "splunk enable boot-start".  This will create an
-# init script (or other configuration change) appropriate for your OS.
-execute 'enable boot-start' do
-  user 'root'
-  command "#{splunk_cmd} enable boot-start --answer-yes --no-prompt#{license_accepted? ? ' --accept-license' : ''}"
-  creates '/etc/init.d/splunk'
-end

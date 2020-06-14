@@ -63,7 +63,7 @@ end
 
 Chef::Log.info("Node init package: #{node['init_package']}")
 
-template '/etc/systemd/system/splunkd.service' do
+template '/etc/systemd/system/splunk.service' do
   source 'splunk-systemd.erb'
   mode '644'
   variables(
@@ -76,9 +76,25 @@ template '/etc/systemd/system/splunkd.service' do
   only_if { node['init_package'] == 'systemd' && node['splunk']['server']['runasroot'] == false }
 end
 
+file '/etc/systemd/system/splunkd.service' do
+  action :delete
+  notifies :run, 'execute[systemctl daemon-reload]', :immediately
+end
+
+file '/etc/init.d/splunk' do
+  action :delete
+  only_if { node['init_package'] == 'systemd' }
+end
+
 execute 'systemctl daemon-reload' do
   action :nothing
   only_if { node['init_package'] == 'systemd' }
+end
+
+file '/etc/systemd/system/splunk.service' do
+  action :delete
+  not_if { node['init_package'] == 'systemd' }
+  notifies :run, 'execute[systemctl daemon-reload]', :immediately
 end
 
 template '/etc/init.d/splunk' do

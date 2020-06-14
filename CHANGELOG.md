@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.2.1 (2020-06-14)
+- Removes `execute['enable boot-start']` resource that was conflicting with this cookbook's own templates for system start scripts
+
 ## 6.2.0 (2020-06-09)
 - [PR#170](https://github.com/chef-cookbooks/chef-splunk/pull/170) - Support systemd natively (@mfortin)
 
@@ -20,7 +23,7 @@ This file is used to list changes made in each version of the splunk cookbook.
   * `#ok_to_bootstrap_captain?`
   * `#ok_to_add_member?`
   * `#search_heads_peered?`
-  
+
 ## 6.1.7 (2020-05-13)
 - Fixes `#init_shcluster_member?` exception when splunk is not installed; will return false when splunk hasn't been installed
 

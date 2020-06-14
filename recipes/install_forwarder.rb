@@ -16,19 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 splunk_installer 'splunkforwarder' do
   url node['splunk']['forwarder']['url']
   version node['splunk']['forwarder']['version']
   not_if { server? }
-end
-
-# The init scripts are deprecated.  Splunk
-# now includes the ability to update the system boot configuration on its own.
-# to run "splunk enable boot-start".  This will create an
-# init script (or other configuration change) appropriate for your OS.
-execute 'enable boot-start' do
-  user 'root'
-  command "#{splunk_cmd} enable boot-start --answer-yes --no-prompt#{license_accepted? ? ' --accept-license' : ''}#{node['init_package'] == 'systemd' ? ' -systemd-managed 1 -systemd-unit-file-name splunk.service' : ''}"
-  creates node['init_package'] == 'systemd' ? '/etc/systemd/system/splunk.service' : '/etc/init.d/splunk'
 end
