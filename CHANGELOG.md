@@ -2,10 +2,25 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 6.1.9 (2020-05-21)
+## 6.2.2 (TBD)
 - changes `#shcaptain_elected?` to rely on the splunk CLI output from `show shcluster-status` to determine if a captain has been elected
 - adds new helper method: `#shcluster_captain` that returns `nil` or the name of the captain
 - handles the case where `node['splunk']['shclustering']['mode'] == 'captain'` and the node is replacing one that was part of an existing cluster in a dynamic captain situation; whereby captaincy has migrated to a different node and the incoming "captain" should in fact add itself as a regular member of the search head cluster.
+
+## 6.2.1 (2020-06-14)
+- Removes `execute['enable boot-start']` resource that was conflicting with this cookbook's own templates for system start scripts
+
+## 6.2.0 (2020-06-09)
+- [PR#170](https://github.com/chef-cookbooks/chef-splunk/pull/170) - Support systemd natively (@mfortin)
+
+## 6.1.9 (2020-06-02)
+
+- Standardise files with files in chef-cookbooks/repo-management - [@xorimabot](https://github.com/xorimabot)
+- Chef Infra Client 16 compatibility fixes - [@xorimabot](https://github.com/xorimabot)
+  - resolved cookstyle error: resources/splunk_app.rb:19:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+  - resolved cookstyle error: resources/splunk_index.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+  - resolved cookstyle error: resources/splunk_installer.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+  - resolved cookstyle error: resources/splunk_monitor.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
 
 ## 6.1.8 (2020-05-13)
 - gracefully handles return value when splunk hasn't been installed for these helper methods:

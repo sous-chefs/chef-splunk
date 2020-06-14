@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+provides :splunk_monitor
 resource_name :splunk_monitor
 
 # the dictionary is created from documentation on Splunk's website

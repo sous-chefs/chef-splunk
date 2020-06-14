@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+provides :splunk_index
 resource_name :splunk_index
 
 # Index names must consist of only numbers, lowercase letters, underscores,
