@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.2.3 (2020-06-15)
+- Fixes overzealous splunkd restarts due to SysV template being deployed where Systemd exists after the rendered template is deleted by a `file` resource
+
 ## 6.2.2 (2020-06-14)
 - Fixes systemd error: `Failed to enable unit: File /etc/systemd/system/splunk.service already exists.` This changes the systemd alias to `splunkd.service`
 

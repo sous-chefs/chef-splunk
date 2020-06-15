@@ -73,12 +73,13 @@ template '/etc/systemd/system/splunk.service' do
     accept_license: license_accepted?
   )
   notifies :run, 'execute[systemctl daemon-reload]', :immediately
-  only_if { node['init_package'] == 'systemd' && node['splunk']['server']['runasroot'] == false }
+  only_if { node['init_package'] == 'systemd' }
 end
 
 file '/etc/systemd/system/splunkd.service' do
   action :delete
   notifies :run, 'execute[systemctl daemon-reload]', :immediately
+  not_if { node['init_package'] == 'systemd' }
 end
 
 file '/etc/init.d/splunk' do
@@ -107,8 +108,7 @@ template '/etc/init.d/splunk' do
     runasroot: false,
     accept_license: license_accepted?
   )
-  not_if { node['splunk']['server']['runasroot'] == true }
-  notifies :run, 'execute[systemctl daemon-reload]', :immediately
+  not_if { node['init_package'] == 'systemd' }
   notifies :run, "execute[#{splunk_cmd} stop]", :immediately # must use this if splunk daemon is running as root and needs to switch to non-root user
   notifies :restart, 'service[splunk]'
 end
