@@ -2,10 +2,24 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 6.2.2 (TBD)
+## 6.2.6 (TBD)
 - changes `#shcaptain_elected?` to rely on the splunk CLI output from `show shcluster-status` to determine if a captain has been elected
 - adds new helper method: `#shcluster_captain` that returns `nil` or the name of the captain
 - handles the case where `node['splunk']['shclustering']['mode'] == 'captain'` and the node is replacing one that was part of an existing cluster in a dynamic captain situation; whereby captaincy has migrated to a different node and the incoming "captain" should in fact add itself as a regular member of the search head cluster.
+
+## 6.2.5 (2020-06-16)
+- Fixes splunkd restart issue
+
+## 6.2.4 (2020-06-15)
+- Multiple bugfixes to resolve build issues
+- Better chefspec coverage
+- Installs a limits.conf as a custom Splunk app, called `chef_splunk_universal_forwarder`
+
+## 6.2.3 (2020-06-15)
+- Fixes overzealous splunkd restarts due to SysV template being deployed where Systemd exists after the rendered template is deleted by a `file` resource
+
+## 6.2.2 (2020-06-14)
+- Fixes systemd error: `Failed to enable unit: File /etc/systemd/system/splunk.service already exists.` This changes the systemd alias to `splunkd.service`
 
 ## 6.2.1 (2020-06-14)
 - Removes `execute['enable boot-start']` resource that was conflicting with this cookbook's own templates for system start scripts

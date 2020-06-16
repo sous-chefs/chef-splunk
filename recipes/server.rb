@@ -23,19 +23,6 @@ include_recipe 'chef-splunk::install_server'
 include_recipe 'chef-splunk::service'
 include_recipe 'chef-splunk::setup_auth' if setup_auth?
 
-# during an initial install, the start/restart commands must deal with accepting
-# the license. So, we must ensure the service[splunk] resource
-# properly deals with the license.
-edit_resource(:service, 'splunk') do
-  action node['init_package'] == 'systemd' ? %i(start enable) : :start
-  supports status: true, restart: true
-  stop_command svc_command('stop')
-  start_command svc_command('start')
-  restart_command svc_command('restart')
-  status_command svc_command('status')
-  provider splunk_service_provider
-end
-
 execute 'update-splunk-mgmt-port' do
   command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{node.run_state['splunk_auth_info']}'"
   sensitive true unless Chef::Log.debug?

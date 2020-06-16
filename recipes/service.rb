@@ -73,7 +73,7 @@ template '/etc/systemd/system/splunk.service' do
     accept_license: license_accepted?
   )
   notifies :run, 'execute[systemctl daemon-reload]', :immediately
-  only_if { node['init_package'] == 'systemd' && node['splunk']['server']['runasroot'] == false }
+  only_if { node['init_package'] == 'systemd' }
 end
 
 file '/etc/systemd/system/splunkd.service' do
@@ -107,22 +107,14 @@ template '/etc/init.d/splunk' do
     runasroot: false,
     accept_license: license_accepted?
   )
-  not_if { node['splunk']['server']['runasroot'] == true }
-  notifies :run, 'execute[systemctl daemon-reload]', :immediately
+  not_if { node['init_package'] == 'systemd' }
   notifies :run, "execute[#{splunk_cmd} stop]", :immediately # must use this if splunk daemon is running as root and needs to switch to non-root user
   notifies :restart, 'service[splunk]'
 end
 
-# during an initial install, the start/restart commands must deal with accepting
-# the license. So, we must ensure the service[splunk] resource
-# properly deals with the license by way of the `svc_command` helper.
 service 'splunk' do
   action node['init_package'] == 'systemd' ? %i(start enable) : :start
   supports status: true, restart: true
-  stop_command svc_command('stop')
-  start_command svc_command('start')
-  restart_command svc_command('restart')
-  status_command svc_command('status')
   notifies :run, "execute[#{splunk_cmd} stop]", :before unless correct_runas_user?
   provider splunk_service_provider
 end

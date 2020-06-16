@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'chef-splunk::server' do
-  let(:chef_run_init) do
+  let(:runner) do
     ChefSpec::ServerRunner.new do |node|
       node.force_default['dev_mode'] = true
       node.force_default['splunk']['accept_license'] = true
@@ -17,8 +17,15 @@ describe 'chef-splunk::server' do
   end
 
   context 'default settings' do
+    # since the service[splunk] resource is created in the chef-splunk cookbook and
+    # the `include_recipe` is mocked in this chefspec, we need to insert
+    # a generic mock-up into the Resource collection so notifications can be checked
     let(:chef_run) do
-      chef_run_init.converge(described_recipe)
+      runner.converge(described_recipe) do
+        runner.resource_collection.insert(
+          Chef::Resource::Service.new('splunk', runner.run_context)
+        )
+      end
     end
 
     it 'does not update splunkd management port' do
@@ -31,11 +38,18 @@ describe 'chef-splunk::server' do
   end
 
   context 'custom management port' do
+    # since the service[splunk] resource is created in the chef-splunk cookbook and
+    # the `include_recipe` is mocked in this chefspec, we need to insert
+    # a generic mock-up into the Resource collection so notifications can be checked
     let(:chef_run) do
-      chef_run_init.node.force_default['dev_mode'] = true
-      chef_run_init.node.force_default['splunk']['accept_license'] = true
-      chef_run_init.node.force_default['splunk']['mgmt_port'] = '9089'
-      chef_run_init.converge(described_recipe)
+      runner.node.force_default['dev_mode'] = true
+      runner.node.force_default['splunk']['accept_license'] = true
+      runner.node.force_default['splunk']['mgmt_port'] = '9089'
+      runner.converge(described_recipe) do
+        runner.resource_collection.insert(
+          Chef::Resource::Service.new('splunk', runner.run_context)
+        )
+      end
     end
 
     before do

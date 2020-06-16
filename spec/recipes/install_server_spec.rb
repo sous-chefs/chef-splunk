@@ -29,11 +29,6 @@ describe 'chef-splunk::install_server' do
         end
       end
 
-      it 'enables boot-start' do
-        chef_run.converge(described_recipe)
-        expect(chef_run).to run_execute('enable boot-start')
-      end
-
       context 'url value exists' do
         it 'install splunk server from package downloaded from URL' do
           chef_run.node.force_default['splunk']['server']['url'] = url
