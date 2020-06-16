@@ -112,16 +112,9 @@ template '/etc/init.d/splunk' do
   notifies :restart, 'service[splunk]'
 end
 
-# during an initial install, the start/restart commands must deal with accepting
-# the license. So, we must ensure the service[splunk] resource
-# properly deals with the license by way of the `svc_command` helper.
 service 'splunk' do
   action node['init_package'] == 'systemd' ? %i(start enable) : :start
   supports status: true, restart: true
-  stop_command svc_command('stop')
-  start_command svc_command('start')
-  restart_command svc_command('restart')
-  status_command svc_command('status')
   notifies :run, "execute[#{splunk_cmd} stop]", :before unless correct_runas_user?
   provider splunk_service_provider
 end

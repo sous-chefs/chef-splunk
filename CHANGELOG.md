@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.2.5 (2020-06-16)
+- Fixes splunkd restart issue
+
 ## 6.2.4 (2020-06-15)
 - Multiple bugfixes to resolve build issues
 - Better chefspec coverage
