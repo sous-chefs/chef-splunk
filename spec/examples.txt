@@ -1,18 +1,18 @@
 example_id                                           | status  | run_time        |
 ---------------------------------------------------- | ------- | --------------- |
-./spec/recipes/client_spec.rb[1:1:1]                 | passed  | 1.27 seconds    |
-./spec/recipes/client_spec.rb[1:1:2]                 | passed  | 0.64227 seconds |
-./spec/recipes/client_spec.rb[1:1:3]                 | passed  | 0.64512 seconds |
-./spec/recipes/client_spec.rb[1:1:4]                 | passed  | 0.75337 seconds |
-./spec/recipes/client_spec.rb[1:1:5]                 | passed  | 0.65988 seconds |
-./spec/recipes/client_spec.rb[1:2:1]                 | passed  | 0.59882 seconds |
-./spec/recipes/client_spec.rb[1:2:2]                 | passed  | 0.66554 seconds |
-./spec/recipes/client_spec.rb[1:2:3]                 | passed  | 0.59585 seconds |
-./spec/recipes/client_spec.rb[1:2:4]                 | passed  | 0.66462 seconds |
-./spec/recipes/client_spec.rb[1:2:5]                 | passed  | 0.68175 seconds |
-./spec/recipes/client_spec.rb[1:3:1]                 | passed  | 0.64942 seconds |
-./spec/recipes/client_spec.rb[1:3:2]                 | passed  | 0.5861 seconds  |
-./spec/recipes/client_spec.rb[1:3:3]                 | passed  | 0.57677 seconds |
+./spec/recipes/client_spec.rb[1:1:1]                 | passed  | 1.39 seconds    |
+./spec/recipes/client_spec.rb[1:1:2]                 | passed  | 0.69376 seconds |
+./spec/recipes/client_spec.rb[1:1:3]                 | passed  | 0.66008 seconds |
+./spec/recipes/client_spec.rb[1:1:4]                 | passed  | 0.66951 seconds |
+./spec/recipes/client_spec.rb[1:1:5]                 | passed  | 0.766 seconds   |
+./spec/recipes/client_spec.rb[1:2:1]                 | passed  | 0.65584 seconds |
+./spec/recipes/client_spec.rb[1:2:2]                 | passed  | 0.642 seconds   |
+./spec/recipes/client_spec.rb[1:2:3]                 | passed  | 0.66503 seconds |
+./spec/recipes/client_spec.rb[1:2:4]                 | passed  | 0.65048 seconds |
+./spec/recipes/client_spec.rb[1:2:5]                 | passed  | 0.65791 seconds |
+./spec/recipes/client_spec.rb[1:3:1]                 | passed  | 0.73858 seconds |
+./spec/recipes/client_spec.rb[1:3:2]                 | passed  | 0.66223 seconds |
+./spec/recipes/client_spec.rb[1:3:3]                 | passed  | 0.61445 seconds |
 ./spec/recipes/disabled_spec.rb[1:1:1:1]             | passed  | 0.56695 seconds |
 ./spec/recipes/disabled_spec.rb[1:1:1:2]             | passed  | 0.56671 seconds |
 ./spec/recipes/disabled_spec.rb[1:1:1:3]             | passed  | 0.59186 seconds |

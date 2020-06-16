@@ -29,7 +29,7 @@ describe 'chef-splunk::client' do
       end
     end
 
-    let(:chef_run) do
+    let(:runner) do
       ChefSpec::ServerRunner.new do |node, server|
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['server']['runasroot'] = false
@@ -37,11 +37,18 @@ describe 'chef-splunk::client' do
         # Publish mock indexer nodes to the server
         server.create_node(splunk_indexer1)
         server.create_node(splunk_indexer2)
-      end.converge(described_recipe)
+      end
     end
 
-    it 'created the service[splunk] resource' do
-      expect(chef_run).to start_service('splunk')
+    # since the service[splunk] resource is created in the chef-splunk cookbook and
+    # the `include_recipe` is mocked in this chefspec, we need to insert
+    # a generic mock-up into the Resource collection so notifications can be checked
+    let(:chef_run) do
+      runner.converge(described_recipe) do
+        runner.resource_collection.insert(
+          Chef::Resource::Service.new('splunk', runner.run_context)
+        )
+      end
     end
 
     it 'creates the local system directory' do
@@ -68,20 +75,32 @@ describe 'chef-splunk::client' do
       resource = chef_run.template('/opt/splunkforwarder/etc/system/local/outputs.conf')
       expect(resource).to notify('service[splunk]').to(:restart)
     end
+
+    it 'created app chef_splunk_universal_forwarder' do
+      expect(chef_run).to install_splunk_app('chef_splunk_universal_forwarder')
+      expect(chef_run.splunk_app('chef_splunk_universal_forwarder')).to notify('service[splunk]').to(:restart)
+    end
   end
 
   context 'client config with remote indexers statically defined' do
-    let(:chef_run) do
+    let(:runner) do
       ChefSpec::ServerRunner.new do |node|
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['server_list'] = 'indexers.splunkcloud.com:9997'
         node.force_default['splunk']['server']['runasroot'] = false
         node.force_default['splunk']['accept_license'] = true
-      end.converge(described_recipe)
+      end
     end
 
-    it 'created the service[splunk] resource' do
-      expect(chef_run).to start_service('splunk')
+    # since the service[splunk] resource is created in the chef-splunk cookbook and
+    # the `include_recipe` is mocked in this chefspec, we need to insert
+    # a generic mock-up into the Resource collection so notifications can be checked
+    let(:chef_run) do
+      runner.converge(described_recipe) do
+        runner.resource_collection.insert(
+          Chef::Resource::Service.new('splunk', runner.run_context)
+        )
+      end
     end
 
     it 'creates the local system directory' do
@@ -105,19 +124,31 @@ describe 'chef-splunk::client' do
       resource = chef_run.template('/opt/splunkforwarder/etc/system/local/outputs.conf')
       expect(resource).to notify('service[splunk]').to(:restart)
     end
+
+    it 'created app chef_splunk_universal_forwarder' do
+      expect(chef_run).to install_splunk_app('chef_splunk_universal_forwarder')
+      expect(chef_run.splunk_app('chef_splunk_universal_forwarder')).to notify('service[splunk]').to(:restart)
+    end
   end
 
   context 'client inputs config has hosts' do
-    let(:chef_run) do
+    let(:runner) do
       ChefSpec::ServerRunner.new do |node|
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['inputs_conf']['host'] = 'localhost'
         node.force_default['splunk']['accept_license'] = true
-      end.converge(described_recipe)
+      end
     end
 
-    it 'created the service[splunk] resource' do
-      expect(chef_run).to start_service('splunk')
+    # since the service[splunk] resource is created in the chef-splunk cookbook and
+    # the `include_recipe` is mocked in this chefspec, we need to insert
+    # a generic mock-up into the Resource collection so notifications can be checked
+    let(:chef_run) do
+      runner.converge(described_recipe) do
+        runner.resource_collection.insert(
+          Chef::Resource::Service.new('splunk', runner.run_context)
+        )
+      end
     end
 
     it 'creates an inputs template in the local system directory if it has hosts' do
@@ -127,6 +158,11 @@ describe 'chef-splunk::client' do
     it 'notifies the splunk service to restart when rendering the inputs template' do
       resource = chef_run.template('/opt/splunkforwarder/etc/system/local/inputs.conf')
       expect(resource).to notify('service[splunk]').to(:restart)
+    end
+
+    it 'created app chef_splunk_universal_forwarder' do
+      expect(chef_run).to install_splunk_app('chef_splunk_universal_forwarder')
+      expect(chef_run.splunk_app('chef_splunk_universal_forwarder')).to notify('service[splunk]').to(:restart)
     end
   end
 end

@@ -22,6 +22,7 @@
 # used on their own composed in your own wrapper cookbook or role.
 include_recipe 'chef-splunk::user'
 include_recipe 'chef-splunk::install_forwarder' unless server?
+include_recipe 'chef-splunk::service'
 
 splunk_servers = search(
   :node,
@@ -38,20 +39,6 @@ server_list = if !(node['splunk']['server_list'].nil? || node['splunk']['server_
                   "#{s['fqdn'] || s['ipaddress']}:#{s['splunk']['receiver_port']}"
                 end.join(', ')
               end
-
-# during an initial install, the start/restart commands must deal with accepting
-# the license. So, we must ensure the service[splunk] resource
-# properly deals with the license.
-edit_resource(:service, 'splunk') do
-  action node['init_package'] == 'systemd' ? %i(start enable) : :start
-  supports status: true, restart: true
-  stop_command svc_command('stop')
-  start_command svc_command('start')
-  restart_command svc_command('restart')
-  status_command svc_command('status')
-  notifies :run, "execute[#{splunk_cmd} stop]", :before unless correct_runas_user?
-  provider splunk_service_provider
-end
 
 # if the splunk daemon is running as root, executing a normal service restart or stop will fail if the boot
 # start script has been modified to execute splunk as a non-root user.
@@ -89,14 +76,16 @@ template "#{splunk_dir}/etc/system/local/inputs.conf" do
   not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
 end
 
-template "#{splunk_dir}/etc/apps/SplunkUniversalForwarder/default/limits.conf" do
-  source 'limits.conf.erb'
-  owner splunk_runas_user
-  group splunk_runas_user
-  mode '644'
-  variables ratelimit_kbps: node['splunk']['ratelimit_kilobytessec']
+splunk_app 'chef_splunk_universal_forwarder' do
+  files_mode '0644'
+  templates ['limits.conf.erb']
+  template_variables(
+    'limits.conf.erb' => {
+      ratelimit_kbps: node['splunk']['ratelimit_kilobytessec']
+    }
+  )
+  action :install
   notifies :restart, 'service[splunk]'
 end
 
-include_recipe 'chef-splunk::service'
 include_recipe 'chef-splunk::setup_auth' if setup_auth?
