@@ -22,14 +22,16 @@ describe 'chef-splunk::setup_ssl' do
 
     context 'default webui port' do
       let(:chef_run) do
-        runner.converge(described_recipe)
+        runner.converge(described_recipe) do
+          runner.resource_collection.insert(
+            Chef::Resource::Service.new('splunk', runner.run_context)
+          )
+        end
       end
 
       before do
         allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return(vault_item)
       end
-
-      it_behaves_like 'splunk daemon'
 
       it 'writes web.conf with http port 443' do
         expect(chef_run).to render_file('/opt/splunk/etc/system/local/web.conf').with_content('httpport = 443')
@@ -69,14 +71,16 @@ describe 'chef-splunk::setup_ssl' do
     context 'alternative webui port' do
       let(:chef_run) do
         runner.node.force_default['splunk']['web_port'] = '7777'
-        runner.converge(described_recipe)
+        runner.converge(described_recipe) do
+          runner.resource_collection.insert(
+            Chef::Resource::Service.new('splunk', runner.run_context)
+          )
+        end
       end
 
       before do
         allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return(vault_item)
       end
-
-      it_behaves_like 'splunk daemon'
 
       it 'writes web.conf with a non-default port for https' do
         expect(chef_run).to render_file('/opt/splunk/etc/system/local/web.conf').with_content('httpport = 7777')

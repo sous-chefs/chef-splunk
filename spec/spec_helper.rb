@@ -18,7 +18,7 @@ RSpec.configure do |config|
 
   config.platform = 'ubuntu'        # Avoid warnings in ChefSpec
   config.version = '16.04'          # Avoid warnings in ChefSpec
-  config.example_status_persistence_file_path = 'spec/examples.txt'
+  config.example_status_persistence_file_path = 'spec/reports/examples.txt'
   config.alias_it_should_behave_like_to :it_performs, 'performs'
   config.include_context 'command stubs'
 end

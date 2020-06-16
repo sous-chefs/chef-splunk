@@ -206,35 +206,32 @@ def shcluster_members_ipv4
 end
 
 def shcluster_member?
-  splunk = shell_out("#{splunk_cmd} show shcluster-status -auth #{node.run_state['splunk_auth_info']}")
-  splunk.stdout.strip != 'Encountered some errors while trying to obtain shcluster status.'
+  shcluster_members_ipv4.include?
 end
 
 def shcaptain_elected?
-  return false unless splunk_installed?
+  shcluster_captain.nil?
+end
 
-  election_result = false
-  search(
-    :node,
-    "\
-    splunk_shclustering_enabled:true AND \
-    splunk_shclustering_label:#{node['splunk']['shclustering']['label']} AND \
-    splunk_shclustering_mode:captain AND \
-    chef_environment:#{node.chef_environment}",
-    filter_result: { 'captain_elected' => %w(splunk shclustering captain_elected) }
-  ).each { |result| election_result = result['captain_elected'] }
-  node.override['splunk']['shclustering']['captain_elected'] = election_result
-  election_result == true
+def shcluster_captain
+  return nil unless splunk_installed?
+  
+  command = "#{splunk_cmd} show shcluster-status -auth '#{node.run_state['splunk_auth_info']}' | " \
+    'grep -A 5 Captain | tail -1'
+  shcluster_captain = shell_out(command)
+  stdout = shcluster_captain.stdout.strip
+  return nil unless stdout.match(/^label \: .*/)
+  stdout.split(':').collect(&:strip)[1]
 end
 
 def ok_to_bootstrap_captain?
   return false unless splunk_installed?
-  node['splunk']['shclustering']['mode'] == 'captain' && node['splunk']['shclustering']['captain_elected'] == false && shcluster_servers_size > 2
+  node['splunk']['shclustering']['captain_elected'] == false && node['splunk']['shclustering']['mode'] == 'captain' && shcluster_servers_size >= 2
 end
 
 def ok_to_add_member?
   return false unless splunk_installed?
-  node['splunk']['shclustering']['mode'] == 'member' && shcaptain_elected? && !shcluster_member?
+  shcaptain_elected? && !shcluster_member?
 end
 
 def search_heads_peered?
