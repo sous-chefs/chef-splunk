@@ -24,19 +24,6 @@ unless enable_shclustering?
   return
 end
 
-# during an initial install, the start/restart commands must deal with accepting
-# the license. So, we must ensure the service[splunk] resource
-# properly deals with the license; hence, the use of `#svc_command` method calls here.
-edit_resource(:service, 'splunk') do
-  action node['init_package'] == 'systemd' ? %i(start enable) : :start
-  supports status: true, restart: true
-  stop_command svc_command('stop')
-  start_command svc_command('start')
-  restart_command svc_command('restart')
-  status_command svc_command('status')
-  provider splunk_service_provider
-end
-
 # initialize
 # create app directories to house our server.conf with our shcluster configuration
 directory node['splunk']['shclustering']['app_dir'] do

@@ -16,7 +16,7 @@ describe 'chef-splunk::setup_shclustering' do
   end
 
   context 'search head deployer' do
-    let(:chef_run) do
+    let(:runner) do
       ChefSpec::ServerRunner.new do |node, server|
         node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
         node.run_state['splunk_secret'] = 'notarealsecret'
@@ -26,12 +26,23 @@ describe 'chef-splunk::setup_shclustering' do
         node.force_default['splunk']['accept_license'] = true
         node.force_default['splunk']['shclustering']['mode'] = 'deployer'
         create_data_bag_item(server, 'vault', 'splunk__default')
-      end.converge(described_recipe)
+      end
+    end
+
+    # since the service[splunk] resource is created in the chef-splunk cookbook and
+    # the `include_recipe` is mocked in this chefspec, we need to insert
+    # a generic mock-up into the Resource collection so notifications can be checked
+    let(:chef_run) do
+      runner.converge(described_recipe) do
+        runner.resource_collection.insert(
+          Chef::Resource::Service.new('splunk', runner.run_context)
+        )
+      end
     end
   end
 
   context 'search head cluster member settings' do
-    let(:chef_run) do
+    let(:runner) do
       ChefSpec::ServerRunner.new do |node, server|
         node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
         node.run_state['splunk_secret'] = 'notarealsecret'
@@ -45,14 +56,25 @@ describe 'chef-splunk::setup_shclustering' do
         node.force_default['splunk']['shclustering']['shcluster_members'] = \
           %w(https://shcluster-member01:8089 https://shcluster-member02:8089 https://shcluster-member03:8089)
         create_data_bag_item(server, 'vault', 'splunk__default')
-      end.converge(described_recipe)
+      end
+    end
+
+    # since the service[splunk] resource is created in the chef-splunk cookbook and
+    # the `include_recipe` is mocked in this chefspec, we need to insert
+    # a generic mock-up into the Resource collection so notifications can be checked
+    let(:chef_run) do
+      runner.converge(described_recipe) do
+        runner.resource_collection.insert(
+          Chef::Resource::Service.new('splunk', runner.run_context)
+        )
+      end
     end
 
     it_behaves_like 'a search head cluster member'
   end
 
   context 'search head captain' do
-    let(:chef_run) do
+    let(:runner) do
       ChefSpec::ServerRunner.new do |node, server|
         node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
         node.run_state['splunk_secret'] = 'notarealsecret'
@@ -68,7 +90,18 @@ describe 'chef-splunk::setup_shclustering' do
         create_data_bag_item(server, 'vault', 'splunk__default')
         allow_any_instance_of(Chef::Resource).to receive(:shcaptain_elected?).and_return(false)
         allow_any_instance_of(Chef::Recipe).to receive(:ok_to_bootstrap_captain?).and_return(true)
-      end.converge(described_recipe)
+      end
+    end
+
+    # since the service[splunk] resource is created in the chef-splunk cookbook and
+    # the `include_recipe` is mocked in this chefspec, we need to insert
+    # a generic mock-up into the Resource collection so notifications can be checked
+    let(:chef_run) do
+      runner.converge(described_recipe) do
+        runner.resource_collection.insert(
+          Chef::Resource::Service.new('splunk', runner.run_context)
+        )
+      end
     end
 
     let(:shcluster_servers_list) do
