@@ -215,7 +215,7 @@ end
 
 def shcluster_captain
   return nil unless splunk_installed?
-  
+
   command = "#{splunk_cmd} show shcluster-status -auth '#{node.run_state['splunk_auth_info']}' | " \
     'grep -A 5 Captain | tail -1'
   shcluster_captain = shell_out(command)
