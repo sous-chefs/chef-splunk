@@ -2,13 +2,11 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 6.2.6 (TBD)
+## 6.2.5 (2020-06-16)
+- Fixes splunkd restart issue
 - changes `#shcaptain_elected?` to rely on the splunk CLI output from `show shcluster-status` to determine if a captain has been elected
 - adds new helper method: `#shcluster_captain` that returns `nil` or the name of the captain
 - handles the case where `node['splunk']['shclustering']['mode'] == 'captain'` and the node is replacing one that was part of an existing cluster in a dynamic captain situation; whereby captaincy has migrated to a different node and the incoming "captain" should in fact add itself as a regular member of the search head cluster.
-
-## 6.2.5 (2020-06-16)
-- Fixes splunkd restart issue
 
 ## 6.2.4 (2020-06-15)
 - Multiple bugfixes to resolve build issues

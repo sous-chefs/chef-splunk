@@ -116,14 +116,14 @@ ruby_block 'captain elected' do
   subscribes :run, 'execute[bootstrap-shcluster-captain]'
 end
 
-if splunk_installed? && ok_to_bootstrap_captain?
+if ok_to_bootstrap_captain?
   execute 'bootstrap-shcluster-captain' do
     sensitive true unless Chef::Log.debug?
     command "#{splunk_cmd} bootstrap shcluster-captain -auth '#{node.run_state['splunk_auth_info']}' " \
       "-servers_list \"#{shcluster_servers_list.join(',')}\""
     notifies :restart, 'service[splunk]', :immediately
   end
-elsif splunk_installed? && ok_to_add_member?
+elsif ok_to_add_member?
   captain_mgmt_uri = "https://#{shcluster_captain}:8089"
 
   execute 'add member to search head cluster' do
