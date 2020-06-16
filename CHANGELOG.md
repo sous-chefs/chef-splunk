@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.2.4 (2020-06-15)
+- Multiple bugfixes to resolve build issues
+- Better chefspec coverage
+- Installs a limits.conf as a custom Splunk app, called `chef_splunk_universal_forwarder`
+
 ## 6.2.3 (2020-06-15)
 - Fixes overzealous splunkd restarts due to SysV template being deployed where Systemd exists after the rendered template is deleted by a `file` resource
 
