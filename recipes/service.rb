@@ -79,7 +79,6 @@ end
 file '/etc/systemd/system/splunkd.service' do
   action :delete
   notifies :run, 'execute[systemctl daemon-reload]', :immediately
-  not_if { node['init_package'] == 'systemd' }
 end
 
 file '/etc/init.d/splunk' do

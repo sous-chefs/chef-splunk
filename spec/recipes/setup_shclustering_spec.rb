@@ -67,6 +67,7 @@ describe 'chef-splunk::setup_shclustering' do
           %w(https://shcluster-member01:8089 https://shcluster-member02:8089 https://shcluster-member03:8089)
         create_data_bag_item(server, 'vault', 'splunk__default')
         allow_any_instance_of(Chef::Resource).to receive(:shcaptain_elected?).and_return(false)
+        allow_any_instance_of(Chef::Recipe).to receive(:ok_to_bootstrap_captain?).and_return(true)
       end.converge(described_recipe)
     end
 

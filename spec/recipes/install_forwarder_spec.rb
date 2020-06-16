@@ -28,11 +28,6 @@ describe 'chef-splunk::install_forwarder' do
         end
       end
 
-      it 'enables boot-start' do
-        chef_run.converge(described_recipe)
-        expect(chef_run).to run_execute('enable boot-start')
-      end
-
       context 'url value exists' do
         it 'install splunk forwarder from package downloaded from URL' do
           chef_run.node.force_default['splunk']['forwarder']['url'] = url
