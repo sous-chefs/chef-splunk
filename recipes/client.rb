@@ -81,7 +81,7 @@ splunk_app 'chef_splunk_universal_forwarder' do
   templates ['limits.conf.erb']
   template_variables(
     'limits.conf.erb' => {
-      ratelimit_kbps: node['splunk']['ratelimit_kilobytessec']
+      ratelimit_kbps: node['splunk']['ratelimit_kilobytessec'],
     }
   )
   action :install
