@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.2.7 (2020-06-29)
+- Fixes Issue [#168](https://github.com/chef-cookbooks/chef-splunk/issues/168)
+  * uses `node.normal` when `ruby_block[captain elected]` executes to persist that value between chef runs
+  * requires manually updating node data to set `node.normal['splunk']['shclustering']['captain_elected'] = true` if you've already deployed v6.2.6 of this cookbook previously; otherwise, skip v6.2.6 and run v6.2.7 directly.
+
 ## 6.2.6 (2020-06-16)
 - changes `#shcaptain_elected?` to rely on the splunk CLI output from `show shcluster-status` to determine if a captain has been elected
 - adds new helper method: `#shcluster_captain` that returns `nil` or the name of the captain
