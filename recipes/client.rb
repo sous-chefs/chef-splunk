@@ -20,7 +20,7 @@
 # Universal Forwarder configured to talk to a node that is the splunk
 # server (with node['splunk']['is_server'] true). The recipes can be
 # used on their own composed in your own wrapper cookbook or role.
-include_recipe 'chef-splunk::user'
+include_recipe 'chef-splunk::user' if !node['splunk']['server']['runasroot']
 include_recipe 'chef-splunk::install_forwarder' unless server?
 include_recipe 'chef-splunk::service'
 
