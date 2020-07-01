@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.2.8 (2020-07-01)
+- Thank you, @doublethink, for this submission
+- Resolves issues installing server and client as non-root users:
+  * `chef-splunk::user` recipe will not run if splunkd should be run as a non-root user
+  * systemd and SysV templates correctly run as the specified non-root user
+- Adds a new helper method: `#run_as_root?`
+
 ## 6.2.7 (2020-06-29)
 - Fixes Issue [#168](https://github.com/chef-cookbooks/chef-splunk/issues/168)
   * uses `node.normal` when `ruby_block[captain elected]` executes to persist that value between chef runs
