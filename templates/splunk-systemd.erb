@@ -8,8 +8,8 @@ After=network.target
 Type=forking
 RemainAfterExit=no
 <% if ! @runasroot %>
-User=splunk
-Group=splunk
+User=<%= @splunkuser %>
+Group=<%= @splunkuser %>
 <% end %>
 LimitNOFILE=65536
 ExecStart="<%= @splunkcmd %>" start --answer-yes --no-prompt

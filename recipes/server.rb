@@ -18,7 +18,7 @@
 #
 node.default['splunk']['is_server'] = true
 
-include_recipe 'chef-splunk::user'
+include_recipe 'chef-splunk::user' unless run_as_root?
 include_recipe 'chef-splunk::install_server'
 include_recipe 'chef-splunk::service'
 include_recipe 'chef-splunk::setup_auth' if setup_auth?

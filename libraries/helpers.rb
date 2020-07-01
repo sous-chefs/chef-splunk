@@ -94,6 +94,10 @@ def splunk_runas_user
   node['splunk']['user']['username']
 end
 
+def run_as_root?
+  node['splunk']['server']['runasroot'] == true
+end
+
 def splunk_service_provider
   if node['init_package'] == 'systemd'
     Chef::Provider::Service::Systemd
