@@ -18,7 +18,7 @@
 #
 node.default['splunk']['is_server'] = true
 
-include_recipe 'chef-splunk::user'
+include_recipe 'chef-splunk::user' if !node['splunk']['server']['runasroot']
 include_recipe 'chef-splunk::install_server'
 include_recipe 'chef-splunk::service'
 include_recipe 'chef-splunk::setup_auth' if setup_auth?
