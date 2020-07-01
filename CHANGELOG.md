@@ -3,7 +3,7 @@
 This file is used to list changes made in each version of the splunk cookbook.
 
 ## 6.2.8 (2020-07-01)
-- Thank you, @doublethink, for this submission
+- Thank you, [@doublethink](https://github.com/doublethink), for this submission
 - Resolves issues installing server and client as non-root users:
   * `chef-splunk::user` recipe will not run if splunkd should be run as a non-root user
   * systemd and SysV templates correctly run as the specified non-root user
