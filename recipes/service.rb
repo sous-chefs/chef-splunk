@@ -70,7 +70,7 @@ template '/etc/systemd/system/splunk.service' do
     splunkdir: splunk_dir,
     splunkuser: splunk_runas_user,
     splunkcmd: splunk_cmd,
-    runasroot: node['splunk']['server']['runasroot'],
+    runasroot: run_as_root?,
     accept_license: license_accepted?
   )
   notifies :run, 'execute[systemctl daemon-reload]', :immediately
@@ -105,7 +105,7 @@ template '/etc/init.d/splunk' do
     splunkdir: splunk_dir,
     splunkuser: splunk_runas_user,
     splunkcmd: splunk_cmd,
-    runasroot: node['splunk']['server']['runasroot'],
+    runasroot: run_as_root?,
     accept_license: license_accepted?
   )
   not_if { node['init_package'] == 'systemd' }
