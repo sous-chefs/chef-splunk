@@ -1,5 +1,4 @@
-chef-splunk Cookbook
-====================
+# chef-splunk Cookbook
 
 [![Build Status](https://travis-ci.org/chef-cookbooks/chef-splunk.svg?branch=master)](https://travis-ci.org/chef-cookbooks/chef-splunk)
 [![Cookbook Version](https://img.shields.io/cookbook/v/chef-splunk.svg)](https://supermarket.chef.io/cookbooks/chef-splunk)
@@ -18,11 +17,9 @@ are mirrored locally, supply the local URL instead. At this time the
 cookbook doesn't support installing from networked package managers
 (like apt or yum), since Splunk doesn't provide package repositories.
 
-
 ## Requirements
 
 Chef 13.11 or newer
-
 
 ## License Acceptance
 In the past, it was sufficient to set the `node['splunk']['accept_license']` attribute
@@ -32,6 +29,7 @@ this attribute must be set to boolean `true`. A value resulting in anything othe
 be considered as not accepting the Splunk EULA.
 
 For example, these will not accept the Splunk license:
+
 ```
 node['splunk']['accept_license'] = false
 node['splunk'] = { 'accept_license' => nil }
@@ -40,6 +38,7 @@ node['splunk']['accept_license'] = 'true'
 ```
 
 Only this will accept the license:
+
 ```
 node['splunk']['accept_license'] = true
 ```
@@ -61,13 +60,11 @@ By default, only 64-bit Splunk server and Splunk Universal Forwarder will be ins
 ### Debug Mode
 Since the splunk command requires authentication, many `execute` resources in this cookbook have STDOUT/STDERR suppressed (i.e., `sensitive true`). However, this setting can hide important diagnostic messages during a failed chef run when Chef Infra Client is run in normal logging levels, such as `:info` or `:auto`. In order to disable this suppression, Chef Infra Client must be run with `:debug` logging level (i.e., `chef-client -l debug`). Beware: Running Chef Infra Client this way can persist sensitive information, such as your Splunk admin user credentials, in the chef client log, and pose a security risk. *Do not leave this setting enabled on critical systems*
 
-
 ### Cookbooks
 
 Used for managing secrets, see __Usage__:
 
 * chef-vault, `~> 4.0`
-
 
 ## Attributes
 
@@ -110,13 +107,13 @@ by default.
 
   For example, each line below will force the chef-client to install Splunk's Universal Forwarder
   and server from the local package manager:
+
   ```
   node.force_default['splunk']['forwarder']['url'] = ''
   node.force_default['splunk']['server']['url'] = ''
   node.force_default['splunk']['forwarder']['url'] = nil
   node.force_default['splunk']['server']['url'] = nil
   ```
-
 
 Special attributes for managing the Splunk user:
 
@@ -126,13 +123,9 @@ Special attributes for managing the Splunk user:
 
 - `username`: the username
 - `comment`: gecos field
-- `home`: the home directory, defaults to `/opt/splunkforwarder`, will
-  be set to `/opt/splunk` if `node['splunk']['is_server']` is true.
+- `home`: the home directory, defaults to `/opt/splunkforwarder`, will be set to `/opt/splunk` if `node['splunk']['is_server']` is true.
 - `shell`: the shell to use
-- `uid`: the numeric UID. The default, `396` is an integer arbitrarily
-  chosen and doesn't conflict with anything on the supported platforms
-  (see list above). It is within the `system` UID range on Linux
-  systems.
+- `uid`: the numeric UID. The default, `396` is an integer arbitrarily chosen and doesn't conflict with anything on the supported platforms (see list above). It is within the `system` UID range on Linux systems.
 
 * `node['splunk']['server']['runasroot']`: if runasroot is true (which is the splunk upstream package default) then the splunk server runs as root.  If runasroot is false modify the init script to run as the `node['splunk']['user']`.  This does not apply to the splunk client as they may need root permissions to read logfiles.  NOTE1: you may also need to change `node['splunk']['web_port']` on a splunk server to run on a port >1024 if you don't run as root (splunk user cannot bind to privelaged ports).  NOTE2: If you want to switch from root to the splunk user or vice versa on an existing install, please stop the splunk service first before changing the runasroot boolean value.
 
@@ -270,24 +263,19 @@ The `server` attribute in `tcpout:splunk_indexers_9997` stanza above is populate
 `node['splunk']['server_list']` is an optional comma-separated listed of server IPs and the ports. It's only applicable when there are no Splunk servers managed by Chef, e.g. sending data to Splunk Cloud which has managed indexers.
 
 For example:
+
 ```
 node.default['splunk']['server_list'] = '10.0.2.47:9997, 10.0.2.49:9997'
 ```
 
-
 `node['splunk']['inputs_conf']` is a hash of configuration values that are used to populate the `inputs.conf` file.
 
-* `node['splunk']['inputs_conf']['host']`: A string that specifies the
-default host name used in the inputs.conf file. The inputs.conf file
-is not overwritten if this is not set or is an empty string.
-* `node['splunk']['inputs_conf']['ports']`: An array of hashes that contain
-the input port configuration necessary to generate the inputs.conf
-file.
-* `node['splunk']['inputs_conf']['inputs']`: An array of hashes that contain
-the input configuration necessary to generate the inputs.conf
-file. This attribute supports all input types.
+* `node['splunk']['inputs_conf']['host']`: A string that specifies the default host name used in the inputs.conf file. The inputs.conf file is not overwritten if this is not set or is an empty string.
+* `node['splunk']['inputs_conf']['ports']`: An array of hashes that contain the input port configuration necessary to generate the inputs.conf file.
+* `node['splunk']['inputs_conf']['inputs']`: An array of hashes that contain the input configuration necessary to generate the inputs.conf file. This attribute supports all input types.
 
 For example:
+
 ```
 node.default['splunk']['inputs_conf']['ports'] = [
   {
@@ -330,13 +318,13 @@ must be set explicitly elsewhere on the node(s).
 
   For example, each line below will force the chef-client to install Splunk's Universal Forwarder and server
   from the local package manager:
+
   ```
   node.force_default['splunk']['forwarder']['upgrade']['url'] = ''
   node.force_default['splunk']['server']['upgrade']['url'] = ''
   node.force_default['splunk']['forwarder']['upgrade']['url'] = nil
   node.force_default['splunk']['server']['upgrade']['url'] = nil
   ```
-
 
 ## Custom Resources
 
@@ -370,8 +358,8 @@ As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify r
   a `default` Hash can specify variables/values passed to all templates or it can specify different variables/values for any and all
   templates.
 
-  For example, this will pass the default Hash of variables/values into all of the templates, but the `foo.erb` template will
-  be fed a unique Hash of variables/values.
+  For example, this will pass the default Hash of variables/values into all of the templates, but the `foo.erb` template will be fed a unique Hash of variables/values.
+
   ```ruby
   splunk_app 'my app' do
     templates %w(foo.erb bar.erb server.conf.erb app.conf.erb outputs.conf.erb)
@@ -389,6 +377,7 @@ As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify r
   Install and enable a deployment client configuration that overrides default Splunk Enterprise configurations
 
   - Given a wrapper cookbook called MyDeploymentClientBase with a folder structure as below:
+
   ```
   MyDeploymentClientBase
       /templates
@@ -408,10 +397,10 @@ As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify r
   ```
 
   The Splunk Enterprise server will have a filesystem created, as follows:
+
   ```
   /opt/splunk/etc/apps/MyDeploymentClientBase/local/deploymentclient.conf
   ```
-
 
 ### splunk_index
 
@@ -439,8 +428,6 @@ the word "kvstore".
 
 ### Example
 A test recipe is embedded in this cookbook. Please look at `test/fixtures/cookbooks/test/recipes/splunk_index.rb`.
-
-
 
 ### splunk_monitor
 
@@ -482,7 +469,6 @@ The following are additional settings you can use when defining `monitor` input 
 
 #### Example
 A test recipe is embedded in this cookbook. Please look at `test/fixtures/cookbooks/test/recipes/splunk_monitor.rb`
-
 
 ### splunk_installer
 
@@ -574,6 +560,7 @@ setup a splunk forwarder just set the  default host:
 ```
 node['splunk']['inputs_conf']['host'] = 'myhost'
 ```
+
 Then set up the port configuration for each input port:
 
 ```
@@ -589,7 +576,6 @@ node['splunk']['inputs_conf']['ports'] =
   ...
 ]
 ```
-
 
 ### default
 

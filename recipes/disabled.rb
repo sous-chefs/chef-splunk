@@ -36,8 +36,8 @@ package %w(splunk splunkforwarder) do
   action :remove
 end
 
-execute 'disable boot-start' do
-  command "#{splunk_cmd} disable boot-start"
-  user 'root'
-  ignore_failure true
+['/etc/init.d/splunk', '/etc/systemd/system/splunk.service'].each do |f|
+  file f do
+    action :delete
+  end
 end
