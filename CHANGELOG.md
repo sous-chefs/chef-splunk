@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.2.9 (2020-07-01)
+- Drops travis-ci and onboards testing with Github Actions
+- removes dependency on the splunk command when running the `disable` recipe
+
 ## 6.2.8 (2020-07-01)
 - Thank you, [@doublethink](https://github.com/doublethink), for this submission
 - Resolves issues installing server and client as non-root users:

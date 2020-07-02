@@ -147,6 +147,7 @@ action :remove do
   directory splunk_dir do
     recursive true
     action :delete
+    notifies :stop, 'service[splunk]', :before
   end
 
   file package_file do

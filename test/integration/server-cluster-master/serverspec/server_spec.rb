@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'chef-splunk::server should run as "root" user' do
   describe command('ps aux | grep "splunkd -p" | head -1 | awk \'{print $1}\'') do
-    its(:stdout) { should match(/root/) }
+    its(:stdout) { should match(/splunk/) }
   end
 end
 

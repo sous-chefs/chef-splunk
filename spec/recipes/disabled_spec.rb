@@ -17,8 +17,10 @@ describe 'chef-splunk::disabled' do
         expect(chef_run).to remove_package(%w(splunk splunkforwarder))
       end
 
-      it 'disables splunk forwarder startup at boot' do
-        expect(chef_run).to run_execute('disable boot-start')
+      ['/etc/init.d/splunk', '/etc/systemd/system/splunk.service'].each do |f|
+        it "deletes #{f}" do
+          expect(chef_run).to delete_file(f)
+        end
       end
 
       it 'does not log debug message' do
@@ -48,8 +50,10 @@ describe 'chef-splunk::disabled' do
         end.converge(described_recipe)
       end
 
-      it 'disables splunk startup at boot' do
-        expect(chef_run).to run_execute('/opt/splunk/bin/splunk disable boot-start')
+      ['/etc/init.d/splunk', '/etc/systemd/system/splunk.service'].each do |f|
+        it "deletes #{f}" do
+          expect(chef_run).to delete_file(f)
+        end
       end
     end
   end

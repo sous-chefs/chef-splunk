@@ -25,6 +25,7 @@ describe 'chef-splunk::install_forwarder' do
       let(:chef_run) do
         ChefSpec::ServerRunner.new(platform_under_test[:runner]) do |node|
           node.force_default['splunk']['forwarder']['version'] = '8.0.1'
+          node.force_default['splunk']['accept_license'] = true
         end
       end
 
