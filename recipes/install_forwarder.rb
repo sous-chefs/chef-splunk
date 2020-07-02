@@ -2,7 +2,7 @@
 # Cookbook:: chef-splunk
 # Recipe:: install_forwarder
 #
-# Copyright:: 2014-2019, Chef Software, Inc.
+# Copyright:: 2014-2020, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+include_recipe 'chef-splunk::user'
+
 splunk_installer 'splunkforwarder' do
   url node['splunk']['forwarder']['url']
   version node['splunk']['forwarder']['version']
   not_if { server? }
 end
+
+include_recipe 'chef-splunk::service'
