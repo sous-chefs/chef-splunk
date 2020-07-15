@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.3.10 (2020-07-15)
+- Fixes Issue [#178](https://github.com/chef-cookbooks/chef-splunk/issues/178)
+- `#shcluster_member?` passes `node['ipaddress']` to `#include?`
+
 ## 6.2.9 (2020-07-01)
 - Drops travis-ci and onboards testing with Github Actions
 - removes dependency on the splunk command when running the `disable` recipe

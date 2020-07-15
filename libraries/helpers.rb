@@ -210,7 +210,7 @@ def shcluster_members_ipv4
 end
 
 def shcluster_member?
-  shcluster_members_ipv4.include?
+  shcluster_members_ipv4.include? node['ipaddress']
 end
 
 def shcaptain_elected?
