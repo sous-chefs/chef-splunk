@@ -8,7 +8,7 @@ describe 'chef-splunk::upgrade' do
       node.force_default['splunk']['upgrade_enabled'] = true
       node.force_default['splunk']['accept_license'] = true
       node.force_default['splunk']['server']['upgrade']['url'] = url
-      node.force_default['splunk']['server']['upgrade']['version'] = '8.0.1'
+      node.force_default['splunk']['server']['upgrade']['version'] = '8.0.6'
     end
   end
 
@@ -35,7 +35,7 @@ describe 'chef-splunk::upgrade' do
       chef_run.node.force_default['splunk']['is_server'] = false
       chef_run.node.force_default['splunk']['forwarder']['upgrade']['url'] = ''
       chef_run.converge(described_recipe)
-      expect(chef_run).to upgrade_splunk_installer('splunkforwarder upgrade').with(version: '8.0.1')
+      expect(chef_run).to upgrade_splunk_installer('splunkforwarder upgrade').with(version: '8.0.6')
     end
   end
 end
