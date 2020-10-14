@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 6.3.0 (TBD)
+## 6.3.0 (2020-10-14)
 - Fixes Issue [#183](https://github.com/chef-cookbooks/chef-splunk/issues/183): make upgrades idempotent
 - it is no longer necessary to include `chef-splunk::upgrade` to a run list; Instead, set the following:
   - set `node['splunk']['server']['upgrade']['version']` or `node['splunk']['forwarder']['upgrade']['version']` for the appropriate server type
