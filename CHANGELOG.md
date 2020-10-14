@@ -2,11 +2,11 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 6.3.11 (2020-10-14)
+## 6.2.11 (2020-10-14)
 - Sets the Splunk Enterprise Server and Forwarder upgrade versions to 8.0.6
 - Sets the upgrade attributes to pull v8.0.6 of Splunk Enterprise and Universal Forwarder
 
-## 6.3.10 (2020-07-15)
+## 6.2.10 (2020-07-15)
 - Fixes Issue [#178](https://github.com/chef-cookbooks/chef-splunk/issues/178)
 - `#shcluster_member?` passes `node['ipaddress']` to `#include?`
 
