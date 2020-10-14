@@ -19,9 +19,23 @@
 include_recipe 'chef-splunk::user'
 
 splunk_installer 'splunkforwarder' do
-  url node['splunk']['forwarder']['url']
-  version node['splunk']['forwarder']['version']
+  if upgrade_enabled?
+    action :upgrade
+    url node['splunk']['forwarder']['upgrade']['url']
+    notifies :run, 'ruby_block[update_default_splunk_attributes]', :immediately
+  else
+    url node['splunk']['forwarder']['url']
+  end
   not_if { server? }
+end
+
+ruby_block 'update_default_splunk_attributes' do
+  action :nothing
+  block do
+    node.default['splunk']['forwarder']['url'] = node['splunk']['forwarder']['upgrade']['url']
+    node.default['splunk']['forwarder']['version'] = node['splunk']['forwarder']['upgrade']['version']
+    node.default['splunk']['upgrade_enabled'] = false
+  end
 end
 
 include_recipe 'chef-splunk::service'

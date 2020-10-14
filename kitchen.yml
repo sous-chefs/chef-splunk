@@ -225,13 +225,23 @@ suites:
 
   - name: upgrade_server
     run_list:
+      - recipe[test::upgrade]
       - recipe[chef-splunk::default]
-      - recipe[chef-splunk::upgrade]
     attributes:
       splunk:
         upgrade_enabled: true
         accept_license: true
         is_server: true
+
+  - name: upgrade_client
+    run_list:
+      - recipe[test::upgrade]
+      - recipe[chef-splunk::default]
+    attributes:
+      splunk:
+        upgrade_enabled: true
+        accept_license: true
+        is_server: false
 
   - name: server_resources
     run_list:

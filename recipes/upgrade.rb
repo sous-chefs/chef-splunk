@@ -32,18 +32,4 @@ if node['splunk'].attribute?('upgrade') && node['splunk']['upgrade'].attribute?(
   end
 end
 
-unless node['splunk']['upgrade_enabled']
-  Chef::Log.fatal('The chef-splunk::upgrade recipe was added to the node,')
-  Chef::Log.fatal('but the attribute `node["splunk"]["upgrade_enabled"]` was not set.')
-  Chef::Log.fatal('I am bailing here so this node does not upgrade.')
-  raise 'Failed to upgrade'
-end
-
-splunk_package = server? ? 'splunk' : 'splunkforwarder'
-url_type = server? ? 'server' : 'forwarder'
-
-splunk_installer "#{splunk_package} upgrade" do
-  action :upgrade
-  url node['splunk'][url_type]['upgrade']['url']
-  version node['splunk'][url_type]['upgrade']['version']
-end
+include_recipe "chef-splunk::install_#{server? ? 'server' : 'forwarder'}"
