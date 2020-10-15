@@ -22,9 +22,11 @@ splunk_installer 'splunkforwarder' do
   if upgrade_enabled?
     action :upgrade
     url node['splunk']['forwarder']['upgrade']['url']
+    version node['splunk']['forwarder']['upgrade']['version']
     notifies :run, 'ruby_block[update_default_splunk_attributes]', :immediately
   else
     url node['splunk']['forwarder']['url']
+    version node['splunk']['forwarder']['version']
   end
   not_if { server? }
 end

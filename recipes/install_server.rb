@@ -21,9 +21,11 @@ splunk_installer 'splunk' do
   if upgrade_enabled?
     action :upgrade
     url node['splunk']['server']['upgrade']['url']
+    version node['splunk']['server']['upgrade']['version']
     notifies :run, 'ruby_block[update_default_splunk_attributes]', :immediately
   else
     url node['splunk']['server']['url']
+    version node['splunk']['server']['version']
   end
   only_if { server? }
 end
