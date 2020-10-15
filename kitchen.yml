@@ -117,6 +117,8 @@ suites:
       dev_mode: true
       splunk:
         accept_license: true
+    verifier:
+      name: inspec
 
   - name: uninstall_forwarder
     run_list:
