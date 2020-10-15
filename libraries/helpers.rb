@@ -243,3 +243,7 @@ def search_heads_peered?
   list_search_server = shell_out("#{splunk_cmd} list search-server -auth #{node.run_state['splunk_auth_info']}")
   list_search_server.stdout.match?(/(^Server at URI \".*\" with status as \"Up\")+/)
 end
+
+def upgrade_enabled?
+  node['splunk']['upgrade_enabled'] == true
+end

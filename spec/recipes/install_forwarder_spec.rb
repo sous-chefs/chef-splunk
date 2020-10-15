@@ -34,7 +34,7 @@ describe 'chef-splunk::install_forwarder' do
           chef_run.node.force_default['splunk']['forwarder']['url'] = url
           chef_run.converge(described_recipe)
           expect(chef_run).to run_splunk_installer('splunkforwarder')
-            .with(url: url, version: '8.0.1', package_name: 'splunkforwarder')
+            .with(url: url, package_name: 'splunkforwarder')
         end
       end
 
@@ -43,7 +43,7 @@ describe 'chef-splunk::install_forwarder' do
           chef_run.node.force_default['splunk']['forwarder']['url'] = ''
           chef_run.converge(described_recipe)
           expect(chef_run).to run_splunk_installer('splunkforwarder')
-            .with(url: '', version: '8.0.1', package_name: 'splunkforwarder')
+            .with(url: '', package_name: 'splunkforwarder')
         end
       end
     end

@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.3.0 (2020-10-14)
+- Fixes Issue [#183](https://github.com/chef-cookbooks/chef-splunk/issues/183): make upgrades idempotent
+- it is no longer necessary to include `chef-splunk::upgrade` to a run list; Instead, set the following:
+  - set `node['splunk']['server']['upgrade']['version']` or `node['splunk']['forwarder']['upgrade']['version']` for the appropriate server type
+  - set `node['splunk']['server']['upgrade']['url']` or `node['splunk']['forwarder']['upgrade']['url']` for the appropriate server type
+  - set `node['splunk']['upgrade_enabled'] = true`
+
 ## 6.2.11 (2020-10-14)
 - Sets the Splunk Enterprise Server and Forwarder upgrade versions to 8.0.6
 - Sets the upgrade attributes to pull v8.0.6 of Splunk Enterprise and Universal Forwarder

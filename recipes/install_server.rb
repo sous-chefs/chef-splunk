@@ -18,7 +18,23 @@
 #
 
 splunk_installer 'splunk' do
-  url node['splunk']['server']['url']
-  version node['splunk']['server']['version']
+  if upgrade_enabled?
+    action :upgrade
+    url node['splunk']['server']['upgrade']['url']
+    version node['splunk']['server']['upgrade']['version']
+    notifies :run, 'ruby_block[update_default_splunk_attributes]', :immediately
+  else
+    url node['splunk']['server']['url']
+    version node['splunk']['server']['version']
+  end
   only_if { server? }
+end
+
+ruby_block 'update_default_splunk_attributes' do
+  action :nothing
+  block do
+    node.force_default['splunk']['server']['url'] = node['splunk']['server']['upgrade']['url']
+    node.force_default['splunk']['server']['version'] = node['splunk']['server']['upgrade']['version']
+    node.force_default['splunk']['upgrade_enabled'] = false
+  end
 end

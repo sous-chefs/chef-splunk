@@ -114,7 +114,7 @@ action :upgrade do
     else
       source cached_package.gsub(/\.Z/, '')
     end
-    notifies :stop, 'service[splunk]', :before
+    notifies :stop, 'service[splunk]', :before if splunk_installed?
     # forwarders can be restarted immediately; otherwise, wait until the end
     if package_file =~ /splunkforwarder/
       notifies :start, 'service[splunk]', :immediately

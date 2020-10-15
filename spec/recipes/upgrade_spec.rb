@@ -17,7 +17,7 @@ describe 'chef-splunk::upgrade' do
       chef_run.node.force_default['splunk']['is_server'] = true
       chef_run.node.force_default['splunk']['server']['upgrade']['url'] = url
       chef_run.converge(described_recipe)
-      expect(chef_run).to upgrade_splunk_installer('splunk upgrade').with(url: url)
+      expect(chef_run).to upgrade_splunk_installer('splunk').with(url: url)
     end
   end
 
@@ -26,7 +26,7 @@ describe 'chef-splunk::upgrade' do
       chef_run.node.force_default['splunk']['is_server'] = false
       chef_run.node.force_default['splunk']['forwarder']['upgrade']['url'] = url
       chef_run.converge(described_recipe)
-      expect(chef_run).to upgrade_splunk_installer('splunkforwarder upgrade').with(url: url)
+      expect(chef_run).to upgrade_splunk_installer('splunkforwarder').with(url: url)
     end
   end
 
@@ -35,7 +35,7 @@ describe 'chef-splunk::upgrade' do
       chef_run.node.force_default['splunk']['is_server'] = false
       chef_run.node.force_default['splunk']['forwarder']['upgrade']['url'] = ''
       chef_run.converge(described_recipe)
-      expect(chef_run).to upgrade_splunk_installer('splunkforwarder upgrade').with(version: '8.0.6')
+      expect(chef_run).to upgrade_splunk_installer('splunkforwarder').with(version: '8.0.6')
     end
   end
 end
