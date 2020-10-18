@@ -18,6 +18,9 @@
 #
 include_recipe 'chef-splunk::user'
 
+node.default['splunk']['service_name'] = 'SplunkForwarder' if systemd?
+node.default['splunk']['startup_script'] = '/etc/systemd/system/SplunkForwarder.service' if systemd?
+
 splunk_installer 'splunkforwarder' do
   if upgrade_enabled?
     action :upgrade

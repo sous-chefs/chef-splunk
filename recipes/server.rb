@@ -27,7 +27,7 @@ execute 'update-splunk-mgmt-port' do
   command "#{splunk_cmd} set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{node.run_state['splunk_auth_info']}'"
   sensitive true unless Chef::Log.debug?
   not_if { current_mgmt_port == node['splunk']['mgmt_port'] }
-  notifies :restart, 'service[splunk]'
+  notifies :restart, 'service[splunk]' unless disabled?
 end
 
 ruby_block 'enable-splunk-receiver-port' do
@@ -38,7 +38,7 @@ ruby_block 'enable-splunk-receiver-port' do
     true if splunk.stderr.include?("Configuration for port #{node['splunk']['receiver_port']} already exists")
   end
   not_if { port_open?(node['splunk']['receiver_port']) }
-  notifies :restart, 'service[splunk]'
+  notifies :restart, 'service[splunk]' unless disabled?
 end
 
 include_recipe 'chef-splunk::setup_ssl' if enable_ssl?

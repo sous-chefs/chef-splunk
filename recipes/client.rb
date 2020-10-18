@@ -22,7 +22,6 @@
 # used on their own composed in your own wrapper cookbook or role.
 include_recipe 'chef-splunk::user' unless run_as_root?
 include_recipe 'chef-splunk::install_forwarder' unless server?
-include_recipe 'chef-splunk::service'
 
 splunk_servers = search(
   :node,
@@ -59,9 +58,10 @@ template "#{splunk_dir}/etc/system/local/outputs.conf" do
   mode '644'
   variables(
     server_list: server_list,
-    outputs_conf: node['splunk']['outputs_conf']
+    outputs_conf: node['splunk']['outputs_conf'],
+    conf_file: "#{splunk_dir}/etc/system/local/outputs.conf"
   )
-  notifies :restart, 'service[splunk]'
+  notifies :restart, 'service[splunk]' unless disabled?
   owner splunk_runas_user
   group splunk_runas_user
 end
@@ -72,7 +72,7 @@ template "#{splunk_dir}/etc/system/local/inputs.conf" do
   group splunk_runas_user
   mode '644'
   variables inputs_conf: node['splunk']['inputs_conf']
-  notifies :restart, 'service[splunk]'
+  notifies :restart, 'service[splunk]' unless disabled?
   not_if { node['splunk']['inputs_conf'].nil? || node['splunk']['inputs_conf']['host'].empty? }
 end
 
@@ -85,7 +85,5 @@ splunk_app 'chef_splunk_universal_forwarder' do
     }
   )
   action :install
-  notifies :restart, 'service[splunk]'
+  notifies :restart, 'service[splunk]' unless disabled?
 end
-
-include_recipe 'chef-splunk::setup_auth' if setup_auth?

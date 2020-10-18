@@ -9,18 +9,13 @@ describe 'chef-splunk::disabled' do
     end
 
     context 'splunk is disabled' do
-      it 'stops the splunk service' do
-        expect(chef_run).to stop_service('splunk')
+      it 'disabled splunk boot-start' do
+        expect(chef_run).to run_execute('splunk disable boot-start')
       end
 
-      it 'uninstalls the splunk and splunkforwarder packages' do
-        expect(chef_run).to remove_package(%w(splunk splunkforwarder))
-      end
-
-      ['/etc/init.d/splunk', '/etc/systemd/system/splunk.service'].each do |f|
-        it "deletes #{f}" do
-          expect(chef_run).to delete_file(f)
-        end
+      it 'stopped splunk service' do
+        expect(chef_run).to nothing_execute('/opt/splunkforwarder/bin/splunk stop')
+        expect(chef_run.execute('/opt/splunkforwarder/bin/splunk stop')).to subscribe_to('execute[splunk disable boot-start]').on(:run).before
       end
 
       it 'does not log debug message' do
@@ -50,10 +45,13 @@ describe 'chef-splunk::disabled' do
         end.converge(described_recipe)
       end
 
-      ['/etc/init.d/splunk', '/etc/systemd/system/splunk.service'].each do |f|
-        it "deletes #{f}" do
-          expect(chef_run).to delete_file(f)
-        end
+      it 'disabled splunk boot-start' do
+        expect(chef_run).to run_execute('splunk disable boot-start')
+      end
+
+      it 'stopped splunk service' do
+        expect(chef_run).to nothing_execute('/opt/splunk/bin/splunk stop')
+        expect(chef_run.execute('/opt/splunk/bin/splunk stop')).to subscribe_to('execute[splunk disable boot-start]').on(:run).before
       end
     end
   end

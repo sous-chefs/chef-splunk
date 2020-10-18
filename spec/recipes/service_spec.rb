@@ -3,10 +3,16 @@ require 'spec_helper'
 describe 'chef-splunk::service' do
   context 'splunkd as a server' do
     let(:chef_run) do
-      ChefSpec::ServerRunner.new do |node|
+      ChefSpec::ServerRunner.new do |node, server|
+        create_data_bag_item(server, 'vault', 'splunk__default')
         node.force_default['splunk']['accept_license'] = true
         node.force_default['splunk']['is_server'] = true
+        node.force_default['splunk']['startup_script'] = '/etc/systemd/system/Splunkd.service'
       end.converge(described_recipe)
+    end
+
+    it 'included setup_auth recipe' do
+      expect(chef_run).to include_recipe('chef-splunk::setup_auth')
     end
 
     it 'creates directory /opt/splunk' do
@@ -23,32 +29,61 @@ describe 'chef-splunk::service' do
       expect(chef_run).to create_directory('/opt/splunk/var/log/splunk').with(mode: '700')
     end
 
-    it 'created /etc/systemd/system/splunk.service' do
-      expect(chef_run).to create_template('/etc/systemd/system/splunk.service')
+    it 'fixes splunk file permissions' do
+      expect(chef_run).to run_ruby_block('splunk_fix_file_ownership')
+      expect(chef_run.ruby_block('splunk_fix_file_ownership')).to subscribe_to('service[splunk]').on(:run).before
     end
 
-    it 'deleted /etc/systemd/system/splunkd.service' do
-      expect(chef_run).to delete_file('/etc/systemd/system/splunkd.service')
+    it 'enables boot-start' do
+      expect(chef_run).to run_execute('splunk enable boot-start')
+        .with(sensitive: false, retries: 3, creates: '/etc/systemd/system/Splunkd.service')
     end
 
-    it 'creates resource execute[systemctl daemon-reload] to do_nothing' do
-      expect(chef_run.execute('systemctl daemon-reload')).to do_nothing
-    end
-
-    it 'does not delete /etc/systemd/system/splunk.service' do
-      expect(chef_run).to_not delete_file('/etc/systemd/system/splunk.service')
-    end
-
-    it 'does not create /etc/init.d/splunk' do
-      expect(chef_run).to_not create_template('/etc/init.d/splunk')
-    end
-
-    it 'starts the splunk service' do
+    it 'started splunk service' do
       expect(chef_run).to start_service('splunk')
     end
+  end
 
-    it 'enables the splunk service' do
-      expect(chef_run).to enable_service('splunk')
+  context 'Splunk is setup as a client' do
+    let(:chef_run) do
+      ChefSpec::ServerRunner.new do |node, server|
+        create_data_bag_item(server, 'vault', 'splunk__default')
+        node.force_default['splunk']['accept_license'] = true
+        node.force_default['splunk']['is_server'] = false
+        node.force_default['splunk']['startup_script'] = '/etc/systemd/system/SplunkForwarder.service'
+      end.converge(described_recipe)
+    end
+
+    it 'included setup_auth recipe' do
+      expect(chef_run).to include_recipe('chef-splunk::setup_auth')
+    end
+
+    it 'creates directory /opt/splunk' do
+      expect(chef_run).to_not create_directory('/opt/splunk').with(mode: '755')
+    end
+
+    %w(/opt/splunk/var /opt/splunk/var/log).each do |d|
+      it "creates directory #{d}" do
+        expect(chef_run).to_not create_directory(d).with(mode: '711')
+      end
+    end
+
+    it 'creates directory /opt/splunk/var/log/splunk' do
+      expect(chef_run).to_not create_directory('/opt/splunk/var/log/splunk').with(mode: '700')
+    end
+
+    it 'fixes splunk file permissions' do
+      expect(chef_run).to run_ruby_block('splunk_fix_file_ownership')
+      expect(chef_run.ruby_block('splunk_fix_file_ownership')).to subscribe_to('service[splunk]').on(:run).before
+    end
+
+    it 'enables boot-start' do
+      expect(chef_run).to run_execute('splunk enable boot-start')
+        .with(sensitive: false, retries: 3, creates: '/etc/systemd/system/SplunkForwarder.service')
+    end
+
+    it 'started splunk service' do
+      expect(chef_run).to start_service('splunk')
     end
   end
 end

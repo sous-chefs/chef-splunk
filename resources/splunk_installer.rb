@@ -38,27 +38,13 @@ action_class do
     "#{Chef::Config[:file_cache_path]}/#{package_file}"
   end
 
-  def local_package_resource
-    case node['platform_family']
-    when 'rhel', 'fedora', 'suse', 'amazon'
-      :rpm_package
-    when 'debian'
-      :dpkg_package
-    end
-  end
-
-  def splunk_service
-    # during an initial install, the start/restart commands must deal with accepting
-    # the license. So, we must ensure the service[splunk] resource
-    # properly deals with the license.
-    edit_resource(:service, 'splunk') do
-      action node['init_package'] == 'systemd' ? %i(start enable) : :start
-      supports status: true, restart: true
-      stop_command svc_command('stop')
-      start_command svc_command('start')
-      restart_command svc_command('restart')
-      status_command svc_command('status')
-      provider splunk_service_provider
+  def download_package
+    remote_file package_file do
+      backup false
+      mode '644'
+      path cached_package
+      source new_resource.url
+      action :create
     end
   end
 end
@@ -66,72 +52,51 @@ end
 action :run do
   return if splunk_installed?
 
-  splunk_service
+  download_package
 
-  remote_file package_file do
-    backup false
-    mode '644'
-    path cached_package
-    source new_resource.url
-    use_conditional_get true
-    use_etag true
-    action :create
-    not_if { new_resource.url.empty? || new_resource.url.nil? }
-  end
-
-  declare_resource local_package_resource, new_resource.name do
-    package_name new_resource.package_name
-    if new_resource.url.empty? || new_resource.url.nil?
-      version package_version
-    else
-      source cached_package.gsub(/\.Z/, '')
+  if platform_family?('debian')
+    dpkg_package new_resource.name do
+      package_name new_resource.package_name
+      source cached_package
+      version new_resource.version unless ::File.exist?(cached_package)
+      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
-    notifies :start, 'service[splunk]'
+  else
+    package new_resource.name do
+      package_name new_resource.package_name
+      source cached_package
+      version package_version unless ::File.exist?(cached_package)
+      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
+    end
   end
 end
 
 action :upgrade do
   return unless splunk_installed?
 
-  splunk_service
+  download_package
 
-  remote_file package_file do
-    backup false
-    mode '644'
-    path cached_package
-    source new_resource.url
-    use_conditional_get true
-    use_etag true
-    action :create
-    not_if { new_resource.url.empty? || new_resource.url.nil? }
-  end
-
-  declare_resource local_package_resource, new_resource.name do
-    action :upgrade
-    package_name new_resource.package_name
-    if new_resource.url.empty? || new_resource.url.nil?
-      version package_version
-    else
-      source cached_package.gsub(/\.Z/, '')
+  if platform_family?('debian')
+    dpkg_package new_resource.name do
+      action :upgrade
+      package_name new_resource.package_name
+      source cached_package
+      version new_resource.version unless ::File.exist?(cached_package)
+      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
-    notifies :stop, 'service[splunk]', :before if splunk_installed?
-    # forwarders can be restarted immediately; otherwise, wait until the end
-    if package_file =~ /splunkforwarder/
-      notifies :start, 'service[splunk]', :immediately
-    else
-      notifies :start, 'service[splunk]'
+  else
+    package new_resource.name do
+      action :upgrade
+      package_name new_resource.package_name
+      source cached_package
+      version package_version unless ::File.exist?(cached_package)
+      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
   end
 end
 
 action :remove do
-  find_resource(:service, 'splunk') do
-    supports status: true, restart: true
-    provider splunk_service_provider
-    action node['init_package'] == 'systemd' ? %i(stop disable) : :stop
-  end
-
-  declare_resource local_package_resource, new_resource.name do
+  package new_resource.name do
     action :remove
     notifies :stop, 'service[splunk]', :before
   end

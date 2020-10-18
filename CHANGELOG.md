@@ -2,6 +2,20 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.4.0 (2020-10-17)
+- Fixes Issue [#185](https://github.com/chef-cookbooks/chef-splunk/issues/185)
+  * a startup issue was resolved for SplunkForwarder installations with an improved
+    systemd unit file (fix below)
+  * Adds Inspec tests to verify from SplunkForwarder starts (thanks, @jjm)
+- Fixes Issue [#187](https://github.com/chef-cookbooks/chef-splunk/issues/187)
+  * the systemd unit file is now relegated to the `splunk enable boot-start` command to manage
+- Adds Inspec tests and sets the verifier in Test Kitchen for some test suites; some are still in serverspec
+- Render the user-seed.conf with a file resource rather than a template
+- The default recipe no longer includes the disable recipe; to disable splunk, add `recipe[chef-splunk::disabled]` to a run list explicitly
+- Disabling splunk will no longer uninstall Splunk Enterprise nor the Splunk Universal Forwarder
+- Adds `#SecretsHelper` to aid with secrets rotation and maintaining idempotency for handling Splunk's hashed secret values
+- Improved guards to prevent `service[splunk]` restart/start when it should be disabled.
+
 ## 6.3.0 (2020-10-14)
 - Fixes Issue [#183](https://github.com/chef-cookbooks/chef-splunk/issues/183): make upgrades idempotent
 - it is no longer necessary to include `chef-splunk::upgrade` to a run list; Instead, set the following:
