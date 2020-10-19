@@ -31,5 +31,5 @@ include_recipe 'chef-splunk::service'
 
 execute 'splunk disable boot-start' do
   command boot_start_cmd('disable')
-  notifies :stop, 'service[splunk]'
+  notifies :stop, 'service[splunk]', :before
 end

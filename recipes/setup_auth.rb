@@ -29,12 +29,6 @@ include_recipe 'chef-splunk'
 
 _user, pw = node.run_state['splunk_auth_info'].split(':')
 
-file 'etc/passwd' do
-  path "#{splunk_dir}/etc/passwd"
-  action :delete
-  not_if { splunk_login_successful? || ::File.exist?("#{splunk_dir}/etc/system/local/.user-seed.conf") }
-end
-
 file '.user-seed.conf' do
   action :nothing
   path "#{splunk_dir}/etc/system/local/.user-seed.conf"

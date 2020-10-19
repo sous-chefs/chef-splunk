@@ -25,12 +25,12 @@ describe 'chef-splunk::setup_auth' do
         end
       end
 
-      it 'deleted etc/passwd file' do
-        expect(chef_run).to delete_file('etc/passwd')
+      before do
+        allow_any_instance_of(Chef::Resource).to receive(:splunk_login_successful?).and_return(false)
       end
 
       it 'created user-seed.conf' do
-        expect(chef_run).to create_file('user-seed.conf').with(mode: '0640', sensitive: false)
+        expect(chef_run).to create_file('user-seed.conf').with(mode: '0640')
       end
 
       it 'created .user-seed.conf only when notified after user-seed.conf is processed' do
