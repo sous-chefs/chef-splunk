@@ -6,8 +6,9 @@ control 'Enterprise Splunk' do
   title 'Verify Enterprise Splunk server installation'
   only_if { os.linux? }
 
-  describe 'chef-splunk::server should listen on web_port 8000' do
-    describe port(8000) do
+  describe 'chef-splunk::server listening ports' do
+    describe port(8089) do
+      it { should be_listening }
       its('protocols') { should include('tcp') }
     end
   end
@@ -39,11 +40,6 @@ control 'Enterprise Splunk' do
       it { should be_enabled }
       it { should be_running }
     end
-  end
-
-  describe port 8089 do
-    it { should be_listening }
-    its('protocols') { should include('tcp') }
   end
 
   describe processes('splunkd') do

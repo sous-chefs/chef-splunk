@@ -3,7 +3,7 @@
 [shclustering]
 shcluster_label = <%= @shcluster_params['label'] %>
 <% unless @shcluster_secret.nil? -%>
-pass4SymmKey = <%= @shcluster_secret %>
+pass4SymmKey = <%= splunk_secret_inspect(@conf_file, 'shclustering', 'pass4SymmKey') || @shcluster_secret %>
 <% end -%>
 <% if %w(member captain).include? @shcluster_params['mode'] %>
 disabled = 0

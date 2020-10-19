@@ -48,7 +48,8 @@ if node['splunk']['shclustering']['mode'] == 'deployer'
     group splunk_runas_user
     variables(
       shcluster_params: node['splunk']['shclustering'],
-      shcluster_secret: node.run_state['splunk_secret']
+      shcluster_secret: node.run_state['splunk_secret'],
+      conf_file: "#{node['splunk']['shclustering']['app_dir']}/local/server.conf"
     )
     sensitive true unless Chef::Log.debug?
     notifies :restart, 'service[splunk]', :immediately unless disabled?

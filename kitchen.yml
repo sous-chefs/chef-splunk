@@ -74,6 +74,7 @@ platforms:
 suites:
   - name: client
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
@@ -85,6 +86,7 @@ suites:
 
   - name: uninstall_forwarder
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[test::uninstall_forwarder]
     attributes:
       splunk:
@@ -96,6 +98,7 @@ suites:
 
   - name: client-inputs-outputs
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     verifier:
       name: inspec
@@ -121,6 +124,7 @@ suites:
 
   - name: server-runas-root
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
@@ -148,6 +152,7 @@ suites:
 
   - name: server-cluster-master
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
@@ -165,6 +170,7 @@ suites:
 
   - name: server-shdeployer
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk]
     attributes:
       splunk:
@@ -179,6 +185,7 @@ suites:
 
   - name: server-shcluster-member
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
@@ -187,11 +194,10 @@ suites:
         shclustering:
           enabled: true
         web_port: 8000
-    verifier:
-      root_path: /opt/verifier
 
   - name: disabled
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
       - recipe[chef-splunk::disabled]
     attributes:
@@ -207,6 +213,7 @@ suites:
 
   - name: upgrade_server
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[test::upgrade]
       - recipe[chef-splunk::default]
     attributes:
@@ -221,6 +228,7 @@ suites:
 
   - name: upgrade_client
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[test::upgrade]
       - recipe[chef-splunk::default]
     attributes:
@@ -235,6 +243,7 @@ suites:
 
   - name: server_resources
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
       - recipe[test::splunk_app]
       - recipe[test::splunk_index]
@@ -249,6 +258,7 @@ suites:
 
   - name: client_resources
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
       - recipe[test::splunk_app]
       - recipe[test::splunk_monitor]

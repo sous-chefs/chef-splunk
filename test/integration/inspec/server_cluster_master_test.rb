@@ -3,14 +3,8 @@ control 'Splunk Cluster Master' do
   only_if { os.linux? }
 
   describe 'chef-splunk::server should run as "root" user' do
-    describe command('ps aux | grep "splunkd -p" | head -1 | awk \'{print $1}\'') do
-      its(:stdout) { should match(/splunk/) }
-    end
-  end
-
-  describe 'chef-splunk::server should listen on web_port 8000' do
-    describe port(8000) do
-      it { should be_listening.with('tcp') }
+    describe processes(/splunkd.*\-p 8089 _internal_launch_under_systemd/) do
+      its('users') { should include 'root' }
     end
   end
 
