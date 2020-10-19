@@ -106,7 +106,8 @@ def splunk_auth(auth)
 end
 
 def splunk_login_successful?
-  login = shell_out("/opt/splunk/bin/splunk login -auth #{node.run_state['splunk_auth_info']}")
+  return false unless splunk_installed?
+  login = shell_out("#{splunk_cmd} login -auth #{node.run_state['splunk_auth_info']}")
   login.stderr.strip.empty? && login.stdout.strip.empty? && login.exitstatus == 0
 end
 
