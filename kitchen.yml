@@ -86,7 +86,6 @@ suites:
 
   - name: uninstall_forwarder
     run_list:
-      - recipe[test::file_locking_check]
       - recipe[test::uninstall_forwarder]
     attributes:
       splunk:
