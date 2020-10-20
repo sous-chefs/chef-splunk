@@ -78,7 +78,8 @@ end
 
 splunk_app 'chef_splunk_universal_forwarder' do
   files_mode '0644'
-  templates ['limits.conf.erb']
+  remote_directory 'chef_splunk_universal_forwarder'
+  templates %w(limits.conf.erb server.conf.erb)
   template_variables(
     'limits.conf.erb' => {
       ratelimit_kbps: node['splunk']['ratelimit_kilobytessec'],
