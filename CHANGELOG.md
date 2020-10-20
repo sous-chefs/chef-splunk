@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 6.4.0 (2020-10-17)
+## 6.4.0 (2020-10-19)
 - Fixes Issue [#185](https://github.com/chef-cookbooks/chef-splunk/issues/185)
   * a startup issue was resolved for SplunkForwarder installations with an improved
     systemd unit file (fix below)
