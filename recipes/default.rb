@@ -17,12 +17,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-if disabled?
-  include_recipe 'chef-splunk::disabled'
-  Chef::Log.debug('Splunk is disabled on this node.')
-  return
-end
-
 # We can rely on loading the chef_vault_item here into the run_state so other
 # recipes don't have to keep going back to the chef server to access the vault/data bag item
 vault_item = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")

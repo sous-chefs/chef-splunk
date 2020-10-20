@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+return unless splunk_installed?
 
 unless disabled?
   log 'splunk is not disabled' do
@@ -26,18 +27,9 @@ unless disabled?
   return
 end
 
-service 'splunk' do
-  ignore_failure true
-  action :stop
-end
+include_recipe 'chef-splunk::service'
 
-package %w(splunk splunkforwarder) do
-  ignore_failure true
-  action :remove
-end
-
-['/etc/init.d/splunk', '/etc/systemd/system/splunk.service'].each do |f|
-  file f do
-    action :delete
-  end
+execute 'splunk disable boot-start' do
+  command boot_start_cmd('disable')
+  notifies :stop, 'service[splunk]', :before
 end

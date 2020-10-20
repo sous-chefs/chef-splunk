@@ -2,8 +2,9 @@ require 'spec_helper'
 
 describe 'chef-splunk::setup_auth' do
   context 'default attributes' do
-    let(:chef_run) do
-      ChefSpec::ServerRunner.new do |node, _server|
+    let(:runner) do
+      ChefSpec::ServerRunner.new do |node, server|
+        create_data_bag_item(server, 'vault', 'splunk__default')
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['accept_license'] = true
@@ -12,42 +13,49 @@ describe 'chef-splunk::setup_auth' do
       end
     end
 
-    before do
-      allow_any_instance_of(Chef::Recipe).to receive(:chef_vault_item).and_return('auth' => 'admin:notarealpassword')
-    end
-
     context 'setup_auth is true' do
-      it 'created user-seed.conf and notifies splunk restart' do
-        chef_run.converge(described_recipe) do
-          chef_run.resource_collection.insert(
-            Chef::Resource::Service.new('splunk', chef_run.run_context)
+      # since the service[splunk] resource is created in the chef-splunk cookbook and
+      # the `include_recipe` is mocked in this chefspec, we need to insert
+      # a generic mock-up into the Resource collection so notifications can be checked
+      let(:chef_run) do
+        runner.converge(described_recipe) do
+          runner.resource_collection.insert(
+            Chef::Resource::Service.new('splunk', runner.run_context)
           )
         end
-
-        expect(chef_run).to create_template('user-seed.conf')
-          .with(mode: '600', sensitive: true, owner: 'root', group: 'root')
-        expect(chef_run.template('user-seed.conf')).to notify('service[splunk]').to(:restart).immediately
       end
 
-      it 'created .user-seed.conf' do
-        chef_run.converge(described_recipe) do
-          chef_run.resource_collection.insert(
-            Chef::Resource::Service.new('splunk', chef_run.run_context)
-          )
-        end
-        expect(chef_run).to create_file('.user-seed.conf')
-          .with(mode: '600', owner: 'root', group: 'root')
+      before do
+        allow_any_instance_of(Chef::Resource).to receive(:splunk_login_successful?).and_return(false)
+      end
+
+      it 'created user-seed.conf' do
+        expect(chef_run).to create_file('user-seed.conf').with(mode: '0640')
+      end
+
+      it 'created .user-seed.conf only when notified after user-seed.conf is processed' do
+        expect(chef_run).to nothing_file('.user-seed.conf')
+        expect(chef_run.file('.user-seed.conf')).to subscribe_to('file[user-seed.conf]').on(:touch).immediately
       end
     end
 
     context 'setup auth is false' do
-      it 'logs debug message' do
-        chef_run.node.force_default['splunk']['setup_auth'] = false
-        chef_run.converge(described_recipe) do
-          chef_run.resource_collection.insert(
-            Chef::Resource::Service.new('splunk', chef_run.run_context)
+      # since the service[splunk] resource is created in the chef-splunk cookbook and
+      # the `include_recipe` is mocked in this chefspec, we need to insert
+      # a generic mock-up into the Resource collection so notifications can be checked
+      let(:chef_run) do
+        runner.converge(described_recipe) do
+          runner.resource_collection.insert(
+            Chef::Resource::Service.new('splunk', runner.run_context)
           )
         end
+      end
+
+      before do
+        runner.node.force_default['splunk']['setup_auth'] = false
+      end
+
+      it 'logs debug message' do
         expect(chef_run).to write_log('setup_auth is disabled').with(level: :debug)
       end
     end

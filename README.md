@@ -83,7 +83,7 @@ General attributes:
 * `node['splunk']['data_bag']`: Set this to the name of the data bag where your splunk auth
   and other secrets are stored (Default: `vault`)
 * `node['splunk']['disabled']`: Disable the splunk agent by setting
-  this to true (Default: false)
+  this to true (Default: false) and adding `recipe[chef-splunk::disabled]` to a node's run list
 * `node['splunk']['receiver_port']`: The port that the receiver
   (server) listens to. This is set to the Splunk Enterprise default, 9997.
 * `node['splunk']['mgmt_port']`: The port that splunkd service
@@ -579,9 +579,6 @@ node['splunk']['inputs_conf']['ports'] =
 
 ### default
 
-The default recipe will include the `disabled` recipe if
-`node['splunk']['disabled']` is true.
-
 It will include the `client` or `server` recipe depending on whether
 the `is_server` attribute is set.
 
@@ -594,8 +591,7 @@ through a wrapper cookbook.
 In some cases it may be required to disable Splunk on a particular
 node. For example, it may be sending too much data to Splunk and
 exceed the local license capacity. To use the `disabled` recipe, set
-the `node['splunk']['disabled']` attribute to true, and include the
-recipe on the required node, or just use the `default` recipe.
+the `node['splunk']['disabled']` attribute to `true`, and add `recipe[chef-splunk::disabled]` to a node's run list
 
 ### install_forwarder
 

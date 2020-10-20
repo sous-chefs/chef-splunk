@@ -71,7 +71,8 @@ execute 'setup-indexer-cluster' do
   command "#{splunk_cmd} edit cluster-config #{splunk_cmd_params} -auth '#{node.run_state['splunk_auth_info']}'"
   sensitive true unless Chef::Log.debug?
   not_if { ::File.exist?("#{splunk_dir}/etc/.setup_clustering") }
-  notifies :restart, 'service[splunk]'
+  notifies :start, 'service[splunk]', :before unless disabled?
+  notifies :restart, 'service[splunk]' unless disabled?
 end
 
 file "#{splunk_dir}/etc/.setup_clustering" do

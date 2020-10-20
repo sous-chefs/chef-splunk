@@ -12,8 +12,14 @@ provisioner:
   name: dokken
   deprecations_as_errors: true
   chef_license: accept
+  data_bags_path: test/fixtures/data_bags
+  product_name: chef
+  client_rb:
+    environment: _default
+    log_level: :debug
   attributes:
-    dev_mode: true
+    chef-vault:
+      databag_fallback: true
     splunk:
       accept_license: true
       enable_ssl: false
@@ -23,114 +29,81 @@ provisioner:
         startwebserver: 1
       web_port: 8000
 
-verifier:
-  root_path: '/opt/verifier'
-
 platforms:
-  - name: debian-9
-    driver:
-      image: dokken/debian-9
-      pid_one_command: /bin/systemd
-      intermediate_instructions:
-        - RUN /usr/bin/apt-get -y update
-        - RUN mkdir -p /data/splunk-test
-        # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-        - RUN mkdir -p /opt/splunk/etc
-        - RUN printf '
-          SPLUNK_SERVER_NAME=Splunkd\n
-          SLPUNK_WEB_NAME=splunkweb\n
-          OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
-
   - name: debian-10
     driver:
       image: dokken/debian-10
       pid_one_command: /sbin/init
-      intermediate_instructions:
-        - RUN /usr/bin/apt-get -y update
-        - RUN mkdir -p /data/splunk-test
-        # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-        - RUN mkdir -p /opt/splunk/etc
-        - RUN printf '
-          SPLUNK_SERVER_NAME=Splunkd\n
-          SLPUNK_WEB_NAME=splunkweb\n
-          OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
-
-  - name: centos-7
-    driver:
-      image: dokken/centos-7
-      pid_one_command: /usr/lib/systemd/systemd
-      intermediate_instructions:
-        - RUN mkdir -p /data/splunk-test
-        # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-        - RUN mkdir -p /opt/splunk/etc
-        - RUN printf '
-          SPLUNK_SERVER_NAME=Splunkd\n
-          SLPUNK_WEB_NAME=splunkweb\n
-          OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
+      # intermediate_instructions:
+      #   - RUN /usr/bin/apt-get -y update
+      #   - RUN mkdir -p /data/splunk-test
+      #   # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      #   - RUN mkdir -p /opt/splunk/etc
+      #   - RUN printf '
+      #     SPLUNK_SERVER_NAME=Splunkd\n
+      #     SLPUNK_WEB_NAME=splunkweb\n
+      #     OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
   - name: centos-8
     driver:
       image: dokken/centos-8
       pid_one_command: /usr/lib/systemd/systemd
-      intermediate_instructions:
-        - RUN mkdir -p /data/splunk-test
-        # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-        - RUN mkdir -p /opt/splunk/etc
-        - RUN printf '
-          SPLUNK_SERVER_NAME=Splunkd\n
-          SLPUNK_WEB_NAME=splunkweb\n
-          OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
+      # intermediate_instructions:
+      #   - RUN mkdir -p /data/splunk-test
+      #   # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      #   - RUN mkdir -p /opt/splunk/etc
+      #   - RUN printf '
+      #     SPLUNK_SERVER_NAME=Splunkd\n
+      #     SLPUNK_WEB_NAME=splunkweb\n
+      #     OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
   - name: ubuntu-20.04
     driver:
       image: dokken/ubuntu-20.04
       pid_one_command: /bin/systemd
-      intermediate_instructions:
-        - RUN /usr/bin/apt-get -y update
-        - RUN mkdir -p /data/splunk-test
-        # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-        - RUN mkdir -p /opt/splunk/etc
-        - RUN printf '
-          SPLUNK_SERVER_NAME=Splunkd\n
-          SLPUNK_WEB_NAME=splunkweb\n
-          OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
-
-  - name: ubuntu-18.04
-    driver:
-      image: dokken/ubuntu-18.04
-      pid_one_command: /bin/systemd
-      intermediate_instructions:
-        - RUN /usr/bin/apt-get -y update
-        - RUN mkdir -p /data/splunk-test
-        # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-        - RUN mkdir -p /opt/splunk/etc
-        - RUN printf '
-          SPLUNK_SERVER_NAME=Splunkd\n
-          SLPUNK_WEB_NAME=splunkweb\n
-          OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
+      # intermediate_instructions:
+      #   - RUN /usr/bin/apt-get -y update
+      #   - RUN mkdir -p /data/splunk-test
+      #   # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
+      #   - RUN mkdir -p /opt/splunk/etc
+      #   - RUN printf '
+      #     SPLUNK_SERVER_NAME=Splunkd\n
+      #     SLPUNK_WEB_NAME=splunkweb\n
+      #     OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
 
 suites:
   - name: client
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
-      dev_mode: true
       splunk:
         accept_license: true
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/client_test.rb
 
   - name: uninstall_forwarder
     run_list:
       - recipe[test::uninstall_forwarder]
     attributes:
-      dev_mode: true
       splunk:
         accept_license: true
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/uninstall_forwarder_test.rb
 
   - name: client-inputs-outputs
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/client_inputs_outputs_test.rb
     attributes:
-      dev_mode: true
       splunk:
         accept_license: true
         outputs_conf:
@@ -150,35 +123,38 @@ suites:
 
   - name: server-runas-root
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
-      dev_mode: true
       splunk:
-        server:
-          runasroot: true
         is_server: true
         accept_license: true
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/server_test.rb
 
-  - name: server-runas-splunk
-    run_list:
-      - recipe[chef-splunk::default]
-    attributes:
-      dev_mode: true
-      splunk:
-        server:
-          runasroot: false
-        is_server: true
-        accept_license: true
-        web_port: 8000
+  # - name: server-runas-splunk
+  #   run_list:
+  #     - recipe[chef-splunk::default]
+  #   attributes:
+  #     splunk:
+  #       server:
+  #         runasroot: false
+  #       is_server: true
+  #       accept_license: true
+  #       web_port: 8000
+  #   verifier:
+  #     name: inspec
+  #     inspec_tests:
+  #       - path: test/integration/inspec/server_test.rb
 
   - name: server-cluster-master
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
-      dev_mode: true
       splunk:
-        server:
-          runasroot: false
         is_server: true
         accept_license: true
         clustering:
@@ -186,30 +162,32 @@ suites:
           mode: master
           replication_factor: 5
           search_factor: 3
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/server_cluster_master_test.rb
 
   - name: server-shdeployer
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk]
     attributes:
-      dev_mode: true
       splunk:
-        server:
-          runasroot: false
         is_server: true
         accept_license: true
         shclustering:
           enabled: true
           mode: deployer
         web_port: 8000
+    verifier:
+      root_path: /opt/verifier
 
   - name: server-shcluster-member
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
-      dev_mode: true
       splunk:
-        server:
-          runasroot: false
         is_server: true
         accept_license: true
         shclustering:
@@ -218,13 +196,23 @@ suites:
 
   - name: disabled
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
+      - recipe[chef-splunk::disabled]
+    attributes:
     attributes:
       splunk:
+        is_server: true
+        accept_license: true
         disabled: true
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/disabled_test.rb
 
   - name: upgrade_server
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[test::upgrade]
       - recipe[chef-splunk::default]
     attributes:
@@ -232,9 +220,14 @@ suites:
         upgrade_enabled: true
         accept_license: true
         is_server: true
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/upgrade_test.rb
 
   - name: upgrade_client
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[test::upgrade]
       - recipe[chef-splunk::default]
     attributes:
@@ -242,29 +235,37 @@ suites:
         upgrade_enabled: true
         accept_license: true
         is_server: false
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/upgrade_test.rb
 
   - name: server_resources
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
       - recipe[test::splunk_app]
       - recipe[test::splunk_index]
     attributes:
-      dev_mode: true
       splunk:
-        server:
-          runasroot: false
         accept_license: true
         is_server: true
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/custom_resources_test.rb
 
   - name: client_resources
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
       - recipe[test::splunk_app]
       - recipe[test::splunk_monitor]
     attributes:
-      dev_mode: true
       splunk:
-        server:
-          runasroot: false
         accept_license: true
         is_server: false
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/custom_resources_test.rb

@@ -92,10 +92,10 @@ property :host_segment, kind_of: Integer, default: nil
 property :source, kind_of: String, default: nil
 property :crcSalt, kind_of: String, default: '<SOURCE>'
 property :ignoreOlderThan, kind_of: String, default: nil, regex: [ /^(0|[1-9]+[dhms])$/ ]
-property :followTail, default: 0, equal_to: [0, 1]
+property :followTail, kind_of: Integer, default: 0, equal_to: [0, 1]
 property :whitelist, kind_of: String, default: nil
 property :blacklist, kind_of: String, default: nil
-property :alwaysOpenFile, default: 0, equal_to: [0, 1]
+property :alwaysOpenFile, kind_of: Integer, default: 0, equal_to: [0, 1]
 property :recursive, kind_of: [TrueClass, FalseClass], default: true
 property :time_before_close, kind_of: Integer, default: 3
 property :followSymlink, kind_of: [TrueClass, FalseClass], default: true

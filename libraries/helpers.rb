@@ -24,6 +24,30 @@ include Chef::Mixin::ShellOut
 
 @shcluster_server_size = nil
 
+def boot_start_cmd(disable = nil)
+  systemd_managed = systemd? ? 1 : 0
+
+  if disable.nil? && run_as_root?
+    "#{splunk_cmd} enable boot-start -systemd-managed #{systemd_managed} --accept-license"
+  elsif disable.nil?
+    "#{splunk_cmd} enable boot-start  -user #{splunk_runas_user} -systemd-managed #{systemd_managed} --accept-license"
+  else
+    "#{splunk_cmd} disable boot-start -systemd-managed #{systemd_managed} --accept-license"
+  end
+end
+
+# returns the output of splunk's HASHED_PASSWORD command
+# this command produces a hash of a clear-text password that can be stored in user-seed.conf, for example
+def hash_passwd(pw)
+  return pw if pw.match?(/^\$\d*\$/)
+  hash = shell_out("#{splunk_cmd} hash-passwd #{pw}")
+  hash.stdout.strip
+end
+
+def license_accepted?
+  node['splunk']['accept_license'] == true
+end
+
 def splunk_installed?
   ::File.exist?(splunk_cmd)
 end
@@ -81,21 +105,19 @@ def splunk_auth(auth)
   end
 end
 
-# returns the output of splunk's HASHED_PASSWORD command
-# this command produces a hash of a clear-text password that can be stored in user-seed.conf, for example
-def hash_passwd(pw)
-  return pw if pw.match?(/^\$\d*\$/)
-  hash = shell_out("#{splunk_cmd} hash-passwd #{pw}")
-  hash.stdout.strip
+def splunk_login_successful?
+  return false unless splunk_installed?
+  login = shell_out("#{splunk_cmd} login -auth #{node.run_state['splunk_auth_info']}")
+  login.stderr.strip.empty? && login.stdout.strip.empty? && login.exitstatus == 0
+end
+
+def run_as_root?
+  node['splunk']['server']['runasroot'] == true
 end
 
 def splunk_runas_user
   return 'root' if node['splunk']['server']['runasroot'] == true
   node['splunk']['user']['username']
-end
-
-def run_as_root?
-  node['splunk']['server']['runasroot'] == true
 end
 
 def splunk_service_provider
@@ -104,10 +126,6 @@ def splunk_service_provider
   else
     Chef::Provider::Service::Init
   end
-end
-
-def license_accepted?
-  node['splunk']['accept_license'] == true
 end
 
 # a splunkd instance is either a splunk client (runs universal forwarder only) or a complete server
@@ -246,4 +264,8 @@ end
 
 def upgrade_enabled?
   node['splunk']['upgrade_enabled'] == true
+end
+
+def systemd?
+  node['init_package'] == 'systemd'
 end

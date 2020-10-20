@@ -32,23 +32,20 @@ jobs:
     strategy:
       matrix:
         os:
-          - 'debian-9'
           - 'debian-10'
-          - 'centos-7'
           - 'centos-8'
-          - 'ubuntu-1804'
           - 'ubuntu-2004'
         suite:
           - 'client'
           - 'uninstall-forwarder'
           - 'client-inputs-outputs'
           - 'server-runas-root'
-          - 'server-runas-splunk'
           - 'server-cluster-master'
           - 'server-shdeployer'
           - 'server-shcluster-member'
           - 'disabled'
           - 'upgrade-server'
+          - 'upgrade-client'
           - 'server-resources'
           - 'client-resources'
       fail-fast: false

@@ -1,9 +1,9 @@
 [tcpout]
 defaultGroup = splunk_indexers_<%= node['splunk']['receiver_port'] %>
-disabled=false
+disabled = false
 
 [tcpout:splunk_indexers_<%= node['splunk']['receiver_port'] %>]
 server = <%= @server_list %>
 <% @outputs_conf.each_pair do |name, value| -%>
-<%= name %> = <%= value %>
+<%= name %> = <%= splunk_secret_inspect(@conf_file, "tcpout:splunk_indexers_#{node['splunk']['receiver_port']}", name) || value %>
 <% end -%>

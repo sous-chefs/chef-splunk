@@ -34,7 +34,7 @@ template "#{splunk_dir}/etc/system/local/web.conf" do
   variables ssl_options
   owner splunk_runas_user
   group splunk_runas_user
-  notifies :restart, 'service[splunk]'
+  notifies :restart, 'service[splunk]' unless disabled?
 end
 
 file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['keyfile']}" do
@@ -43,7 +43,7 @@ file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['keyfile']}" do
   group splunk_runas_user
   mode '600'
   sensitive true unless Chef::Log.debug?
-  notifies :restart, 'service[splunk]'
+  notifies :restart, 'service[splunk]' unless disabled?
 end
 
 file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['crtfile']}" do
@@ -52,5 +52,5 @@ file "#{splunk_dir}/etc/auth/splunkweb/#{ssl_options['crtfile']}" do
   group splunk_runas_user
   mode '600'
   sensitive true unless Chef::Log.debug?
-  notifies :restart, 'service[splunk]'
+  notifies :restart, 'service[splunk]' unless disabled?
 end

@@ -27,29 +27,27 @@ end
 
 include_recipe 'chef-splunk'
 
-user, pw = node.run_state['splunk_auth_info'].split(':')
-
-file "#{splunk_dir}/etc/passwd" do
-  action :nothing
-end
-
-template 'user-seed.conf' do
-  path "#{splunk_dir}/etc/system/local/user-seed.conf"
-  source 'user-seed-conf.erb'
-  owner splunk_runas_user
-  group splunk_runas_user
-  mode '600'
-  sensitive true unless Chef::Log.debug?
-  variables user: user, hashed_password: lazy { hash_passwd(pw) }
-  notifies :delete, "file[#{splunk_dir}/etc/passwd]", :immediately
-  notifies :restart, 'service[splunk]', :immediately
-  not_if { ::File.exist?("#{splunk_dir}/etc/system/local/.user-seed.conf") }
-end
+_user, pw = node.run_state['splunk_auth_info'].split(':')
 
 file '.user-seed.conf' do
+  action :nothing
   path "#{splunk_dir}/etc/system/local/.user-seed.conf"
-  content "true\n"
+  subscribes :touch, 'file[user-seed.conf]', :immediately
+end
+
+# Splunk will delete this file the first time splunk is started
+# it's a secure way of automating the initial admin password when installing Splunk
+file 'user-seed.conf' do
+  path "#{splunk_dir}/etc/system/local/user-seed.conf"
+  content lazy {
+            <<~SEED
+              [user_info]
+              USERNAME = admin
+              HASHED_PASSWORD = #{hash_passwd(pw)}
+            SEED
+          }
   owner splunk_runas_user
   group splunk_runas_user
-  mode '600'
+  mode '0640'
+  not_if { ::File.exist?("#{splunk_dir}/etc/system/local/.user-seed.conf") || splunk_login_successful? }
 end
