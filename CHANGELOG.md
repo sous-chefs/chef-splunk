@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 6.4.1 (2020-10-20)
+- Fixes an issue running Splunk and the Splunk Universal Forwarder as a non-root user
+- Fixes Test Kitchen configuration to test running Splunk as non-root user
+- Helper methods in `libraries/helper.rb` are moved to their own module space: `ChefSplunk::Helpers`
+
 ## 6.4.0 (2020-10-19)
 - Fixes Issue [#185](https://github.com/chef-cookbooks/chef-splunk/issues/185)
   * a startup issue was resolved for SplunkForwarder installations with an improved

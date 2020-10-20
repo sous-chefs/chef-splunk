@@ -96,7 +96,6 @@ service 'splunk' do
   action default_service_action
   supports status: true, restart: true
   status_command "#{splunk_dir}/bin/splunk status"
-  user splunk_runas_user if systemd? && !run_as_root?
   timeout 1800
   provider splunk_service_provider
   subscribes :restart, 'template[user-seed.conf]', :immediately unless disabled?
