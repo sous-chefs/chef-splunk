@@ -42,7 +42,8 @@ control 'Enterprise Splunk' do
     end
   end
 
-  describe processes('splunkd') do
+  describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
+    its('users') { should include 'root' }
     it { should exist }
   end
 
