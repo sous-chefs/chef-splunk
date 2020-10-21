@@ -15,12 +15,12 @@ control 'Custom Resources' do
 
   describe.one do
     describe command('/opt/splunkforwarder/bin/splunk btool --app=bistro-1.0.2 app list') do
-      its(:exit_status) { should eq 0 }
-      its(:stdout) { should_not match /disabled\s*=\s*(0|false)/ }
+      its('exit_status') { should eq 0 }
+      its('stdout') { should_not match /disabled\s*=\s*(0|false)/ }
     end
     describe command('/opt/splunk/bin/splunk btool --app=bistro-1.0.2 app list') do
-      its(:exit_status) { should eq 0 }
-      its(:stdout) { should_not match /disabled\s*=\s*(0|false)/ }
+      its('exit_status') { should eq 0 }
+      its('stdout') { should_not match /disabled\s*=\s*(0|false)/ }
     end
   end
 end

@@ -1,15 +1,5 @@
 ---
-driver:
-  name: dokken
-  # because Docker and SystemD/Upstart
-  privileged: true
-  chef_version: <%= ENV['CHEF_VERSION'] || 'stable' %>
-
-transport:
-  name: dokken
-
 provisioner:
-  name: dokken
   deprecations_as_errors: true
   chef_license: accept
   data_bags_path: test/fixtures/data_bags
@@ -29,48 +19,6 @@ provisioner:
         startwebserver: 1
       web_port: 8000
 
-platforms:
-  - name: debian-10
-    driver:
-      image: dokken/debian-10
-      pid_one_command: /sbin/init
-      # intermediate_instructions:
-      #   - RUN /usr/bin/apt-get -y update
-      #   - RUN mkdir -p /data/splunk-test
-      #   # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-      #   - RUN mkdir -p /opt/splunk/etc
-      #   - RUN printf '
-      #     SPLUNK_SERVER_NAME=Splunkd\n
-      #     SLPUNK_WEB_NAME=splunkweb\n
-      #     OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
-
-  - name: centos-8
-    driver:
-      image: dokken/centos-8
-      pid_one_command: /usr/lib/systemd/systemd
-      # intermediate_instructions:
-      #   - RUN mkdir -p /data/splunk-test
-      #   # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-      #   - RUN mkdir -p /opt/splunk/etc
-      #   - RUN printf '
-      #     SPLUNK_SERVER_NAME=Splunkd\n
-      #     SLPUNK_WEB_NAME=splunkweb\n
-      #     OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
-
-  - name: ubuntu-20.04
-    driver:
-      image: dokken/ubuntu-20.04
-      pid_one_command: /bin/systemd
-      # intermediate_instructions:
-      #   - RUN /usr/bin/apt-get -y update
-      #   - RUN mkdir -p /data/splunk-test
-      #   # Disable file locking check by Splunk as it fails on unsupported file systems used in some Docker hosts (e.g. on Mac)
-      #   - RUN mkdir -p /opt/splunk/etc
-      #   - RUN printf '
-      #     SPLUNK_SERVER_NAME=Splunkd\n
-      #     SLPUNK_WEB_NAME=splunkweb\n
-      #     OPTIMISTIC_ABOUT_FILE_LOCKING=1\n' > /opt/splunk/etc/splunk-launch.conf
-
 suites:
   - name: client
     run_list:
@@ -78,6 +26,20 @@ suites:
       - recipe[chef-splunk::default]
     attributes:
       splunk:
+        accept_license: true
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/client_test.rb
+
+  - name: client-runas-splunk
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      splunk:
+        server:
+          runasroot: false
+        is_server: false
         accept_license: true
     verifier:
       name: inspec
@@ -134,20 +96,19 @@ suites:
       inspec_tests:
         - path: test/integration/inspec/server_test.rb
 
-  # - name: server-runas-splunk
-  #   run_list:
-  #     - recipe[chef-splunk::default]
-  #   attributes:
-  #     splunk:
-  #       server:
-  #         runasroot: false
-  #       is_server: true
-  #       accept_license: true
-  #       web_port: 8000
-  #   verifier:
-  #     name: inspec
-  #     inspec_tests:
-  #       - path: test/integration/inspec/server_test.rb
+  - name: server-runas-splunk
+    run_list:
+      - recipe[chef-splunk::default]
+    attributes:
+      splunk:
+        server:
+          runasroot: false
+        is_server: true
+        accept_license: true
+    verifier:
+      name: inspec
+      inspec_tests:
+        - path: test/integration/inspec/server_test.rb
 
   - name: server-cluster-master
     run_list:
@@ -181,6 +142,7 @@ suites:
         web_port: 8000
     verifier:
       root_path: /opt/verifier
+      sudo: false
 
   - name: server-shcluster-member
     run_list:

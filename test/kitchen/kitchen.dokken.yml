@@ -1,0 +1,40 @@
+---
+driver:
+  name: dokken
+  # because Docker and SystemD/Upstart
+  privileged: true
+  userns_host: true
+  chef_version: <%= ENV['CHEF_VERSION'] || 'stable' %>
+
+provisioner:
+  name: dokken
+  clean_dokken_sandbox: false
+
+transport:
+  name: dokken
+
+# splunkd takes a little time to be fully ready for Inspec
+# so we force a 60-sec wait after converging the node
+lifecycle:
+  post_converge:
+    - local: sleep 240
+
+platforms:
+  - name: debian-10
+    driver:
+      image: dokken/debian-10
+      pid_one_command: /sbin/init
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+
+  - name: centos-8
+    driver:
+      image: dokken/centos-8
+      pid_one_command: /usr/lib/systemd/systemd
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+
+  - name: ubuntu-20.04
+    driver:
+      image: dokken/ubuntu-20.04
+      pid_one_command: /bin/systemd

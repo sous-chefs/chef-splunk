@@ -23,8 +23,7 @@ control 'SplunkForwarder installation' do
   end
 
   describe port 8089 do
-    it { should be_listening }
-    its('protocols') { should include('tcp') }
+    it { should_not be_listening }
   end
 
   describe processes('splunkd') do
@@ -79,24 +78,5 @@ control 'SplunkForwarder local system config files' do
     its('tcpout:splunk_indexers_9997.sslPassword') { should match(SPLUNK_ENCRYPTED_STRING_REGEX) }
     its('tcpout:splunk_indexers_9997.sslRootCAPath') { should eq '$SPLUNK_HOME/etc/certs/cacert.pem' }
     its('tcpout:splunk_indexers_9997.sslVerifyServerCert') { should eq 'false' }
-  end
-end
-
-control 'Splunk admin password validation' do
-  title 'Splunk admin password'
-  desc 'validate that the splunk admin password has been properly set'
-
-  describe file("#{SPLUNK_HOME}/etc/system/local/user-seed.conf") do
-    it { should_not exist }
-  end
-
-  describe file("#{SPLUNK_HOME}/etc/system/local/.user-seed.conf") do
-    it { should exist }
-  end
-
-  # ensure the admin password has been changed from the default `changeme`
-  describe command("#{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword"), :sensitive do
-    its('stderr') { should be_empty }
-    its('exit_status') { should eq 0 }
   end
 end

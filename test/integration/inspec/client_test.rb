@@ -75,8 +75,7 @@ control 'Splunk Universal Forwarder' do
   end
 
   describe port 8089 do
-    it { should be_listening }
-    its('protocols') { should include('tcp') }
+    it { should_not be_listening }
   end
 
   describe processes('splunkd') do
