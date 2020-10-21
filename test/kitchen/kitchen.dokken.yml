@@ -14,7 +14,7 @@ transport:
   name: dokken
 
 # splunkd takes a little time to be fully ready for Inspec
-# so we force a 60-sec wait after converging the node
+# so we force a wait after converging the node
 lifecycle:
   post_converge:
     - local: sleep 240
