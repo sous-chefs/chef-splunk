@@ -55,12 +55,6 @@ jobs:
         uses: actions/checkout@master
       - name: Install Chef
         uses: actionshub/chef-install@master
-      - name: install gems
-        working-directory: $GITHUB_WORKSPACE/test/integration/inspec
-        run: |
-          echo $PATH
-          which chef
-          /opt/chef-workstation/embedded/bin/chef exec bundle install
       - name: Dokken
         uses: actionshub/kitchen-dokken@master
         env:
