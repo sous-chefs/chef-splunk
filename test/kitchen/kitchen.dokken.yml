@@ -17,7 +17,7 @@ transport:
 # so we force a 60-sec wait after converging the node
 lifecycle:
   post_converge:
-    - local: sleep 60
+    - local: sleep 240
 
 platforms:
   - name: debian-10
