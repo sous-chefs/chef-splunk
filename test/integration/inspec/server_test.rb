@@ -1,6 +1,4 @@
 # Inspec tests for enterprise splunk on linux systems.
-require 'rspec/retry'
-
 SPLUNK_HOME = '/opt/splunk'.freeze
 
 control 'Enterprise Splunk' do
@@ -44,12 +42,12 @@ control 'Enterprise Splunk' do
   end
 
   describe.one do
-    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/), retry: 3, retry_wait: 7 do
+    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
       its('users') { should include 'splunk' }
       its('users') { should_not include 'root' }
       it { should exist }
     end
-    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/), retry: 3, retry_wait: 7 do
+    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
       its('users') { should include 'root' }
       it { should exist }
     end
