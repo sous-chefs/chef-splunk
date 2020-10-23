@@ -7,7 +7,8 @@ control 'Splunk Cluster Master' do
   end
 
   describe ini('/opt/splunk/etc/system/local/inputs.conf') do
-    its('default.host') { should eq 'dokken' }
+    its('default.host') { should_not be_nil }
+    its('default.host') { should_not be_empty }
   end
 
   describe file('/opt/splunk/etc/system/local/server.conf') do

@@ -64,44 +64,6 @@ jobs:
           suite: ${{ matrix.suite }}
           os: ${{ matrix.os }}
 
-  # dokken:
-  #   needs: [yamllint, delivery]
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       os:
-  #         - 'debian-10'
-  #         - 'centos-8'
-  #         - 'ubuntu-2004'
-  #       suite:
-  #         - 'client'
-  #         - 'uninstall-forwarder'
-  #         - 'client-inputs-outputs'
-  #         - 'server-runas-root'
-  #         - 'server-cluster-master'
-  #         - 'server-shdeployer'
-  #         - 'server-shcluster-member'
-  #         - 'disabled'
-  #         - 'upgrade-server'
-  #         - 'upgrade-client'
-  #         - 'server-resources'
-  #         - 'client-resources'
-  #     fail-fast: false
-  #
-  #   steps:
-  #     - name: Check out code
-  #       uses: actions/checkout@master
-  #     - name: Install Chef
-  #       uses: actionshub/chef-install@master
-  #     - name: Dokken
-  #       uses: actionshub/kitchen-dokken@master
-  #       env:
-  #         CHEF_LICENSE: accept-no-persist
-  #         KITCHEN_LOCAL_YAML: test/kitchen/kitchen.dokken.yml
-  #       with:
-  #         suite: ${{ matrix.suite }}
-  #         os: ${{ matrix.os }}
-
   final:
     needs: [vagrant]
     runs-on: ubuntu-latest

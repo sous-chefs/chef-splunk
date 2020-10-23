@@ -77,7 +77,7 @@ file '/etc/init.d/splunk' do
   only_if { systemd? }
 end
 
-execute 'splunk enable boot-start' do
+execute "splunk #{disabled? ? 'disable' : 'enable' } boot-start" do
   command boot_start_cmd
   sensitive false
   retries 3
