@@ -11,9 +11,6 @@ ruby_block 'mitigation splunk service notifications' do
     r.stop_command('/bin/true')
     r.start_command('/bin/true')
     r.status_command('/bin/true')
-
-    r = resources('execute[/opt/splunkforwarder/bin/splunk stop]')
-    r.command('/bin/true')
   end
 end
 

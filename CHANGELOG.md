@@ -2,6 +2,14 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 7.0.0 (2020-10-22)
+**BREAKING CHANGE**
+- sets umask when executing the `execute[splunk enable boot-start]` resource
+- adds new attribute, `default['splunk']['enable_boot_start_umask']` for umask setting applied to `execute[splunk enable boot-start]` (Default: '18')
+- `#splunk_cmd` now requires a dynamic array of arguments that will be appended to the splunk command
+- `splunk.service` is symlinked to the systemd unit
+- adds a kitchen-vagrant config to run inside Github Actions
+
 ## 6.4.1 (2020-10-20)
 - Fixes an issue running Splunk and the Splunk Universal Forwarder as a non-root user
 - Fixes Test Kitchen configuration to test running Splunk as non-root user

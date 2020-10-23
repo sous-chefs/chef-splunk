@@ -16,20 +16,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 group node['splunk']['user']['username'] do
+  action :nothing
   gid node['splunk']['user']['uid'].to_i # CHEF-4927
   system true if %w(linux).include?(node['os'])
-end
+end.run_action(:create)
 
 node.default['splunk']['user']['home'] = splunk_dir
 
 user node['splunk']['user']['username'] do
+  action :nothing
   comment node['splunk']['user']['comment']
   shell node['splunk']['user']['shell']
   gid node['splunk']['user']['username']
   uid node['splunk']['user']['uid']
   home node['splunk']['user']['home']
   system true if %w(linux).include?(node['os'])
-  notifies :stop, 'service[splunk]', :before if splunk_installed?
-end
+end.run_action(:create)

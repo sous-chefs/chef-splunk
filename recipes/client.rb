@@ -42,7 +42,8 @@ server_list = if !(node['splunk']['server_list'].nil? || node['splunk']['server_
 # if the splunk daemon is running as root, executing a normal service restart or stop will fail if the boot
 # start script has been modified to execute splunk as a non-root user.
 # So, the splunk daemon must be run this way instead
-execute "#{splunk_cmd} stop" do
+execute 'splunk stop' do
+  command splunk_cmd('stop')
   action :nothing
   not_if { node['splunk']['server']['runasroot'] == true }
 end

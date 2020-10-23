@@ -29,12 +29,13 @@ module ChefSplunk
     def boot_start_cmd(disable = nil)
       systemd_managed = systemd? ? 1 : 0
 
+      # this command modifies the systemd unit file, so must be run as root
       if disable.nil? && run_as_root?
-        "#{splunk_cmd} enable boot-start -systemd-managed #{systemd_managed} --accept-license"
+        "#{splunk_dir}/bin/splunk enable boot-start -systemd-managed #{systemd_managed} --accept-license"
       elsif disable.nil?
-        "#{splunk_cmd} enable boot-start  -user #{splunk_runas_user} -systemd-managed #{systemd_managed} --accept-license"
+        "#{splunk_dir}/bin/splunk enable boot-start  -user #{splunk_runas_user} -systemd-managed #{systemd_managed} --accept-license"
       else
-        "#{splunk_cmd} disable boot-start -systemd-managed #{systemd_managed} --accept-license"
+        "#{splunk_dir}/bin/splunk disable boot-start -systemd-managed #{systemd_managed} --accept-license"
       end
     end
 
@@ -42,7 +43,7 @@ module ChefSplunk
     # this command produces a hash of a clear-text password that can be stored in user-seed.conf, for example
     def hash_passwd(pw)
       return pw if pw.match?(/^\$\d*\$/)
-      hash = shell_out("#{splunk_cmd} hash-passwd #{pw}")
+      hash = shell_out("#{splunk_dir}/bin/splunk hash-passwd #{pw}")
       hash.stdout.strip
     end
 
@@ -51,7 +52,7 @@ module ChefSplunk
     end
 
     def splunk_installed?
-      ::File.exist?(splunk_cmd)
+      ::File.exist?("#{splunk_dir}/bin/splunk")
     end
 
     def splunk_file(uri)
@@ -60,8 +61,11 @@ module ChefSplunk
       Pathname.new(URI.parse(uri).path).basename.to_s
     end
 
-    def splunk_cmd
-      "#{splunk_dir}/bin/splunk"
+    def splunk_cmd(*args)
+      cmd = "#{splunk_dir}/bin/splunk #{args.join(' ')}"
+
+      return cmd if splunk_runas_user == 'root'
+      "su - #{splunk_runas_user} -c '#{cmd}'"
     end
 
     # a way to return the right command to stop, start, and restart the splunk
@@ -73,10 +77,7 @@ module ChefSplunk
         raise "Failed to #{action}"
       end
 
-      command = "#{splunk_cmd} #{action} --answer-yes --no-prompt --accept-license"
-
-      return command if splunk_runas_user == 'root'
-      "su - #{splunk_runas_user} -c '#{command}'"
+      splunk_cmd("#{action} --answer-yes --no-prompt --accept-license")
     end
 
     def splunk_dir
@@ -109,7 +110,7 @@ module ChefSplunk
 
     def splunk_login_successful?
       return false unless splunk_installed?
-      login = shell_out("#{splunk_cmd} login -auth #{node.run_state['splunk_auth_info']}")
+      login = shell_out(splunk_cmd(%w(login -auth node.run_state['splunk_auth_info'])))
       login.stderr.strip.empty? && login.stdout.strip.empty? && login.exitstatus == 0
     end
 
@@ -148,7 +149,7 @@ module ChefSplunk
     end
 
     def current_mgmt_port
-      splunk = shell_out("#{splunk_cmd} show splunkd-port -auth #{node.run_state['splunk_auth_info']} | awk -F: '{print$NF}'")
+      splunk = shell_out(splunk_cmd("show splunkd-port -auth #{node.run_state['splunk_auth_info']} | awk -F: '{print$NF}'"))
       splunk.error! # Raise an exception if it didn't exit with 0
       splunk.stdout.strip
     end
@@ -190,7 +191,7 @@ module ChefSplunk
 
     def init_shcluster_member?
       return false unless splunk_installed?
-      list_member_info = shell_out("#{splunk_cmd} list shcluster-member-info -auth #{node.run_state['splunk_auth_info']}")
+      list_member_info = shell_out(splunk_cmd("list shcluster-member-info -auth #{node.run_state['splunk_auth_info']}"))
       list_member_info.error?
     end
 
@@ -224,7 +225,7 @@ module ChefSplunk
     end
 
     def shcluster_members_ipv4
-      splunk = shell_out("#{splunk_cmd} list shcluster-members -auth #{node.run_state['splunk_auth_info']} | grep host_port_pair | awk -F: '{print$2}'")
+      splunk = shell_out(splunk_cmd("list shcluster-members -auth #{node.run_state['splunk_auth_info']} | grep host_port_pair | awk -F: '{print$2}'"))
       return [] if splunk.stdout.strip == 'Encountered some errors while trying to obtain shcluster status.'
       splunk.stdout.split
     end
@@ -240,8 +241,7 @@ module ChefSplunk
     def shcluster_captain
       return unless splunk_installed?
 
-      command = "#{splunk_cmd} show shcluster-status -auth '#{node.run_state['splunk_auth_info']}' | " \
-        'grep -A 5 Captain | tail -1'
+      command = splunk_cmd("show shcluster-status -auth '#{node.run_state['splunk_auth_info']}' | grep -A 5 Captain | tail -1'")
       shcluster_captain = shell_out(command)
       stdout = shcluster_captain.stdout.strip
       return unless stdout.match(/^label \: .*/)
@@ -260,7 +260,7 @@ module ChefSplunk
 
     def search_heads_peered?
       return false unless splunk_installed?
-      list_search_server = shell_out("#{splunk_cmd} list search-server -auth #{node.run_state['splunk_auth_info']}")
+      list_search_server = shell_out(splunk_cmd("list search-server -auth #{node.run_state['splunk_auth_info']}"))
       list_search_server.stdout.match?(/(^Server at URI \".*\" with status as \"Up\")+/)
     end
 

@@ -25,6 +25,7 @@ default['splunk']['web_port']       = '443'
 default['splunk']['ratelimit_kilobytessec'] = '2048'
 default['splunk']['disabled'] = false
 default['splunk']['data_bag'] = 'vault'
+default['splunk']['enable_boot_start_umask'] = '18'
 
 default['splunk']['setup_auth'] = true
 default['splunk']['service_name'] = 'splunk' # Splunk changes this to Splunkd or SplunkForwarder on systemd-managed servers

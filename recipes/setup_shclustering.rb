@@ -98,13 +98,13 @@ end
 # this effectively waits until the captain is ready before adding members to the cluster
 execute 'initialize search head cluster member' do
   sensitive true unless Chef::Log.debug?
-  command "#{splunk_cmd} init shcluster-config -auth '#{node.run_state['splunk_auth_info']}' " \
+  command splunk_cmd("init shcluster-config -auth '#{node.run_state['splunk_auth_info']}' " \
     "-mgmt_uri #{node['splunk']['shclustering']['mgmt_uri']} " \
     "-replication_port #{node['splunk']['shclustering']['replication_port']} " \
     "-replication_factor #{node['splunk']['shclustering']['replication_factor']} " \
     "-conf_deploy_fetch_url #{node['splunk']['shclustering']['deployer_url']} " \
     "-secret #{node.run_state['splunk_secret']} " \
-    "-shcluster_label #{node['splunk']['shclustering']['label']}"
+    "-shcluster_label #{node['splunk']['shclustering']['label']}")
   notifies :restart, 'service[splunk]', :immediately unless disabled?
   only_if { init_shcluster_member? }
 end
@@ -120,8 +120,7 @@ end
 if ok_to_bootstrap_captain?
   execute 'bootstrap-shcluster-captain' do
     sensitive true unless Chef::Log.debug?
-    command "#{splunk_cmd} bootstrap shcluster-captain -auth '#{node.run_state['splunk_auth_info']}' " \
-      "-servers_list \"#{shcluster_servers_list.join(',')}\""
+    command splunk_cmd("bootstrap shcluster-captain -auth '#{node.run_state['splunk_auth_info']}' -servers_list \"#{shcluster_servers_list.join(',')}\"")
     notifies :restart, 'service[splunk]', :immediately unless disabled?
   end
 elsif ok_to_add_member?
@@ -129,7 +128,7 @@ elsif ok_to_add_member?
 
   execute 'add member to search head cluster' do
     sensitive true unless Chef::Log.debug?
-    command "#{splunk_cmd} add shcluster-member -current_member_uri #{captain_mgmt_uri} -auth '#{node.run_state['splunk_auth_info']}'"
+    command splunk_cmd("add shcluster-member -current_member_uri #{captain_mgmt_uri} -auth '#{node.run_state['splunk_auth_info']}'")
     notifies :restart, 'service[splunk]' unless disabled?
   end
 end
@@ -152,8 +151,8 @@ search(
   cluster_master['num_sites'] = result['cluster_num_sites']
 end
 
-shpeer_integration_command = "#{splunk_cmd} edit cluster-config -mode searchhead -master_uri #{cluster_master['mgmt_uri']} " \
-                             "-secret #{node.run_state['splunk_secret']} -auth #{node.run_state['splunk_auth_info']}"
+shpeer_integration_command = splunk_cmd("edit cluster-config -mode searchhead -master_uri #{cluster_master['mgmt_uri']} " \
+                             "-secret #{node.run_state['splunk_secret']} -auth #{node.run_state['splunk_auth_info']}")
 shpeer_integration_command += ' -site site0' if cluster_master['num_sites'] > 1
 
 execute 'search head cluster integration with indexer cluster' do

@@ -94,22 +94,3 @@ control 'Splunk Universal Forwarder' do
     end
   end
 end
-
-control 'Splunk admin password validation' do
-  title 'Splunk admin password'
-  desc 'validate that the splunk admin password has been properly set'
-
-  describe file("#{SPLUNK_HOME}/etc/system/local/user-seed.conf") do
-    it { should_not exist }
-  end
-
-  describe file("#{SPLUNK_HOME}/etc/system/local/.user-seed.conf") do
-    it { should exist }
-  end
-
-  # the password used for validation here is from the test/fixture/data_bags/vault/splunk__default.rb
-  describe command("#{SPLUNK_HOME}/bin/splunk validate-passwd notarealpassword") do
-    its('stderr') { should be_empty }
-    its('exit_status') { should eq 0 }
-  end
-end
