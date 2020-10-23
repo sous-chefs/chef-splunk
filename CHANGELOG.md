@@ -9,6 +9,7 @@ This file is used to list changes made in each version of the splunk cookbook.
 - `#splunk_cmd` now requires a dynamic array of arguments that will be appended to the splunk command
 - `splunk.service` is symlinked to the systemd unit
 - adds a kitchen-vagrant config to run inside Github Actions
+- enhancements to the `:remove` action for `splunk_installer` resource to ensure a complete uninstall for both Splunk Enterprise Server and Universal Forwarder
 
 ## 6.4.1 (2020-10-20)
 - Fixes an issue running Splunk and the Splunk Universal Forwarder as a non-root user
