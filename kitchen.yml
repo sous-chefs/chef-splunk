@@ -121,8 +121,8 @@ suites:
         clustering:
           enabled: true
           mode: master
-          replication_factor: 5
-          search_factor: 3
+          replication_factor: 2
+          search_factor: 1
     verifier:
       name: inspec
       inspec_tests:

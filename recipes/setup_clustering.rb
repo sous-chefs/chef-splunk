@@ -67,17 +67,20 @@ end
 
 splunk_cmd_params << " -secret #{node.run_state['splunk_secret']}" if node.run_state['splunk_secret']
 
-execute 'setup-indexer-cluster' do
-  command splunk_cmd("edit cluster-config #{splunk_cmd_params} -auth '#{node.run_state['splunk_auth_info']}'")
-  sensitive true unless Chef::Log.debug?
-  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_clustering") }
-  notifies :start, 'service[splunk]', :before unless disabled?
-  notifies :restart, 'service[splunk]' unless disabled?
-end
-
 file "#{splunk_dir}/etc/.setup_clustering" do
-  content "true\n"
+  action :nothing
   owner splunk_runas_user
   group splunk_runas_user
   mode '600'
+  subscribes :touch, 'execute[setup-indexer-cluster]'
+end
+
+execute 'setup-indexer-cluster' do
+  command splunk_cmd("edit cluster-config #{splunk_cmd_params} -auth '#{node.run_state['splunk_auth_info']}'")
+  sensitive true unless Chef::Log.debug?
+  retries 5
+  retry_delay 60
+  not_if { ::File.exist?("#{splunk_dir}/etc/.setup_clustering") }
+  notifies :start, 'service[splunk]', :before unless disabled?
+  notifies :restart, 'service[splunk]' unless disabled?
 end
