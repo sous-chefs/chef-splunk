@@ -1,6 +1,7 @@
 ---
 driver:
   name: vagrant
+  boot_timeout: 600
 
 provisioner:
   name: chef_zero
