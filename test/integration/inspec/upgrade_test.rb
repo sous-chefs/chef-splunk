@@ -19,12 +19,20 @@ control 'Splunk Upgrade' do
   end
 
   describe.one do
-    %w(Splunkd SplunkForwarder splunk).each do |svc|
-      describe service(svc) do
-        it { should be_installed }
-        it { should be_enabled }
-        it { should be_running }
-      end
+    describe service('Splunkd') do
+      it { should be_installed }
+      it { should be_enabled }
+      it { should be_running }
+    end
+    describe service('SplunkForwarder') do
+      it { should be_installed }
+      it { should be_enabled }
+      it { should be_running }
+    end
+    describe service('splunk') do
+      it { should be_installed }
+      it { should be_enabled }
+      it { should be_running }
     end
   end
 end

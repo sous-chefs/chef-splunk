@@ -96,9 +96,18 @@ action :upgrade do
 end
 
 action :remove do
+  log 'splunk_install remove action failed: Splunk was not installed' do
+    level :warn
+    not_if { splunk_installed? }
+  end
+
+  service 'Splunk' do
+    service_name server? ? 'Splunkd' : 'SplunkForwarder'
+    action systemd? ? %i(stop disable) : :stop
+  end
+
   package new_resource.name do
     action :remove
-    notifies :stop, 'service[splunk]', :before
   end
 
   user node['splunk']['user']['username'] do
@@ -112,12 +121,32 @@ action :remove do
   directory splunk_dir do
     recursive true
     action :delete
-    notifies :stop, 'service[splunk]', :before
   end
 
-  file package_file do
-    action :delete
-    path cached_package
-    backup false
+  startup_files = if server? && systemd?
+                    [
+                      '/etc/systemd/system/splunk.service',
+                      '/etc/systemd/system/Splunkd.service',
+                    ]
+                  elsif systemd?
+                    [
+                      '/etc/systemd/system/splunk.service',
+                      '/etc/systemd/system/SplunkForwarder.service',
+                    ]
+                  else
+                    [ '/etc/init.d/splunk' ]
+                  end
+
+  (startup_files << cached_package).each do |f|
+    file f do
+      action :delete
+      backup false
+    end
+  end
+
+  # one final step to ensure nothing is left running
+  execute 'pkill -9 splunkd' do
+    user 'root'
+    ignore_failure :quiet
   end
 end

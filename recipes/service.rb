@@ -66,7 +66,8 @@ end
 # if the splunk daemon is running as root, executing a normal service restart or stop will fail if the boot
 # start script has been modified to execute splunk as a non-root user.
 # So, the splunk daemon must be run this way instead
-execute "#{splunk_cmd} stop" do
+execute 'splunk stop' do
+  command splunk_cmd('stop')
   action :nothing
   subscribes :run, 'execute[splunk enable boot-start]', :before
 end
@@ -76,11 +77,16 @@ file '/etc/init.d/splunk' do
   only_if { systemd? }
 end
 
-execute 'splunk enable boot-start' do
-  command boot_start_cmd
+execute "splunk #{disabled? ? 'disable' : 'enable'} boot-start" do
+  command boot_start_cmd(disabled? ? true : nil)
   sensitive false
   retries 3
   creates node['splunk']['startup_script']
+  umask node['splunk']['enable_boot_start_umask']
+end
+
+link '/etc/systemd/system/splunk.service' do
+  to server? ? '/etc/systemd/system/Splunkd.service' : '/etc/systemd/system/SplunkForwarder.service'
 end
 
 default_service_action = if node['splunk']['disabled'] == true
@@ -95,8 +101,11 @@ service 'splunk' do
   service_name node['splunk']['service_name']
   action default_service_action
   supports status: true, restart: true
-  status_command "#{splunk_dir}/bin/splunk status"
+  status_command svc_command('status')
   timeout 1800
   provider splunk_service_provider
-  subscribes :restart, 'template[user-seed.conf]', :immediately unless disabled?
+  unless disabled?
+    subscribes :restart, 'template[user-seed.conf]', :immediately
+    subscribes :restart, "user[#{node['splunk']['user']['username']}]", :immediately
+  end
 end

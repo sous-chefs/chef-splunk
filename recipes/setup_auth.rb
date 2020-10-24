@@ -30,7 +30,7 @@ include_recipe 'chef-splunk'
 _user, pw = node.run_state['splunk_auth_info'].split(':')
 
 file '.user-seed.conf' do
-  action :nothing
+  action splunk_login_successful? ? :nothing : :delete
   path "#{splunk_dir}/etc/system/local/.user-seed.conf"
   subscribes :touch, 'file[user-seed.conf]', :immediately
 end

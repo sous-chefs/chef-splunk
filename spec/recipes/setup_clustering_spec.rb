@@ -8,8 +8,9 @@ shared_examples 'a successful run' do |params|
     expect(chef_run.execute('setup-indexer-cluster')).to notify('service[splunk]').to(:restart)
   end
 
-  it 'writes a file marker to ensure convergence' do
-    expect(chef_run).to create_file('/opt/splunk/etc/.setup_clustering')
+  it 'writes a file marker to indicate no setup for clustering is needed (i.e., already done)' do
+    expect(chef_run).to nothing_file('/opt/splunk/etc/.setup_clustering')
+    expect(chef_run.file('/opt/splunk/etc/.setup_clustering')).to subscribe_to('execute[setup-indexer-cluster]').on(:touch).delayed
   end
 end
 

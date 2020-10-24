@@ -10,13 +10,32 @@ control 'Splunk Universal Forwarder' do
     it { should_not be_installed }
   end
 
+  describe user('splunk') do
+    it { should_not exist }
+  end
+
+  describe group('splunk') do
+    it { should_not exist }
+  end
+
+  describe directory('/opt/splunkforwarder') do
+    it { should_not exist }
+  end
+
+  describe processes(Regexp.new('splunkd')) do
+    it { should_not exist }
+  end
+
   describe.one do
-    %w(splunk SplunkForwarder).each do |svc|
-      describe service svc do
-        it { should_not be_running }
-        it { should_not be_enabled }
-        it { should_not be_installed }
-      end
+    describe service('SplunkForwarder') do
+      it { should_not be_running }
+      it { should_not be_enabled }
+      it { should_not be_installed }
+    end
+    describe service('splunk') do
+      it { should_not be_running }
+      it { should_not be_enabled }
+      it { should_not be_installed }
     end
   end
 end

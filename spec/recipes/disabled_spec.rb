@@ -6,8 +6,8 @@ describe 'chef-splunk::disabled' do
       ChefSpec::ServerRunner.new do |node, server|
         create_data_bag_item(server, 'vault', 'splunk__default')
         node.force_default['splunk']['disabled'] = true
+        node.force_default['splunk']['accept_license'] = true
         allow_any_instance_of(Chef::Recipe).to receive(:splunk_installed?).and_return(true)
-        allow_any_instance_of(Chef::Recipe).to receive(:license_accepted?).and_return(true)
       end.converge(described_recipe)
     end
 

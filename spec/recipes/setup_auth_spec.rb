@@ -34,7 +34,7 @@ describe 'chef-splunk::setup_auth' do
       end
 
       it 'created .user-seed.conf only when notified after user-seed.conf is processed' do
-        expect(chef_run).to nothing_file('.user-seed.conf')
+        expect(chef_run).to delete_file('.user-seed.conf')
         expect(chef_run.file('.user-seed.conf')).to subscribe_to('file[user-seed.conf]').on(:touch).immediately
       end
     end

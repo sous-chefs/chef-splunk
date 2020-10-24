@@ -326,6 +326,30 @@ must be set explicitly elsewhere on the node(s).
   node.force_default['splunk']['server']['upgrade']['url'] = nil
   ```
 
+## Helper methods
+### splunk_cmd
+When wrapping this cookbook, it is often beneficial to run Splunk Enterprise or Universal Forwarder as a non-root user. This is, in fact, a security recommendation to run Splunk as a non-root user. To this end, `#splunk_cmd` will return the properly constructed command to run a Splunk CLI command with arguments.
+
+Example:
+```
+execute 'set servername' do
+  command splunk_cmd(['set', 'servername', node.name, '-auth', node.run_state['splunk_auth_info'])
+  sensitive true
+  notifies :restart, 'service[splunk]'
+end
+```
+
+another way that will result in the same command:
+
+```
+execute 'set servername' do
+  command splunk_cmd("set servname #{node.name} -auth '#{node.run_state['splunk_auth_info']}'")
+  sensitive true
+  notifies :restart, 'service[splunk]'
+end
+```
+
+
 ## Custom Resources
 
 ### splunk_app
