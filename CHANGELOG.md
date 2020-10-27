@@ -21,7 +21,7 @@ This file is used to list changes made in each version of the splunk cookbook.
 - Fixes Issue [#185](https://github.com/chef-cookbooks/chef-splunk/issues/185)
   * a startup issue was resolved for SplunkForwarder installations with an improved
     systemd unit file (fix below)
-  * Adds Inspec tests to verify from SplunkForwarder starts (thanks, @jjm)
+  * Adds Inspec tests to verify from SplunkForwarder starts (thanks, [@jjm](https://github.com/jjm))
 - Fixes Issue [#187](https://github.com/chef-cookbooks/chef-splunk/issues/187)
   * the systemd unit file is now relegated to the `splunk enable boot-start` command to manage
 - Adds Inspec tests and sets the verifier in Test Kitchen for some test suites; some are still in serverspec
