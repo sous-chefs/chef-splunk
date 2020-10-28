@@ -33,8 +33,12 @@ jobs:
       matrix:
         os:
           - 'debian-10'
+          - 'debian-9'
           - 'centos-8'
+          - 'centos-7'
           - 'ubuntu-2004'
+          - 'ubuntu-1804'
+          - 'ubuntu-1604'
         suite:
           - 'client'
           - 'uninstall-forwarder'
