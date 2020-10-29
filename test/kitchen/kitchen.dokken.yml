@@ -34,6 +34,11 @@ platforms:
       volumes:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
 
+  - name: centos-6
+    driver:
+      image: dokken/centos-6
+      pid_one_command: /sbin/init
+
   - name: ubuntu-20.04
     driver:
       image: dokken/ubuntu-20.04
