@@ -87,6 +87,7 @@ end
 
 link '/etc/systemd/system/splunk.service' do
   to server? ? '/etc/systemd/system/Splunkd.service' : '/etc/systemd/system/SplunkForwarder.service'
+  only_if { systemd? }
 end
 
 default_service_action = if node['splunk']['disabled'] == true
