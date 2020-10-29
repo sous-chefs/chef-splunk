@@ -19,10 +19,6 @@ platforms:
       volumes:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
 
-  - name: centos-6
-    driver:
-      pid_one_command: /sbin/init
-
   - name: ubuntu-20.04
     driver:
       pid_one_command: /bin/systemd
