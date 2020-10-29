@@ -40,17 +40,49 @@ jobs:
           - 'ubuntu-1804'
           - 'ubuntu-1604'
         suite:
-          - 'client'
-          - 'uninstall-forwarder'
-          - 'client-inputs-outputs'
           - 'server-runas-root'
           - 'server-cluster-master'
           - 'server-shdeployer'
           - 'server-shcluster-member'
-          - 'disabled'
           - 'upgrade-server'
-          - 'upgrade-client'
           - 'server-resources'
+      fail-fast: false
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@master
+      - name: Install Chef
+        uses: actionshub/chef-install@master
+      - name: Test Kitchen
+        uses: actionshub/test-kitchen@master
+        env:
+          CHEF_LICENSE: accept-no-persist
+          KITCHEN_LOCAL_YAML: test/kitchen/kitchen.vagrant.yml
+        with:
+          suite: ${{ matrix.suite }}
+          os: ${{ matrix.os }}
+
+  # Run client & disabled tests in dokken as docker is quicker.
+  dokken:
+    needs: [yamllint, delivery]
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        os:
+          - 'debian-10'
+          - 'debian-9'
+          - 'centos-8'
+          - 'centos-7'
+          - 'centos-6'
+          - 'ubuntu-2004'
+          - 'ubuntu-1804'
+          - 'ubuntu-1604'
+        suite:
+          - 'client'
+          - 'uninstall-forwarder'
+          - 'client-inputs-outputs'
+          - 'disabled'
+          - 'upgrade-client'
           - 'client-resources'
       fail-fast: false
 
@@ -68,8 +100,9 @@ jobs:
           suite: ${{ matrix.suite }}
           os: ${{ matrix.os }}
 
+
   final:
-    needs: [vagrant]
+    needs: [vagrant, dokken]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
