@@ -25,7 +25,7 @@ unless setup_auth?
   return
 end
 
-include_recipe 'chef-splunk'
+include_recipe 'chef-splunk' if setup_auth_include?
 
 _user, pw = node.run_state['splunk_auth_info'].split(':')
 

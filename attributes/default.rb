@@ -28,6 +28,8 @@ default['splunk']['data_bag'] = 'vault'
 default['splunk']['enable_boot_start_umask'] = '18'
 
 default['splunk']['setup_auth'] = true
+default['splunk']['setup_auth_include'] = true
+
 default['splunk']['service_name'] = 'splunk' # Splunk changes this to Splunkd or SplunkForwarder on systemd-managed servers
 default['splunk']['startup_script'] = '/etc/init.d/splunk' # Splunk changes this to Splunkd or SplunkForwarder on systemd-managed servers
 default['splunk']['user'] = {

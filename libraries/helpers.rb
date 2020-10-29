@@ -163,6 +163,10 @@ module ChefSplunk
       node['splunk']['setup_auth'] == true
     end
 
+    def setup_auth_include?
+      node['splunk']['setup_auth_include'] == true
+    end
+
     def enable_ssl?
       node['splunk']['ssl_options']['enable_ssl'] == true
     end
