@@ -34,6 +34,7 @@ jobs:
         os:
           - 'debian-10'
           - 'centos-8'
+          - 'centos-6'
           - 'ubuntu-2004'
         suite:
           - 'client'
