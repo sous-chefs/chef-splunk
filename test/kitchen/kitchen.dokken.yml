@@ -13,16 +13,17 @@ provisioner:
 transport:
   name: dokken
 
-# splunkd takes a little time to be fully ready for Inspec
-# so we force a wait after converging the node
-lifecycle:
-  post_converge:
-    - local: sleep 300
-
 platforms:
   - name: debian-10
     driver:
       image: dokken/debian-10
+      pid_one_command: /sbin/init
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+
+  - name: debian-9
+    driver:
+      image: dokken/debian-9
       pid_one_command: /sbin/init
       volumes:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
@@ -34,7 +35,31 @@ platforms:
       volumes:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
 
+  - name: centos-7
+    driver:
+      image: dokken/centos-7
+      pid_one_command: /usr/lib/systemd/systemd
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+
+  - name: centos-6
+    driver:
+      image: dokken/centos-6
+      pid_one_command: /sbin/init
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+
   - name: ubuntu-20.04
     driver:
       image: dokken/ubuntu-20.04
+      pid_one_command: /bin/systemd
+
+  - name: ubuntu-18.04
+    driver:
+      image: dokken/ubuntu-18.04
+      pid_one_command: /bin/systemd
+
+  - name: ubuntu-16.04
+    driver:
+      image: dokken/ubuntu-16.04
       pid_one_command: /bin/systemd
