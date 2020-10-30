@@ -42,12 +42,12 @@ control 'Enterprise Splunk' do
   end
 
   describe.one do
-    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
+    describe processes(Regexp.new('splunkd.*-p 8089 _internal_launch_under_systemd')) do
       its('users') { should include 'splunk' }
       its('users') { should_not include 'root' }
       it { should exist }
     end
-    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
+    describe processes(Regexp.new('splunkd.*-p 8089 _internal_launch_under_systemd')) do
       its('users') { should include 'root' }
       it { should exist }
     end
