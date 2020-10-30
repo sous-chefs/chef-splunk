@@ -66,6 +66,8 @@ Used for managing secrets, see __Usage__:
 
 * chef-vault, `~> 4.0`
 
+:smile: Note: Using chef-vault is optional, but is a dependency for this cookbook. Please see the section [Chef-Vault encrypted data bag fallback](https://github.com/chef-cookbooks/chef-splunk#chef-vault-encrypted-data-bag-fallback) for an alternative method to manage Splunk secrets with standard encrypted data bags.
+
 ## Attributes
 
 Attributes have default values set in `attributes/default.rb`. Where
