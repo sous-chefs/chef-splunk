@@ -26,26 +26,20 @@ jobs:
       - name: Run yaml Lint
         uses: actionshub/yamllint@master
 
+  # Vagrant tests are very slow and often time out, so only check those services that
+  # don't run as root across centos and debian, ubuntu.
   vagrant:
     needs: [yamllint, delivery]
     runs-on: macos-latest
     strategy:
       matrix:
         os:
-          - 'debian-10'
-          - 'debian-9'
           - 'centos-8'
-          - 'centos-7'
+          - 'debian-10'
           - 'ubuntu-2004'
-          - 'ubuntu-1804'
-          - 'ubuntu-1604'
         suite:
-          - 'server-runas-root'
-          - 'server-cluster-master'
-          - 'server-shdeployer'
-          - 'server-shcluster-member'
-          - 'upgrade-server'
-          - 'server-resources'
+          - 'client-runas-splunk'
+          - 'server-runas-splunk'
       fail-fast: false
 
     steps:
@@ -62,28 +56,33 @@ jobs:
           suite: ${{ matrix.suite }}
           os: ${{ matrix.os }}
 
-  # Run client & disabled tests in dokken as docker is quicker.
+  # Run most tests in dokken as it's quicker than Vagrant
   dokken:
     needs: [yamllint, delivery]
     runs-on: macos-latest
     strategy:
       matrix:
         os:
+          - 'centos-7'
+          - 'centos-8'
           - 'debian-10'
           - 'debian-9'
-          - 'centos-8'
-          - 'centos-7'
-          - 'centos-6'
-          - 'ubuntu-2004'
-          - 'ubuntu-1804'
           - 'ubuntu-1604'
+          - 'ubuntu-1804'
+          - 'ubuntu-2004'
         suite:
           - 'client'
-          - 'uninstall-forwarder'
           - 'client-inputs-outputs'
-          - 'disabled'
-          - 'upgrade-client'
           - 'client-resources'
+          - 'disabled'
+          - 'server-cluster-master'
+          - 'server-resources'
+          - 'server-runas-root'
+          - 'server-shcluster-member'
+          - 'server-shdeployer'
+          - 'uninstall-forwarder'
+          - 'upgrade-client'
+          - 'upgrade-server'
       fail-fast: false
 
     steps:
