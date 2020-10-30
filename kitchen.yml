@@ -84,6 +84,9 @@ suites:
                 source: tcp:123123
 
   - name: server-runas-root
+    lifecycle:
+      post_converge:
+        - local: sleep 120
     run_list:
       - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
@@ -97,6 +100,9 @@ suites:
         - path: test/integration/inspec/server_test.rb
 
   - name: server-runas-splunk
+    lifecycle:
+      post_converge:
+        - local: sleep 120
     run_list:
       - recipe[chef-splunk::default]
     attributes:
