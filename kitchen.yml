@@ -46,7 +46,7 @@ suites:
       inspec_tests:
         - path: test/integration/inspec/client_test.rb
 
-  - name: uninstall_forwarder
+  - name: uninstall-forwarder
     run_list:
       - recipe[test::uninstall_forwarder]
     attributes:
@@ -162,7 +162,6 @@ suites:
       - recipe[chef-splunk::default]
       - recipe[chef-splunk::disabled]
     attributes:
-    attributes:
       splunk:
         is_server: true
         accept_license: true
@@ -172,7 +171,7 @@ suites:
       inspec_tests:
         - path: test/integration/inspec/disabled_test.rb
 
-  - name: upgrade_server
+  - name: upgrade-server
     run_list:
       - recipe[test::file_locking_check]
       - recipe[test::upgrade]
@@ -187,7 +186,7 @@ suites:
       inspec_tests:
         - path: test/integration/inspec/upgrade_test.rb
 
-  - name: upgrade_client
+  - name: upgrade-client
     run_list:
       - recipe[test::file_locking_check]
       - recipe[test::upgrade]
