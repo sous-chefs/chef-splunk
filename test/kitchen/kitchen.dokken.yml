@@ -17,14 +17,14 @@ platforms:
   - name: debian-10
     driver:
       image: dokken/debian-10
-      pid_one_command: /sbin/init
+      pid_one_command: /bin/systemd
       volumes:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
 
   - name: debian-9
     driver:
       image: dokken/debian-9
-      pid_one_command: /sbin/init
+      pid_one_command: /bin/systemd
       volumes:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
 
