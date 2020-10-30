@@ -1,4 +1,3 @@
----
 name: ci
 
 on:
@@ -26,10 +25,9 @@ jobs:
       - name: Run yaml Lint
         uses: actionshub/yamllint@master
 
-  # Vagrant tests are very slow and often time out, so only check those services that
-  # don't run as root across centos and debian, ubuntu.
+  # Vagrant tests are very slow and often time out, so only check those suites that
+  # don't run as root across latest centos, debian and ubuntu.
   vagrant:
-    needs: [yamllint, delivery]
     runs-on: macos-latest
     strategy:
       matrix:
@@ -58,7 +56,6 @@ jobs:
 
   # Run most tests in dokken as it's quicker than Vagrant
   dokken:
-    needs: [yamllint, delivery]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -98,10 +95,3 @@ jobs:
         with:
           suite: ${{ matrix.suite }}
           os: ${{ matrix.os }}
-
-  final:
-    needs: [vagrant, dokken]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@master
