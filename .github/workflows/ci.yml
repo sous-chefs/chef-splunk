@@ -38,6 +38,8 @@ jobs:
         suite:
           - 'client-runas-splunk'
           - 'server-runas-splunk'
+          # Run the server in Vagrant too, as it splunk often does not keep running in Dokken.
+          - 'server-runas-root'
       fail-fast: false
 
     steps:
@@ -74,7 +76,6 @@ jobs:
           - 'disabled'
           - 'server-cluster-master'
           - 'server-resources'
-          - 'server-runas-root'
           - 'server-shcluster-member'
           - 'server-shdeployer'
           - 'uninstall-forwarder'
