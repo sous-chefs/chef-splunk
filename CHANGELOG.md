@@ -3,6 +3,9 @@
 This file is used to list changes made in each version of the splunk cookbook.
 
 ## 7.0.1 (2020-10-30)
+- Fix centos-6 and Amazon linux convergence by adding an only_if to only create systemd symlinks on systemd systems.
+
+## 7.0.1 (2020-10-30)
 - Moves most tests back to dokken and only run suites that change splunk user from root in vagrant.
 
 ## 7.0.0 (2020-10-22)
