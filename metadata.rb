@@ -11,6 +11,8 @@ supports 'redhat', '>= 6.9'
 supports 'centos', '>= 6.9'
 supports 'amazon'
 
+# please read the README.md section regarding data bag fallback if you
+# do not use chef-vault
 depends 'chef-vault', '~> 4.0'
 
 source_url 'https://github.com/chef-cookbooks/chef-splunk'
