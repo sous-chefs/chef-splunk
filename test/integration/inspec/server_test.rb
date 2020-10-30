@@ -42,12 +42,12 @@ control 'Enterprise Splunk' do
   end
 
   describe.one do
-    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
+    describe processes(Regexp.new('splunkd.*-p 8089 _internal_launch_under_systemd')) do
       its('users') { should include 'splunk' }
       its('users') { should_not include 'root' }
       it { should exist }
     end
-    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
+    describe processes(Regexp.new('splunkd.*-p 8089 _internal_launch_under_systemd')) do
       its('users') { should include 'root' }
       it { should exist }
     end
@@ -79,9 +79,18 @@ control 'Splunk admin password validation' do
     it { should exist }
   end
 
-  # the password used for validation here is from the test/fixture/data_bags/vault/splunk__default.rb
-  describe command("#{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
-    its('stderr') { should be_empty }
-    its('exit_status') { should eq 0 }
+  describe.one do
+    # the password used for validation here is from the test/fixture/data_bags/vault/splunk__default.rb
+    describe command("#{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
+      its('stderr') { should be_empty }
+      its('exit_status') { should eq 0 }
+    end
+
+    # When running as a service user, need to check logging into splunk as the service user or
+    # you get a permission denied when writing the token to ~/.splunk/.
+    describe command("sudo -u splunk #{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
+      its('stderr') { should be_empty }
+      its('exit_status') { should eq 0 }
+    end
   end
 end

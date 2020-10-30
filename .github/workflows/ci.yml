@@ -1,4 +1,3 @@
----
 name: ci
 
 on:
@@ -26,28 +25,21 @@ jobs:
       - name: Run yaml Lint
         uses: actionshub/yamllint@master
 
+  # Vagrant tests are very slow and often time out, so only check those suites that
+  # don't run as root across latest centos, debian and ubuntu.
   vagrant:
-    needs: [yamllint, delivery]
     runs-on: macos-latest
     strategy:
       matrix:
         os:
-          - 'debian-10'
           - 'centos-8'
+          - 'debian-10'
           - 'ubuntu-2004'
         suite:
-          - 'client'
-          - 'uninstall-forwarder'
-          - 'client-inputs-outputs'
+          - 'client-runas-splunk'
+          - 'server-runas-splunk'
+          # Run the server in Vagrant too, as it splunk often does not keep running in Dokken.
           - 'server-runas-root'
-          - 'server-cluster-master'
-          - 'server-shdeployer'
-          - 'server-shcluster-member'
-          - 'disabled'
-          - 'upgrade-server'
-          - 'upgrade-client'
-          - 'server-resources'
-          - 'client-resources'
       fail-fast: false
 
     steps:
@@ -64,9 +56,43 @@ jobs:
           suite: ${{ matrix.suite }}
           os: ${{ matrix.os }}
 
-  final:
-    needs: [vagrant]
+  # Run most tests in dokken as it's quicker than Vagrant
+  dokken:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - 'centos-7'
+          - 'centos-8'
+          - 'debian-10'
+          - 'debian-9'
+          - 'ubuntu-1604'
+          - 'ubuntu-1804'
+          - 'ubuntu-2004'
+        suite:
+          - 'client'
+          - 'client-inputs-outputs'
+          - 'client-resources'
+          - 'disabled'
+          - 'server-cluster-master'
+          - 'server-resources'
+          - 'server-shcluster-member'
+          - 'server-shdeployer'
+          - 'uninstall-forwarder'
+          - 'upgrade-client'
+          - 'upgrade-server'
+      fail-fast: false
+
     steps:
       - name: Check out code
         uses: actions/checkout@master
+      - name: Install Chef
+        uses: actionshub/chef-install@master
+      - name: Test Kitchen
+        uses: actionshub/test-kitchen@master
+        env:
+          CHEF_LICENSE: accept-no-persist
+          KITCHEN_LOCAL_YAML: test/kitchen/kitchen.dokken.yml
+        with:
+          suite: ${{ matrix.suite }}
+          os: ${{ matrix.os }}

@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 7.0.1 (2020-10-30)
+- Moves most tests back to dokken and only run suites that change splunk user from root in vagrant.
+
 ## 7.0.0 (2020-10-22)
 **BREAKING CHANGE**
 - sets umask when executing the `execute[splunk enable boot-start]` resource
