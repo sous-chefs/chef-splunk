@@ -1,6 +1,6 @@
 # chef-splunk Cookbook
 
-[![Build Status](https://travis-ci.org/chef-cookbooks/chef-splunk.svg?branch=master)](https://travis-ci.org/chef-cookbooks/chef-splunk)
+[![Chef-Splunk Actions Status](https://github.com/chef-cookbooks/chef-splunk/workflows/ci/badge.svg)](https://github.com/chef-cookbooks/chef-splunk/actions)
 [![Cookbook Version](https://img.shields.io/cookbook/v/chef-splunk.svg)](https://supermarket.chef.io/cookbooks/chef-splunk)
 
 This cookbook manages a Splunk Universal Forwarder (client) or a
@@ -50,10 +50,10 @@ post-convergence tests. The tested platforms are considered supported.
 This cookbook may work on other platforms or platform versions with or
 without modification.
 
-* Debian 8, 9
-* Ubuntu 16.04, 18.04
-* CentOS 6, 7, 8
-* Redhat 6, 7, 8
+* Debian 9, 10
+* Ubuntu 16.04, 18.04, 20.04
+* CentOS 7, 8
+* Redhat 7, 8
 
 By default, only 64-bit Splunk server and Splunk Universal Forwarder will be installed or upgraded by this cookbook.
 
@@ -796,6 +796,51 @@ environment):
 
 More information about Chef Vault is available on the
 [GitHub Project Page](https://github.com/Nordstrom/chef-vault).
+
+#### Chef-Vault encrypted data bag fallback
+The use of chef-vault is entirely optional. However, this cookbook maintains the structure of the encrypted data bags used throughout for those folks who prefer chef-vault. If you are one of the folks that don't want or can't use chef-vault, here is what you do.
+
+First, chef-vault has a built-in mechanism to fallback to a standard encrypted data bag. So, in order to make use of this, set the following attribute:
+
+```
+node.force_default['chef-vault']['data_bag_fallback'] = true
+```
+
+The next step is to create a standard encrypted data bag. There are only two requirements to ensure your encrypted data bag is compatible with this cookbook, as follows. The steps below are very similar to the previous section; however, you will notice these steps are not using chef-vault.
+
+- Your data bag must conform to the data bag that is created by chef-vault.
+- Data bag items created in the data bag must also conform to the names created by chef-vault.
+
+Create a data bag named `vault`, with an item `splunk_CHEF-ENVIRONMENT`, where
+`CHEF-ENVIRONMENT` is the `node.chef_environment` that the Splunk
+Enterprise server will be assigned. If environments are not used, use
+`_default`. For example in a Chef Repository (not in a cookbook):
+
+    % cat data_bags/vault/splunk__default.json
+    {
+      "id": "splunk__default",
+      "auth": "admin:notarealpassword",
+      "secret": "notarealsecret"
+    }
+
+Or with an environment, '`production`':
+
+    % cat data_bags/vault/splunk_production.json
+    {
+      "id": "splunk_production",
+      "auth": "admin:notarealpassword",
+      "secret": "notarealsecret"
+    }
+
+Below is an example for a node that is in the `_default` chef environment using the json file above.
+
+```
+knife data bag create vault
+knife data bag from file vault data_bags/vault/splunk__default.json --secret-file ~/.chef/your_encrypted_data_bag_secret.key
+```
+
+That's all there is to it!
+
 
 #### Web UI SSL
 

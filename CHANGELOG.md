@@ -2,8 +2,10 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## 7.0.1 (2020-10-30)
+## 7.0.2 (2020-10-30)
 - Fix centos-6 and Amazon linux convergence by adding an only_if to only create systemd symlinks on systemd systems.
+- Adds clarification text to README.md regarding chef-vault fallback to encrypted data bags
+- Changes the build status badge to track Actions status
 
 ## 7.0.1 (2020-10-30)
 - Moves most tests back to dokken and only run suites that change splunk user from root in vagrant.
