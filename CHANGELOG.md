@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 7.0.3 (2020-11-02)
+- Fixes logic in `#shcluster_members?` helper method with a regular expression match
+
 ## 7.0.2 (2020-10-30)
 - Fix centos-6 and Amazon linux convergence by adding an only_if to only create systemd symlinks on systemd systems.
 - Adds clarification text to README.md regarding chef-vault fallback to encrypted data bags
