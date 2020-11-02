@@ -231,7 +231,7 @@ module ChefSplunk
     end
 
     def shcluster_member?
-      shcluster_members_ipv4.include? node['ipaddress']
+      shcluster_members_ipv4.include? "host_port_pair:#{node['ipaddress']}:8089"
     end
 
     def shcaptain_elected?
