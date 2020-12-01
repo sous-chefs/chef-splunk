@@ -13,7 +13,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@master
       - name: Run Chef Delivery
-        uses: actionshub/chef-delivery@master
+        uses: actionshub/chef-delivery@main
         env:
           CHEF_LICENSE: accept-no-persist
 
@@ -23,7 +23,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@master
       - name: Run yaml Lint
-        uses: actionshub/yamllint@master
+        uses: actionshub/yamllint@main
 
   # Vagrant tests are very slow and often time out, so only check those suites that
   # don't run as root across latest centos, debian and ubuntu.
@@ -46,7 +46,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@master
       - name: Install Chef
-        uses: actionshub/chef-install@master
+        uses: actionshub/chef-install@main
       - name: Test Kitchen
         uses: actionshub/test-kitchen@master
         env:
@@ -87,7 +87,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@master
       - name: Install Chef
-        uses: actionshub/chef-install@master
+        uses: actionshub/chef-install@main
       - name: Test Kitchen
         uses: actionshub/test-kitchen@master
         env:
