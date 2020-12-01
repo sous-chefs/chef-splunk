@@ -23,6 +23,8 @@ vault_item = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_env
 node.run_state['splunk_auth_info'] = splunk_auth(vault_item['auth'])
 node.run_state['splunk_secret'] = vault_item['secret']
 
+include_recipe 'ec2-tags-ohai-plugin'
+
 if server?
   include_recipe 'chef-splunk::server'
 else

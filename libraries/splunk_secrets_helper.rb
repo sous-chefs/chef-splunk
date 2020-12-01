@@ -6,7 +6,7 @@ module SecretsHelper
     key = nil
     tag = "force_#{section}_#{secret_name.downcase}_rotation"
 
-    if node.tags.include?(tag) || file.nil?
+    if node.tags.include?(tag) || (node.respond_to?('ec2') && node.ec2.tags && node.ec2.tags.include?(tag)) || file.nil?
       ::Chef::Log.info("secret rotation occurred for #{secret_name.downcase} in [#{section}]")
       node.tags.delete(tag)
     elsif ::File.exist?(file)

@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## 7.1.0 (2020-11-30)
+- Adds cookbook dependency on [ec2-tags-ohai-plugin](https://supermarket.chef.io/cookbooks/ec2-tags-ohai-plugin) to read EC2 tags as a secondary detection method for rotating Splunk secrets
+
 ## 7.0.3 (2020-11-02)
 - Fixes Issue #128 logic in `#shcluster_members?` helper method with a better match
 
