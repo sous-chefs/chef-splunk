@@ -11,34 +11,30 @@ platforms:
     driver:
       pid_one_command: /sbin/init
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
 
   - name: debian-9
     driver:
       pid_one_command: /sbin/init
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
 
   - name: centos-8
     driver:
       pid_one_command: /usr/lib/systemd/systemd
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
 
   - name: centos-7
     driver:
       pid_one_command: /usr/lib/systemd/systemd
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
 
   - name: ubuntu-20.04
     driver:
       pid_one_command: /bin/systemd
 
   - name: ubuntu-18.04
-    driver:
-      pid_one_command: /bin/systemd
-
-  - name: ubuntu-16.04
     driver:
       pid_one_command: /bin/systemd

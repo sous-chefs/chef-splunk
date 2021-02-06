@@ -1,6 +1,7 @@
 ---
 provisioner:
   deprecations_as_errors: true
+  multiple_converge: 2
   chef_license: accept
   data_bags_path: test/fixtures/data_bags
   product_name: chef
@@ -19,6 +20,18 @@ provisioner:
         startwebserver: 1
       web_port: 8000
 
+verifier: inspec
+
+platforms:
+  name:
+    - amazonlinux-2
+    - debian-9
+    - debian-10
+    - centos-7
+    - centos-8
+    - ubuntu-18.04
+    - ubuntu-20.04
+
 suites:
   - name: client
     run_list:
@@ -27,10 +40,6 @@ suites:
     attributes:
       splunk:
         accept_license: true
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/client_test.rb
 
   - name: client-runas-splunk
     run_list:
@@ -41,10 +50,6 @@ suites:
           runasroot: false
         is_server: false
         accept_license: true
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/client_test.rb
 
   - name: uninstall-forwarder
     run_list:
@@ -52,19 +57,11 @@ suites:
     attributes:
       splunk:
         accept_license: true
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/uninstall_forwarder_test.rb
 
   - name: client-inputs-outputs
     run_list:
       - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/client_inputs_outputs_test.rb
     attributes:
       splunk:
         accept_license: true
@@ -94,10 +91,6 @@ suites:
       splunk:
         is_server: true
         accept_license: true
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/server_test.rb
 
   - name: server-runas-splunk
     lifecycle:
@@ -111,10 +104,6 @@ suites:
           runasroot: false
         is_server: true
         accept_license: true
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/server_test.rb
 
   - name: server-cluster-master
     run_list:
@@ -129,10 +118,6 @@ suites:
           mode: master
           replication_factor: 2
           search_factor: 1
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/server_cluster_master_test.rb
 
   - name: server-shdeployer
     run_list:
@@ -172,10 +157,6 @@ suites:
         is_server: true
         accept_license: true
         disabled: true
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/disabled_test.rb
 
   - name: upgrade-server
     run_list:
@@ -187,10 +168,6 @@ suites:
         upgrade_enabled: true
         accept_license: true
         is_server: true
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/upgrade_test.rb
 
   - name: upgrade-client
     run_list:
@@ -202,10 +179,6 @@ suites:
         upgrade_enabled: true
         accept_license: true
         is_server: false
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/upgrade_test.rb
 
   - name: server_resources
     run_list:
@@ -217,10 +190,6 @@ suites:
       splunk:
         accept_license: true
         is_server: true
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/custom_resources_test.rb
 
   - name: client_resources
     run_list:
@@ -232,7 +201,3 @@ suites:
       splunk:
         accept_license: true
         is_server: false
-    verifier:
-      name: inspec
-      inspec_tests:
-        - path: test/integration/inspec/custom_resources_test.rb
