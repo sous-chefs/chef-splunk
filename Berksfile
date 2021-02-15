@@ -4,5 +4,5 @@ metadata
 
 # this group can be excluded by berks; for example: `berks upload --except test`
 group :test do
-  cookbook 'test', path: './test/fixtures/cookbooks/test'
+  cookbook 'splunk-test', path: './test/cookbooks/splunk-test'
 end
