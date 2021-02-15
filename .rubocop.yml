@@ -1,2 +1,6 @@
----
-inherit_from: .rubocop_todo.yml
+AllCops:
+  TargetChefVersion: 16.latest
+Chef/Modernize/FoodcriticComments:
+  Enabled: true
+Chef/Style/CopyrightCommentFormat:
+  Enabled: true
