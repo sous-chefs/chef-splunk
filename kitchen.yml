@@ -4,7 +4,7 @@ provisioner:
   multiple_converge: 2
   chef_license: accept
   data_bags_path: test/fixtures/data_bags
-  product_name: chef
+  # product_name: chef
   client_rb:
     environment: _default
     log_level: :debug
@@ -23,25 +23,24 @@ provisioner:
 verifier: inspec
 
 platforms:
-  name:
-    - amazonlinux-2
-    - debian-9
-    - debian-10
-    - centos-7
-    - centos-8
-    - ubuntu-18.04
-    - ubuntu-20.04
+  - name: amazonlinux-2
+  - name: debian-9
+  - name: debian-10
+  - name: centos-7
+  - name: centos-8
+  - name: ubuntu-18.04
+  - name: ubuntu-20.04
 
 suites:
   - name: client
     run_list:
-      - recipe[test::file_locking_check]
+      - recipe[splunk-test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
         accept_license: true
 
-  - name: client-runas-splunk
+  - name: client_runas_splunk
     run_list:
       - recipe[chef-splunk::default]
     attributes:
@@ -51,16 +50,16 @@ suites:
         is_server: false
         accept_license: true
 
-  - name: uninstall-forwarder
+  - name: uninstall_forwarder
     run_list:
-      - recipe[test::uninstall_forwarder]
+      - recipe[splunk-test::uninstall_forwarder]
     attributes:
       splunk:
         accept_license: true
 
-  - name: client-inputs-outputs
+  - name: client_inputs_outputs
     run_list:
-      - recipe[test::file_locking_check]
+      - recipe[splunk-test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
@@ -80,19 +79,19 @@ suites:
                 sourcetype: syslog
                 source: tcp:123123
 
-  - name: server-runas-root
+  - name: server_runas_root
     lifecycle:
       post_converge:
         - local: sleep 120
     run_list:
-      - recipe[test::file_locking_check]
+      - recipe[splunk-test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
         is_server: true
         accept_license: true
 
-  - name: server-runas-splunk
+  - name: server_runas_splunk
     lifecycle:
       post_converge:
         - local: sleep 120
@@ -105,9 +104,9 @@ suites:
         is_server: true
         accept_license: true
 
-  - name: server-cluster-master
+  - name: server_cluster_master
     run_list:
-      - recipe[test::file_locking_check]
+      - recipe[splunk-test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
@@ -119,9 +118,9 @@ suites:
           replication_factor: 2
           search_factor: 1
 
-  - name: server-shdeployer
+  - name: server_shdeployer
     run_list:
-      - recipe[test::file_locking_check]
+      - recipe[splunk-test::file_locking_check]
       - recipe[chef-splunk]
     attributes:
       splunk:
@@ -135,9 +134,9 @@ suites:
       root_path: /opt/verifier
       sudo: false
 
-  - name: server-shcluster-member
+  - name: server_shcluster_member
     run_list:
-      - recipe[test::file_locking_check]
+      - recipe[splunk-test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
@@ -149,7 +148,7 @@ suites:
 
   - name: disabled
     run_list:
-      - recipe[test::file_locking_check]
+      - recipe[splunk-test::file_locking_check]
       - recipe[chef-splunk::default]
       - recipe[chef-splunk::disabled]
     attributes:
@@ -158,10 +157,10 @@ suites:
         accept_license: true
         disabled: true
 
-  - name: upgrade-server
+  - name: upgrade_server
     run_list:
-      - recipe[test::file_locking_check]
-      - recipe[test::upgrade]
+      - recipe[splunk-test::file_locking_check]
+      - recipe[splunk-test::upgrade]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
@@ -169,10 +168,10 @@ suites:
         accept_license: true
         is_server: true
 
-  - name: upgrade-client
+  - name: upgrade_client
     run_list:
-      - recipe[test::file_locking_check]
-      - recipe[test::upgrade]
+      - recipe[splunk-test::file_locking_check]
+      - recipe[splunk-test::upgrade]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
@@ -182,10 +181,10 @@ suites:
 
   - name: server_resources
     run_list:
-      - recipe[test::file_locking_check]
+      - recipe[splunk-test::file_locking_check]
       - recipe[chef-splunk::default]
-      - recipe[test::splunk_app]
-      - recipe[test::splunk_index]
+      - recipe[splunk-test::splunk_app]
+      - recipe[splunk-test::splunk_index]
     attributes:
       splunk:
         accept_license: true
@@ -193,10 +192,10 @@ suites:
 
   - name: client_resources
     run_list:
-      - recipe[test::file_locking_check]
+      - recipe[splunk-test::file_locking_check]
       - recipe[chef-splunk::default]
-      - recipe[test::splunk_app]
-      - recipe[test::splunk_monitor]
+      - recipe[splunk-test::splunk_app]
+      - recipe[splunk-test::splunk_monitor]
     attributes:
       splunk:
         accept_license: true
