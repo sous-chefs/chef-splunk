@@ -1,4 +1,8 @@
 ---
+driver:
+  name: vagrant
+  boot_timeout: 600
+
 provisioner:
   deprecations_as_errors: true
   multiple_converge: 2
@@ -200,3 +204,18 @@ suites:
       splunk:
         accept_license: true
         is_server: false
+
+# client
+# client_runas_splunk
+# uninstall_forwarder
+# client_inputs_outputs
+# server_runas_root
+# server_runas_splunk
+# server_cluster_master
+# server_shdeployer
+# server_shcluster_member
+# disabled
+# upgrade_server
+# upgrade_client
+# server_resources
+# client_resources

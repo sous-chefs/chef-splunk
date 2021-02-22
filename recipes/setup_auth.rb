@@ -29,14 +29,9 @@ include_recipe 'chef-splunk'
 
 _user, pw = node.run_state['splunk_auth_info'].split(':')
 
-file '.user-seed.conf' do
-  action splunk_login_successful? ? :nothing : :delete
-  path "#{splunk_dir}/etc/system/local/.user-seed.conf"
-  subscribes :touch, 'file[user-seed.conf]', :immediately
-end
-
 # Splunk will delete this file the first time splunk is started
 # it's a secure way of automating the initial admin password when installing Splunk
+# I dont believe this happens anymore. But when given a password here it re-writes the file to hold the hash of the password.
 file 'user-seed.conf' do
   path "#{splunk_dir}/etc/system/local/user-seed.conf"
   content lazy {
