@@ -8,12 +8,11 @@ source_url        'https://github.com/sous-chefs/chef-splunk'
 issues_url        'https://github.com/sous-chefs/chef-splunk/issues'
 chef_version      '>= 13.11'
 
-# pins are temporary
 supports 'amazon'
-supports 'centos', '>= 7.0'
-supports 'debian', '>= 9.0'
+supports 'centos'
+supports 'debian'
 supports 'redhat'
-supports 'ubuntu', '>= 18.04'
+supports 'ubuntu'
 
 # please read the README.md section regarding data bag fallback if you
 # do not use chef-vault

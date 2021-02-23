@@ -59,7 +59,7 @@ This cookbook may work on other platforms or platform versions with or
 without modification.
 
 - Debian 9, 10
-- Ubuntu 16.04, 18.04, 20.04
+- Ubuntu 18.04, 20.04
 - CentOS 7, 8
 - Redhat 7, 8
 
