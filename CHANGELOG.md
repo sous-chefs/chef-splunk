@@ -5,6 +5,8 @@ This file is used to list changes made in each version of the splunk cookbook.
 ## Unreleased
 
 - Sous Chefs Adoption
+- Re-vamp inspec tests for test-kitchen
+- Various cookstyle & spec fixes
 
 ## 7.1.0 (2020-11-30)
 
