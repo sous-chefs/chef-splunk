@@ -41,25 +41,27 @@ jobs:
       matrix:
         os:
           - amazonlinux-2
-          - debian-9
-          - debian-10
           - centos-7
           - centos-8
+          - debian-10
+          - debian-9
           - ubuntu-1804
           - ubuntu-2004
         suite:
-          - 'client'
-          - 'uninstall-forwarder'
           - 'client-inputs-outputs'
-          - 'server-runas-root'
-          - 'server-cluster-master'
-          - 'server-shdeployer'
-          - 'server-shcluster-member'
-          - 'disabled'
-          - 'upgrade-server'
-          - 'upgrade-client'
-          - 'server-resources'
           - 'client-resources'
+          - 'client-runas-splunk'
+          - 'client'
+          - 'disabled'
+          - 'server-cluster-master'
+          - 'server-resources'
+          - 'server-runas-root'
+          - 'server-runas-splunk'
+          - 'server-shcluster-member'
+          - 'server-shdeployer'
+          - 'uninstall-forwarder'
+          - 'upgrade-client'
+          - 'upgrade-server'
       fail-fast: false
 
     steps:

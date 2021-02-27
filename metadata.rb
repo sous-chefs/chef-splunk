@@ -17,5 +17,5 @@ supports 'ubuntu'
 # please read the README.md section regarding data bag fallback if you
 # do not use chef-vault
 depends 'apt'
-depends 'chef-vault', '~> 4.0'
-depends 'ec2-tags-ohai-plugin', '~> 0.2.4'
+depends 'chef-vault', '>= 4.0'
+depends 'ec2-tags-ohai-plugin', '>= 0.2.4'
