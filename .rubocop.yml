@@ -1,4 +1,0 @@
-AllCops:
-  TargetChefVersion: 16.latest
-Chef/Modernize/FoodcriticComments:
-  Enabled: true

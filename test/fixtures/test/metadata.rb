@@ -1,4 +1,4 @@
-name 'splunk-test'
+name 'test'
 version '0.0.2'
 
 depends 'chef-splunk'
