@@ -16,14 +16,14 @@ platforms:
       image: dokken/amazonlinux-2
       pid_one_command: /usr/lib/systemd/systemd
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
 
   - name: debian-9
     driver:
       image: dokken/debian-9
       pid_one_command: /bin/systemd
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
 
@@ -32,7 +32,7 @@ platforms:
       image: dokken/debian-10
       pid_one_command: /bin/systemd
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
 
@@ -41,21 +41,21 @@ platforms:
       image: dokken/centos-7
       pid_one_command: /sbin/init
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
 
   - name: centos-8
     driver:
       image: dokken/centos-8
       pid_one_command: /usr/lib/systemd/systemd
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
 
   - name: ubuntu-18.04
     driver:
       image: dokken/ubuntu-18.04
       pid_one_command: /bin/systemd
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
 
@@ -64,6 +64,6 @@ platforms:
       image: dokken/ubuntu-20.04
       pid_one_command: /bin/systemd
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
