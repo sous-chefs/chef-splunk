@@ -95,6 +95,7 @@ suites:
       post_converge:
         - local: sleep 120
     run_list:
+      - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]
     attributes:
       splunk:
