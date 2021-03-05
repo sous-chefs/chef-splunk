@@ -111,7 +111,7 @@ end
 
 ruby_block 'captain elected' do
   block do
-    node.default['splunk']['shclustering']['captain_elected'] = true
+    node.normal['splunk']['shclustering']['captain_elected'] = true
   end
   action :nothing
   subscribes :run, 'execute[bootstrap-shcluster-captain]'
