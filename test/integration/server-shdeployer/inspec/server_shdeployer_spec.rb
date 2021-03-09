@@ -3,8 +3,8 @@ control 'Splunk Search Head Deployer' do
   only_if { os.linux? }
 
   describe 'chef-splunk::server should run as "root" user' do
-    describe command('ps aux | grep -E "splunkd.+ -p" | head -1 | awk \'{print $1}\'') do
-      its(:stdout) { should match(/root/) }
+    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
+      its('users') { should include 'root' }
     end
   end
 
