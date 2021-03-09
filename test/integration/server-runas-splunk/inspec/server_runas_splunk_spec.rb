@@ -7,7 +7,7 @@ control 'Enterprise Splunk' do
 
   describe 'chef-splunk::server should run as "splunk" user' do
     describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
-      its('users') { should include 'root' }
+      its('users') { should include 'splunk' }
     end
   end
 
