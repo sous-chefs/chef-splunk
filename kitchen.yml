@@ -1,7 +1,6 @@
 ---
 provisioner:
   deprecations_as_errors: true
-  multiple_converge: 2
   chef_license: accept
   data_bags_path: test/integration/data_bags
   client_rb:
