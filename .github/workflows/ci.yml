@@ -1,6 +1,7 @@
+---
 name: ci
 
-on:
+"on":
   pull_request:
   push:
     branches:
@@ -13,7 +14,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@master
       - name: Run Chef Delivery
-        uses: actionshub/chef-delivery@main
+        uses: actionshub/chef-delivery@master
         env:
           CHEF_LICENSE: accept-no-persist
 
@@ -23,59 +24,39 @@ jobs:
       - name: Check out code
         uses: actions/checkout@master
       - name: Run yaml Lint
-        uses: actionshub/yamllint@main
+        uses: actionshub/yamllint@master
 
-  # Vagrant tests are very slow and often time out, so only check those suites that
-  # don't run as root across latest centos, debian and ubuntu.
-  vagrant:
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        os:
-          - 'centos-8'
-          - 'debian-10'
-          - 'ubuntu-2004'
-        suite:
-          - 'client-runas-splunk'
-          - 'server-runas-splunk'
-          # Run the server in Vagrant too, as it splunk often does not keep running in Dokken.
-          - 'server-runas-root'
-      fail-fast: false
-
+  mdl:
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@master
-      - name: Install Chef
-        uses: actionshub/chef-install@main
-      - name: Test Kitchen
-        uses: actionshub/test-kitchen@master
-        env:
-          CHEF_LICENSE: accept-no-persist
-          KITCHEN_LOCAL_YAML: test/kitchen/kitchen.vagrant.yml
-        with:
-          suite: ${{ matrix.suite }}
-          os: ${{ matrix.os }}
+      - name: Run Markdown Lint
+        uses: actionshub/markdownlint@master
 
-  # Run most tests in dokken as it's quicker than Vagrant
   dokken:
+    needs: [mdl, yamllint, delivery]
     runs-on: ubuntu-latest
     strategy:
       matrix:
         os:
-          - 'centos-7'
-          - 'centos-8'
-          - 'debian-10'
-          - 'debian-9'
-          - 'ubuntu-1604'
-          - 'ubuntu-1804'
-          - 'ubuntu-2004'
+          - amazonlinux-2
+          - centos-7
+          - centos-8
+          - debian-10
+          - debian-9
+          - ubuntu-1804
+          - ubuntu-2004
         suite:
-          - 'client'
           - 'client-inputs-outputs'
           - 'client-resources'
+          - 'client-runas-splunk'
+          - 'client'
           - 'disabled'
           - 'server-cluster-master'
           - 'server-resources'
+          - 'server-runas-root'
+          - 'server-runas-splunk'
           - 'server-shcluster-member'
           - 'server-shdeployer'
           - 'uninstall-forwarder'
@@ -87,12 +68,25 @@ jobs:
       - name: Check out code
         uses: actions/checkout@master
       - name: Install Chef
-        uses: actionshub/chef-install@main
-      - name: Test Kitchen
-        uses: actionshub/test-kitchen@master
+        uses: actionshub/chef-install@master
+      - name: Dokken
+        uses: actionshub/kitchen-dokken@master
         env:
           CHEF_LICENSE: accept-no-persist
-          KITCHEN_LOCAL_YAML: test/kitchen/kitchen.dokken.yml
+          KITCHEN_LOCAL_YAML: kitchen.dokken.yml
         with:
           suite: ${{ matrix.suite }}
           os: ${{ matrix.os }}
+      - name: Print debug output on failure
+        if: failure()
+        run: |
+            set -x
+            sudo journalctl -l --since today
+            KITCHEN_LOCAL_YAML=kitchen.dokken.yml /usr/bin/kitchen exec ${{ matrix.suite }}-${{ matrix.os }} -c "journalctl -l"
+
+  final:
+    needs: [dokken]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@master

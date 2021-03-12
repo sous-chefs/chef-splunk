@@ -32,11 +32,6 @@ describe 'chef-splunk::setup_auth' do
       it 'created user-seed.conf' do
         expect(chef_run).to create_file('user-seed.conf').with(mode: '0640')
       end
-
-      it 'created .user-seed.conf only when notified after user-seed.conf is processed' do
-        expect(chef_run).to delete_file('.user-seed.conf')
-        expect(chef_run.file('.user-seed.conf')).to subscribe_to('file[user-seed.conf]').on(:touch).immediately
-      end
     end
 
     context 'setup auth is false' do

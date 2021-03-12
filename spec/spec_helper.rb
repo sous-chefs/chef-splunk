@@ -3,8 +3,8 @@ require 'chefspec/berkshelf'
 require 'shared_examples'
 require_relative 'shared_contexts'
 
-FIXTURES_DIR = ::File.join('test', 'fixtures')
-DATA_BAG_DIR = ::File.join(FIXTURES_DIR, 'data_bags')
+TEST_DIR = ::File.join('test', 'integration')
+DATA_BAG_DIR = ::File.join(TEST_DIR, 'data_bags')
 
 def create_data_bag_item(server, bag, item)
   db_path = ::File.join(DATA_BAG_DIR, bag, "#{item}.json")
@@ -17,7 +17,7 @@ RSpec.configure do |config|
   config.log_level = :error         # Avoid deprecation notice SPAM
 
   config.platform = 'ubuntu'        # Avoid warnings in ChefSpec
-  config.version = '16.04'          # Avoid warnings in ChefSpec
+  config.version = '18.04'          # Avoid warnings in ChefSpec
   config.example_status_persistence_file_path = 'spec/reports/examples.txt'
   config.alias_it_should_behave_like_to :it_performs, 'performs'
   config.include_context 'command stubs'

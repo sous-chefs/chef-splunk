@@ -5,6 +5,12 @@ control 'Enterprise Splunk' do
   title 'Verify Enterprise Splunk server installation'
   only_if { os.linux? }
 
+  describe 'chef-splunk::server should run as "splunk" user' do
+    describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
+      its('users') { should include 'splunk' }
+    end
+  end
+
   describe 'chef-splunk::server listening ports' do
     describe port(8089) do
       it { should be_listening }
@@ -72,25 +78,32 @@ control 'Splunk admin password validation' do
   only_if { os.linux? }
 
   describe file("#{SPLUNK_HOME}/etc/system/local/user-seed.conf") do
-    it { should_not exist }
-  end
-
-  describe file("#{SPLUNK_HOME}/etc/system/local/.user-seed.conf") do
     it { should exist }
+    its('content') { should match /HASHED_PASSWORD/ }
   end
 
   describe.one do
-    # the password used for validation here is from the test/fixture/data_bags/vault/splunk__default.rb
-    describe command("#{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
-      its('stderr') { should be_empty }
-      its('exit_status') { should eq 0 }
-    end
+    if os.debian?
+      # When running as a service user, need to check logging into splunk as the service user or
+      # you get a permission denied when writing the token to ~/.splunk/.
+      describe command("sudo -u splunk sh -c 'export HOME=#{SPLUNK_HOME} && #{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword'") do
+        its('stderr') { should be_empty }
+        its('exit_status') { should eq 0 }
+      end
+    else
 
-    # When running as a service user, need to check logging into splunk as the service user or
-    # you get a permission denied when writing the token to ~/.splunk/.
-    describe command("sudo -u splunk #{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
-      its('stderr') { should be_empty }
-      its('exit_status') { should eq 0 }
+      # the password used for validation here is from the test/fixture/data_bags/vault/splunk__default.rb
+      describe command("#{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
+        its('stderr') { should be_empty }
+        its('exit_status') { should eq 0 }
+      end
+
+      # When running as a service user, need to check logging into splunk as the service user or
+      # you get a permission denied when writing the token to ~/.splunk/.
+      describe command("sudo -u splunk #{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
+        its('stderr') { should be_empty }
+        its('exit_status') { should eq 0 }
+      end
     end
   end
 end
