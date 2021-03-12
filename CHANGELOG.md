@@ -2,6 +2,8 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## Unreleased
+
 ## 7.2.0 - *2021-03-12*
 
 - Sous Chefs Adoption
