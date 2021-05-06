@@ -4,6 +4,13 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
+- resolved cookstyle error: recipes/service.rb:57:1 convention: `Layout/EmptyLinesAroundBlockBody`
+- resolved cookstyle error: recipes/service.rb:57:1 convention: `Layout/TrailingWhitespace`
+- resolved cookstyle error: recipes/service.rb:57:5 convention: `Style/RedundantBegin`
+- resolved cookstyle error: recipes/service.rb:58:3 convention: `Layout/IndentationWidth`
+- resolved cookstyle error: recipes/service.rb:59:5 convention: `Layout/RescueEnsureAlignment`
+- resolved cookstyle error: recipes/service.rb:61:1 convention: `Layout/EmptyLinesAroundBlockBody`
+- resolved cookstyle error: recipes/service.rb:61:1 convention: `Layout/TrailingWhitespace`
 ## 7.2.0 - *2021-03-12*
 
 - Sous Chefs Adoption

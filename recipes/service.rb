@@ -54,11 +54,9 @@ include_recipe 'chef-splunk::setup_auth' if setup_auth?
 ruby_block 'splunk_fix_file_ownership' do
   action :run
   block do
-    begin
-      FileUtils.chown_R(splunk_runas_user, splunk_runas_user, splunk_dir)
-    rescue Errno::ENOENT => e
-      Chef::Log.warn "Possible transient file encountered in Splunk while setting ownership:\n#{e.message}"
-    end
+    FileUtils.chown_R(splunk_runas_user, splunk_runas_user, splunk_dir)
+  rescue Errno::ENOENT => e
+    Chef::Log.warn "Possible transient file encountered in Splunk while setting ownership:\n#{e.message}"
   end
   subscribes :run, 'service[splunk]', :before
 end
