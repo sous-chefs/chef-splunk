@@ -4,6 +4,10 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
+- resolved cookstyle error: resources/splunk_app.rb:1:1 refactor: `Chef/Deprecations/ResourceWithoutUnifiedTrue`
+- resolved cookstyle error: resources/splunk_index.rb:1:1 refactor: `Chef/Deprecations/ResourceWithoutUnifiedTrue`
+- resolved cookstyle error: resources/splunk_installer.rb:1:1 refactor: `Chef/Deprecations/ResourceWithoutUnifiedTrue`
+- resolved cookstyle error: resources/splunk_monitor.rb:1:1 refactor: `Chef/Deprecations/ResourceWithoutUnifiedTrue`
 ## 7.2.0 - *2021-03-12*
 
 - Sous Chefs Adoption
