@@ -43,6 +43,12 @@ platforms:
       pid_one_command: /sbin/init
       volumes:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
+    provisioner:
+      attributes:
+        splunk:
+          server:
+            url: https://download.splunk.com/products/splunk/releases/8.0.9/linux/splunk-8.0.9-153839c8b72f-linux-2.6-x86_64.rpm
+            version: 8.0.9
 
   - name: centos-8
     driver:
