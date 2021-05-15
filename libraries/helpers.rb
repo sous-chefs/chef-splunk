@@ -270,7 +270,7 @@ module ChefSplunk
 
     def systemd?
       ps1 = shell_out('ps --no-headers 1')
-      ps1.stdout.strip.match?(/systemd$/)
+      ps1.stdout.strip.match?(/systemd/)
     end
   end
 end
