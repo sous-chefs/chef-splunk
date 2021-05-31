@@ -62,6 +62,7 @@ without modification.
 - Ubuntu 18.04, 20.04
 - CentOS 7, 8
 - Redhat 7, 8
+- openSUSE Leap 15
 
 By default, only 64-bit Splunk server and Splunk Universal Forwarder will be installed or upgraded by this cookbook.
 

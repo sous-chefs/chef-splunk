@@ -62,6 +62,13 @@ action :run do
       version new_resource.version unless ::File.exist?(cached_package)
       notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
+  elsif platform_family?('suse')
+    rpm_package new_resource.name do
+      package_name new_resource.package_name
+      source cached_package
+      version new_resource.version unless ::File.exist?(cached_package)
+      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
+    end
   else
     package new_resource.name do
       package_name new_resource.package_name
@@ -79,6 +86,14 @@ action :upgrade do
 
   if platform_family?('debian')
     dpkg_package new_resource.name do
+      action :upgrade
+      package_name new_resource.package_name
+      source cached_package
+      version new_resource.version unless ::File.exist?(cached_package)
+      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
+    end
+  elsif platform_family?('suse')
+    rpm_package new_resource.name do
       action :upgrade
       package_name new_resource.package_name
       source cached_package

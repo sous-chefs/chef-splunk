@@ -29,6 +29,7 @@ platforms:
   - name: debian-10
   - name: ubuntu-18.04
   - name: ubuntu-20.04
+  - name: opensuse-leap-15
 
 suites:
   - name: client
