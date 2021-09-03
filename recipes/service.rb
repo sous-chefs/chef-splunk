@@ -92,7 +92,7 @@ end
 
 default_service_action = if node['splunk']['disabled'] == true
                            :stop
-                         elsif node['init_package'] == 'systemd'
+                         elsif systemd?
                            %i(start enable)
                          else
                            :start
