@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 provides :splunk_installer
+unified_mode true
 resource_name :splunk_installer
 
 property :url, String
