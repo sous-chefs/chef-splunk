@@ -20,7 +20,7 @@ describe 'chef-splunk::server' do
     # since the service[splunk] resource is created in the chef-splunk cookbook and
     # the `include_recipe` is mocked in this chefspec, we need to insert
     # a generic mock-up into the Resource collection so notifications can be checked
-    let(:chef_run) do
+    cached(:chef_run) do
       runner.converge(described_recipe) do
         runner.resource_collection.insert(
           Chef::Resource::Service.new('splunk', runner.run_context)
@@ -41,7 +41,7 @@ describe 'chef-splunk::server' do
     # since the service[splunk] resource is created in the chef-splunk cookbook and
     # the `include_recipe` is mocked in this chefspec, we need to insert
     # a generic mock-up into the Resource collection so notifications can be checked
-    let(:chef_run) do
+    cached(:chef_run) do
       runner.node.force_default['dev_mode'] = true
       runner.node.force_default['splunk']['accept_license'] = true
       runner.node.force_default['splunk']['mgmt_port'] = '9089'

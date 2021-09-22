@@ -5,6 +5,7 @@ describe 'chef-splunk::setup_auth' do
     let(:runner) do
       ChefSpec::ServerRunner.new do |node, server|
         create_data_bag_item(server, 'vault', 'splunk__default')
+        node.force_default['chef-vault']['databag_fallback'] = true
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['accept_license'] = true
@@ -17,7 +18,7 @@ describe 'chef-splunk::setup_auth' do
       # since the service[splunk] resource is created in the chef-splunk cookbook and
       # the `include_recipe` is mocked in this chefspec, we need to insert
       # a generic mock-up into the Resource collection so notifications can be checked
-      let(:chef_run) do
+      cached(:chef_run) do
         runner.converge(described_recipe) do
           runner.resource_collection.insert(
             Chef::Resource::Service.new('splunk', runner.run_context)
@@ -38,7 +39,7 @@ describe 'chef-splunk::setup_auth' do
       # since the service[splunk] resource is created in the chef-splunk cookbook and
       # the `include_recipe` is mocked in this chefspec, we need to insert
       # a generic mock-up into the Resource collection so notifications can be checked
-      let(:chef_run) do
+      cached(:chef_run) do
         runner.converge(described_recipe) do
           runner.resource_collection.insert(
             Chef::Resource::Service.new('splunk', runner.run_context)

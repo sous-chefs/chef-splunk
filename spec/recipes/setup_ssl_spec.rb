@@ -21,7 +21,7 @@ describe 'chef-splunk::setup_ssl' do
     end
 
     context 'default webui port' do
-      let(:chef_run) do
+      cached(:chef_run) do
         runner.converge(described_recipe) do
           runner.resource_collection.insert(
             Chef::Resource::Service.new('splunk', runner.run_context)
@@ -69,7 +69,7 @@ describe 'chef-splunk::setup_ssl' do
     end
 
     context 'alternative webui port' do
-      let(:chef_run) do
+      cached(:chef_run) do
         runner.node.force_default['splunk']['web_port'] = '7777'
         runner.converge(described_recipe) do
           runner.resource_collection.insert(

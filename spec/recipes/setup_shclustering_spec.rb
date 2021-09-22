@@ -5,7 +5,7 @@ describe 'chef-splunk::setup_shclustering' do
   let(:server_conf_file) { "#{splunk_local_dir}/server.conf" }
 
   let(:deployer_node) do
-    stub_node(platform: 'ubuntu', version: '16.04') do |node|
+    stub_node(platform: 'ubuntu', version: '20.04') do |node|
       node.automatic['fqdn'] = 'deploy.cluster.example.com'
       node.automatic['ipaddress'] = '192.168.0.10'
       node.force_default['dev_mode'] = true
@@ -32,7 +32,7 @@ describe 'chef-splunk::setup_shclustering' do
     # since the service[splunk] resource is created in the chef-splunk cookbook and
     # the `include_recipe` is mocked in this chefspec, we need to insert
     # a generic mock-up into the Resource collection so notifications can be checked
-    let(:chef_run) do
+    cached(:chef_run) do
       runner.converge(described_recipe) do
         runner.resource_collection.insert(
           Chef::Resource::Service.new('splunk', runner.run_context)
@@ -62,7 +62,7 @@ describe 'chef-splunk::setup_shclustering' do
     # since the service[splunk] resource is created in the chef-splunk cookbook and
     # the `include_recipe` is mocked in this chefspec, we need to insert
     # a generic mock-up into the Resource collection so notifications can be checked
-    let(:chef_run) do
+    cached(:chef_run) do
       runner.converge(described_recipe) do
         runner.resource_collection.insert(
           Chef::Resource::Service.new('splunk', runner.run_context)
@@ -96,7 +96,7 @@ describe 'chef-splunk::setup_shclustering' do
     # since the service[splunk] resource is created in the chef-splunk cookbook and
     # the `include_recipe` is mocked in this chefspec, we need to insert
     # a generic mock-up into the Resource collection so notifications can be checked
-    let(:chef_run) do
+    cached(:chef_run) do
       runner.converge(described_recipe) do
         runner.resource_collection.insert(
           Chef::Resource::Service.new('splunk', runner.run_context)

@@ -21,7 +21,7 @@ describe 'chef-splunk::setup_clustering' do
   end
 
   context 'default server settings' do
-    let(:chef_run) do
+    cached(:chef_run) do
       ChefSpec::ServerRunner.new do |node|
         node.force_default['dev_mode'] = true
         node.force_default['splunk']['is_server'] = true
@@ -49,7 +49,7 @@ describe 'chef-splunk::setup_clustering' do
     end
 
     context 'invalid cluster mode settings' do
-      let(:chef_run) do
+      cached(:chef_run) do
         runner.node.force_default['splunk']['clustering']['mode'] = 'foo'
         runner.converge(described_recipe) do
           runner.resource_collection.insert(
@@ -64,7 +64,7 @@ describe 'chef-splunk::setup_clustering' do
     end
 
     context 'cluster master mode' do
-      let(:chef_run) do
+      cached(:chef_run) do
         runner.node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
         runner.node.run_state['splunk_secret'] = 'notarealsecret'
         runner.node.force_default['splunk']['clustering']['mode'] = 'master'
@@ -80,7 +80,7 @@ describe 'chef-splunk::setup_clustering' do
       end
 
       context 'multisite clustering with default settings' do
-        let(:chef_run) do
+        cached(:chef_run) do
           runner.node.force_default['splunk']['clustering']['num_sites'] = 2
           runner.node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
           runner.node.run_state['splunk_secret'] = 'notarealsecret'
@@ -96,7 +96,7 @@ describe 'chef-splunk::setup_clustering' do
       end
 
       context 'single-site clustering with custom settings' do
-        let(:chef_run) do
+        cached(:chef_run) do
           runner.node.force_default['splunk']['clustering']['replication_factor'] = 5
           runner.node.force_default['splunk']['clustering']['search_factor'] = 3
           runner.node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
@@ -112,7 +112,7 @@ describe 'chef-splunk::setup_clustering' do
       end
 
       context 'multisite clustering with custom settings' do
-        let(:chef_run) do
+        cached(:chef_run) do
           runner.node.force_default['splunk']['clustering']['num_sites'] = 3
           runner.node.force_default['splunk']['clustering']['site'] = 'site2'
           runner.node.force_default['splunk']['clustering']['site_replication_factor'] = 'origin:2,site1:1,site2:1,total:4'
@@ -132,7 +132,7 @@ describe 'chef-splunk::setup_clustering' do
     context 'cluster search head mode' do
       # Publish mock cluster master node to the server
       let(:cluster_master_node) do
-        stub_node(platform: 'ubuntu', version: '16.04') do
+        stub_node(platform: 'ubuntu', version: '20.04') do
           node.automatic['fqdn'] = 'cm.cluster.example.com'
           node.automatic['ipaddress'] = '192.168.0.10'
           node.force_default['dev_mode'] = true
@@ -153,7 +153,7 @@ describe 'chef-splunk::setup_clustering' do
       end
 
       context 'default settings (single-site)' do
-        let(:chef_run) do
+        cached(:chef_run) do
           runner.node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
           runner.node.run_state['splunk_secret'] = 'notarealsecret'
           runner.converge(described_recipe) do
@@ -167,7 +167,7 @@ describe 'chef-splunk::setup_clustering' do
       end
 
       context 'default settings (multi-site)' do
-        let(:chef_run) do
+        cached(:chef_run) do
           runner.node.run_state['splunk_auth_info'] = 'admin:notarealpassword'
           runner.node.run_state['splunk_secret'] = 'notarealsecret'
           runner.node.force_default['splunk']['clustering']['num_sites'] = 3

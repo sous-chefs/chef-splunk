@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe 'chef-splunk::user' do
   context 'os linux' do
-    let(:chef_run) do
+    cached(:chef_run) do
       ChefSpec::ServerRunner.new(
         platform: 'ubuntu',
-        version: '16.04'
+        version: '20.04'
       ).converge(described_recipe)
     end
 
