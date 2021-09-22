@@ -66,12 +66,6 @@ dictionary = {
 
 pretrained_sourcetypes = dictionary.values.flatten.sort.uniq
 
-builtin_indexes = %w(
-  _internal access_combined access_combined_wcookie apache_error
-  catalina cisco_syslog history linux_messages_syslog linux_secure
-  log4j main os postfix_syslog rabbitmq sample shared_json splunklogger
-)
-
 # these properties are specific to this resource
 property :monitor_name, kind_of: String, name_property: true, regex: %r{^monitor:///.*},
                         coerce: proc { |m| "monitor://#{m}" }
@@ -82,7 +76,8 @@ property :backup, kind_of: [FalseClass, Integer], default: 5, desired_state: fal
 # Refer to https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Monitorfilesanddirectorieswithinputs.conf
 # for more detailed description of these properties
 property :host, kind_of: String, default: nil
-property :index, kind_of: String, equal_to: builtin_indexes, default: '_internal'
+property :index, kind_of: String, default: '_internal', regex: /^[^-][0-9a-zA-Z_=]+/,
+                 coerce: proc { |index| index.gsub(/kvstore/, '') }
 property :sourcetype, kind_of: String, equal_to: pretrained_sourcetypes
 property :queue, kind_of: String, equal_to: %w(parsingQueue indexQueue), default: 'parsingQueue'
 property :_TCP_ROUTING, kind_of: String, default: '*'

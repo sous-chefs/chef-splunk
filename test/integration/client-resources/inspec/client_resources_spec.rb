@@ -28,4 +28,5 @@ end
 describe ini('/opt/splunkforwarder/etc/apps/SplunkUniversalForwarder/default/inputs.conf') do
   its(['monitor:///var/log/httpd/access.log', 'index']) { should cmp /access_combined/ }
   its(['monitor:///var/log/httpd/access.log', 'sourcetype']) { should match /access_combined/ }
+  its(['monitor:///var/log/httpd/error.log', 'index']) { should cmp 'alert-web_1' }
 end
