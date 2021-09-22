@@ -4,6 +4,7 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
+- Remove `systemd?` method and use internal one instead
 - resolved cookstyle error: libraries/helpers.rb:127:10 refactor: `Chef/Modernize/UseChefLanguageSystemdHelper`
 - resolved cookstyle error: libraries/helpers.rb:272:7 refactor: `Chef/Modernize/UseChefLanguageSystemdHelper`
 - resolved cookstyle error: metadata.rb:20:1 refactor: `Chef/Modernize/DependsOnChefVaultCookbook`

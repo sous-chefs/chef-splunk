@@ -267,10 +267,6 @@ module ChefSplunk
     def upgrade_enabled?
       node['splunk']['upgrade_enabled'] == true
     end
-
-    def systemd?
-      systemd?
-    end
   end
 end
 
