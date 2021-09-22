@@ -26,7 +26,7 @@ This cookbook is maintained by the Sous Chefs. The Sous Chefs are a community of
 
 ## Requirements
 
-Chef 13.11 or newer
+Chef 15.5 or newer
 
 ## License Acceptance
 
