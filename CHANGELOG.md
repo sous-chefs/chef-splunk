@@ -4,6 +4,8 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
+- Add SUSE support
+
 ## 9.0.0 - *2021-09-23*
 
 - Require Chef 16 for Chef Vault functionality
