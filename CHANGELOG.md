@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## Unreleased
+## 9.1.0 - *2021-09-23*
 
 - Add SUSE support
 
