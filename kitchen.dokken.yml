@@ -67,3 +67,10 @@ platforms:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
+
+  - name: opensuse-leap-15
+    driver:
+      image: dokken/opensuse-leap-15
+      pid_one_command: /usr/lib/systemd/systemd
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro  # required by systemd

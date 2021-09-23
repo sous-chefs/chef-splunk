@@ -13,6 +13,7 @@ supports 'centos'
 supports 'debian'
 supports 'redhat'
 supports 'ubuntu'
+supports 'suse'
 
 # please read the README.md section regarding data bag fallback if you
 # do not use chef-vault
