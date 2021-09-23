@@ -2,6 +2,8 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## Unreleased
+
 ## 8.0.0 - *2021-09-23*
 
 - Remove `systemd?` method and use internal one instead
