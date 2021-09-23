@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 provides :splunk_index
+unified_mode true
 resource_name :splunk_index
 
 # Index names must consist of only numbers, lowercase letters, underscores,

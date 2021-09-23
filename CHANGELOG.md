@@ -4,6 +4,18 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
+- Remove `systemd?` method and use internal one instead
+- Fix and update ChefSpec
+- resolved cookstyle error: libraries/helpers.rb:127:10 refactor: `Chef/Modernize/UseChefLanguageSystemdHelper`
+- resolved cookstyle error: libraries/helpers.rb:272:7 refactor: `Chef/Modernize/UseChefLanguageSystemdHelper`
+- resolved cookstyle error: metadata.rb:20:1 refactor: `Chef/Modernize/DependsOnChefVaultCookbook`
+- resolved cookstyle error: recipes/service.rb:95:32 refactor: `Chef/Modernize/UseChefLanguageSystemdHelper`
+- resolved cookstyle error: resources/splunk_app.rb:1:1 refactor: `Chef/Deprecations/ResourceWithoutUnifiedTrue`
+- resolved cookstyle error: resources/splunk_index.rb:1:1 refactor: `Chef/Deprecations/ResourceWithoutUnifiedTrue`
+- resolved cookstyle error: resources/splunk_installer.rb:1:1 refactor: `Chef/Deprecations/ResourceWithoutUnifiedTrue`
+- resolved cookstyle error: resources/splunk_monitor.rb:1:1 refactor: `Chef/Deprecations/ResourceWithoutUnifiedTrue`
+- resolved cookstyle error: recipes/setup_shclustering.rb:114:5: refactor: `Chef/Correctness/NodeNormal`
+
 ## 7.2.2 - *2021-08-30*
 
 - Standardise files with files in sous-chefs/repo-management

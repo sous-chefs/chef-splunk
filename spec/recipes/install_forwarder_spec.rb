@@ -5,14 +5,14 @@ describe 'chef-splunk::install_forwarder' do
     debian: {
       runner: {
         platform: 'ubuntu',
-        version: '16.04',
+        version: '20.04',
       },
       url: 'http://splunk.example.com/forwarder/package.deb',
     },
     redhat: {
       runner: {
         platform: 'centos',
-        version: '7',
+        version: '8',
       },
       url: 'http://splunk.example.com/forwarder/package.rpm',
     },
@@ -23,7 +23,7 @@ describe 'chef-splunk::install_forwarder' do
       let(:url) { platform_under_test[:url] }
 
       context 'url value exists' do
-        let(:chef_run) do
+        cached(:chef_run) do
           ChefSpec::ServerRunner.new(platform_under_test[:runner]) do |node, server|
             create_data_bag_item(server, 'vault', 'splunk__default')
             node.force_default['splunk']['forwarder']['version'] = '8.0.1'
@@ -40,7 +40,7 @@ describe 'chef-splunk::install_forwarder' do
       end
 
       context 'url attribute is empty' do
-        let(:chef_run) do
+        cached(:chef_run) do
           ChefSpec::ServerRunner.new(platform_under_test[:runner]) do |node, server|
             create_data_bag_item(server, 'vault', 'splunk__default')
             node.force_default['splunk']['forwarder']['version'] = '8.0.1'

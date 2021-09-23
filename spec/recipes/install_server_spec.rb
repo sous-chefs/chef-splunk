@@ -5,14 +5,14 @@ describe 'chef-splunk::install_server' do
     debian: {
       runner: {
         platform: 'ubuntu',
-        version: '16.04',
+        version: '20.04',
       },
       url: 'http://splunk.example.com/server/package.deb',
     },
     redhat: {
       runner: {
         platform: 'centos',
-        version: '7',
+        version: '8',
       },
       url: 'http://splunk.example.com/server/package.rpm',
     },

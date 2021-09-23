@@ -124,7 +124,7 @@ module ChefSplunk
     end
 
     def splunk_service_provider
-      if node['init_package'] == 'systemd'
+      if systemd?
         Chef::Provider::Service::Systemd
       else
         Chef::Provider::Service::Init
@@ -266,10 +266,6 @@ module ChefSplunk
 
     def upgrade_enabled?
       node['splunk']['upgrade_enabled'] == true
-    end
-
-    def systemd?
-      node['init_package'] == 'systemd'
     end
   end
 end

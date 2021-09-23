@@ -2,9 +2,10 @@ require 'spec_helper'
 
 describe 'chef-splunk::service' do
   context 'splunkd as a server' do
-    let(:chef_run) do
+    cached(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
         create_data_bag_item(server, 'vault', 'splunk__default')
+        node.force_default['chef-vault']['databag_fallback'] = true
         node.force_default['splunk']['accept_license'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['startup_script'] = '/etc/systemd/system/Splunkd.service'
@@ -45,9 +46,10 @@ describe 'chef-splunk::service' do
   end
 
   context 'Splunk is setup as a client' do
-    let(:chef_run) do
+    cached(:chef_run) do
       ChefSpec::ServerRunner.new do |node, server|
         create_data_bag_item(server, 'vault', 'splunk__default')
+        node.force_default['chef-vault']['databag_fallback'] = true
         node.force_default['splunk']['accept_license'] = true
         node.force_default['splunk']['is_server'] = false
         node.force_default['splunk']['startup_script'] = '/etc/systemd/system/SplunkForwarder.service'
