@@ -456,11 +456,7 @@ Upon convergence, this resource will add a new stanza to the `indexes.conf` file
 
 - `index_name` - this is the String naming each Splunk index. The resource will verify that the name of the index satisifies Splunk's naming requirements, which are below:
 
->>>
-Index names must consist of only numbers, lowercase letters, underscores,
-and hyphens. They cannot begin with an underscore or hyphen, or contain
-the word "kvstore".
->>>
+  > User-defined index names must consist of only numbers, lowercase letters, underscores, and hyphens. They cannot begin with an underscore or hyphen, or contain the word "kvstore".
 
 - `indexes_conf_path` - this is the target path and filename to the `indexes.conf`
 - `backup` - similar to the backup property of other file/template resources in chef, this specifies a number of backup files to retain or false to disable (Default: 5)
@@ -472,7 +468,7 @@ A test recipe is embedded in this cookbook. Please look at `test/fixtures/cookbo
 
 ### splunk_monitor
 
-Adds a Splunk monitor stanza into a designated `inputs.conf` file in a "chef-erized" way using standard Chef DSL vernacular. This resource also validates supported monitors and indexes as documented by Splunk. The dictionary is created from documentation on [Splunk's website](https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Listofpretrainedsourcetypes).
+Adds a Splunk monitor stanza into a designated `inputs.conf` file in a "chef-erized" way using standard Chef DSL vernacular. This resource also validates supported monitors and index names as documented by Splunk. The dictionary is created from documentation on [Splunk's website](https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Listofpretrainedsourcetypes).
 
 Upon convergence, this resource will add a new stanza to the inputs.conf file, as needed, and modify or add new lines to the section based on properties given to the resource. If the current stanza in the inputs.conf file has any extra lines that are not listed as a valid property in this resource, those lines are automatically removed.
 

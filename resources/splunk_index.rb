@@ -18,10 +18,10 @@ provides :splunk_index
 unified_mode true
 resource_name :splunk_index
 
-# Index names must consist of only numbers, lowercase letters, underscores,
-# and hyphens. They cannot begin with an underscore or hyphen, or contain
-# the word "kvstore".
-property :index_name, kind_of: String, name_property: true, regex: /^[^_-][0-9a-zA-Z_=]+/,
+# User-defined index names must consist of only numbers, lowercase letters,
+# underscores, and hyphens. They cannot begin with an underscore or hyphen,
+# or contain the word "kvstore".
+property :index_name, kind_of: String, name_property: true, regex: /^[0-9a-z][0-9a-z_-]+$/,
                       coerce: proc { |index| index.gsub(/kvstore/, '') }
 property :indexes_conf_path, kind_of: String, regex: %r{^/.*/indexes\.conf$}, desired_state: false, required: true
 property :backup, kind_of: [FalseClass, Integer], default: 5, desired_state: false

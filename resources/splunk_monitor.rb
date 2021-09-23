@@ -75,8 +75,12 @@ property :backup, kind_of: [FalseClass, Integer], default: 5, desired_state: fal
 # These resource properties are drawn from Splunk's @documentation.
 # Refer to https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Monitorfilesanddirectorieswithinputs.conf
 # for more detailed description of these properties
+#
+# Refer to https://docs.splunk.com/Documentation/Splunk/latest/Indexer/Setupmultipleindexes
+# for user-defined index name requirements--note that Splunk-standard internal
+# indexes do start with an underscore
 property :host, kind_of: String, default: nil
-property :index, kind_of: String, default: '_internal', regex: /^[^-][0-9a-zA-Z_=]+/,
+property :index, kind_of: String, default: '_internal', regex: /^[0-9a-z_][0-9a-z_-]+$/,
                  coerce: proc { |index| index.gsub(/kvstore/, '') }
 property :sourcetype, kind_of: String, equal_to: pretrained_sourcetypes
 property :queue, kind_of: String, equal_to: %w(parsingQueue indexQueue), default: 'parsingQueue'
