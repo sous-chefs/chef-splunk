@@ -2,6 +2,8 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## Unreleased
+
 ## 9.2.0 - *2021-09-24*
 
 - Align index name validation in splunk_monitor and splunk_index resources with [Splunk docs](https://docs.splunk.com/Documentation/Splunk/8.2.2/Indexer/Setupmultipleindexes)
