@@ -4,6 +4,8 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
+- Align index name validation in splunk_monitor and splunk_index resources with [Splunk docs](https://docs.splunk.com/Documentation/Splunk/8.2.2/Indexer/Setupmultipleindexes)
+
 ## 9.1.0 - *2021-09-23*
 
 - Add SUSE support
