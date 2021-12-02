@@ -19,6 +19,7 @@ require 'pathname'
 provides :splunk_app
 unified_mode true
 resource_name :splunk_app
+unified_mode true
 
 property :app_name, kind_of: String, name_property: true
 property :app_dependencies, kind_of: Array, default: []

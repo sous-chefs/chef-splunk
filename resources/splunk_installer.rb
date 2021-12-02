@@ -18,6 +18,7 @@
 provides :splunk_installer
 unified_mode true
 resource_name :splunk_installer
+unified_mode true
 
 property :url, String
 property :package_name, String, name_property: true

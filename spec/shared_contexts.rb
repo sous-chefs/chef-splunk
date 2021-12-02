@@ -1,5 +1,8 @@
 shared_context 'command stubs' do
   before(:each) do
+    allow_any_instance_of(Chef::Resource).to receive(:systemd?).and_return(true)
+    allow_any_instance_of(Chef::Recipe).to receive(:systemd?).and_return(true)
+
     stubs_for_resource('execute[initialize search head cluster member]') do |resource|
       allow(resource).to receive_shell_out('/opt/splunk/bin/splunk list shcluster-member-info -auth admin:notarealpassword')
     end
