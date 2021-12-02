@@ -4,7 +4,7 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
-- Fixes Issue [#204](https://github.com/sous-chefs/chef-splunk/issues/204)# Please enter the commit message for your changes. Lines starting
+- Fixes Issue [#204](https://github.com/sous-chefs/chef-splunk/issues/204)
 - Fixes an issue with the `user-seed.conf` file
 - Ensures that splunk is installed prior to anything in the `chef-splunk::service` recipe executes
 
