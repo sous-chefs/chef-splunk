@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
       - name: Run Chef Delivery
         uses: actionshub/chef-delivery@main
         env:
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
       - name: Run yaml Lint
         uses: actionshub/yamllint@main
 
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
       - name: Run Markdown Lint
         uses: actionshub/markdownlint@main
 
@@ -67,7 +67,7 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
       - name: Install Chef
         uses: actionshub/chef-install@main
       - name: Dokken
@@ -83,4 +83,11 @@ jobs:
         run: |
             set -x
             sudo journalctl -l --since today
-            KITCHEN_LOCAL_YAML=kitchen.dokken.yml /usr/bin/kitchen exec ${{ matrix.suite }}-${{ matrix.os }} -c "journalctl -l"
+            KITCHEN_LOCAL_YAML=kitchen.dokken.yml kitchen exec ${{ matrix.suite }}-${{ matrix.os }} -c "journalctl -l"
+
+  final:
+    needs: [dokken]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@main

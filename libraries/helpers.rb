@@ -110,7 +110,7 @@ module ChefSplunk
 
     def splunk_login_successful?
       return false unless splunk_installed?
-      login = shell_out(splunk_cmd(%w(login -auth node.run_state['splunk_auth_info'])))
+      login = shell_out(splunk_cmd(['login', '-auth', node.run_state['splunk_auth_info']]))
       login.stderr.strip.empty? && login.stdout.strip.empty? && login.exitstatus == 0
     end
 
@@ -266,6 +266,11 @@ module ChefSplunk
 
     def upgrade_enabled?
       node['splunk']['upgrade_enabled'] == true
+    end
+
+    def systemd?
+      ps1 = shell_out('ps --no-headers 1')
+      ps1.stdout.strip.match?(/systemd$/)
     end
   end
 end

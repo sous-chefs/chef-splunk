@@ -17,6 +17,5 @@ include_recipe 'chef-splunk::install_forwarder'
 splunk_installer 'splunkforwarder' do
   url node['splunk']['forwarder']['url']
   version node['splunk']['forwarder']['version']
-  action :nothing
-  subscribes :remove, 'service[splunk]'
+  action :remove
 end

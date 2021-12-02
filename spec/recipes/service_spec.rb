@@ -9,11 +9,19 @@ describe 'chef-splunk::service' do
         node.force_default['splunk']['accept_license'] = true
         node.force_default['splunk']['is_server'] = true
         node.force_default['splunk']['startup_script'] = '/etc/systemd/system/Splunkd.service'
+        node.automatic['init_package'] = 'systemd'
       end.converge(described_recipe)
     end
 
-    it 'included setup_auth recipe' do
-      expect(chef_run).to include_recipe('chef-splunk::setup_auth')
+    before do
+      allow(::File).to receive(:exist?).and_call_original
+      allow(::File).to receive(:exist?).with('/etc/systemd/system/Splunkd.service').and_return(true)
+    end
+
+    %w(chef-splunk::setup_auth chef-splunk).each do |recipe|
+      it "included #{recipe} recipe" do
+        expect(chef_run).to include_recipe(recipe)
+      end
     end
 
     it 'creates directory /opt/splunk' do
@@ -40,6 +48,10 @@ describe 'chef-splunk::service' do
         .with(sensitive: false, retries: 3, creates: '/etc/systemd/system/Splunkd.service')
     end
 
+    it 'links the startup script' do
+      expect(chef_run).to create_link('/etc/systemd/system/splunk.service')
+    end
+
     it 'started splunk service' do
       expect(chef_run).to start_service('splunk')
     end
@@ -53,11 +65,19 @@ describe 'chef-splunk::service' do
         node.force_default['splunk']['accept_license'] = true
         node.force_default['splunk']['is_server'] = false
         node.force_default['splunk']['startup_script'] = '/etc/systemd/system/SplunkForwarder.service'
+        node.automatic['init_package'] = 'systemd'
       end.converge(described_recipe)
     end
 
-    it 'included setup_auth recipe' do
-      expect(chef_run).to include_recipe('chef-splunk::setup_auth')
+    before do
+      allow(::File).to receive(:exist?).and_call_original
+      allow(::File).to receive(:exist?).with('/etc/systemd/system/SplunkForwarder.service').and_return(true)
+    end
+
+    %w(chef-splunk::setup_auth chef-splunk).each do |recipe|
+      it "included #{recipe} recipe" do
+        expect(chef_run).to include_recipe(recipe)
+      end
     end
 
     it 'creates directory /opt/splunk' do

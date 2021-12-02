@@ -1,6 +1,6 @@
 ---
 provisioner:
-  deprecations_as_errors: false # TODO: ec2-tags-ohai-plugin uses ohai cookbook
+  deprecations_as_errors: false
   multiple_converge: 2  # The second converge here is to pass specefic tests that need Splunk to be restarted
   chef_license: accept
   data_bags_path: test/integration/data_bags
@@ -56,6 +56,7 @@ suites:
     attributes:
       splunk:
         accept_license: true
+        is_server: false
 
   - name: client-inputs-outputs
     run_list:

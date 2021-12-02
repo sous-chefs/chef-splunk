@@ -58,7 +58,7 @@ describe 'chef-splunk::server' do
 
     it 'updates splunkd management port' do
       expect(chef_run).to run_execute('update-splunk-mgmt-port').with(
-        command: "/opt/splunk/bin/splunk set splunkd-port 9089 -auth 'admin:notarealpassword'",
+        command: "/opt/splunk/bin/splunk set splunkd-port 9089 -auth 'admin:notarealpassword' --accept-license",
         sensitive: true
       )
     end

@@ -4,6 +4,10 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
+- Fixes Issue [#204](https://github.com/sous-chefs/chef-splunk/issues/204)# Please enter the commit message for your changes. Lines starting
+- Fixes an issue with the `user-seed.conf` file
+- Ensures that splunk is installed prior to anything in the `chef-splunk::service` recipe executes
+
 ## 9.2.0 - *2021-09-24*
 
 - Align index name validation in splunk_monitor and splunk_index resources with [Splunk docs](https://docs.splunk.com/Documentation/Splunk/8.2.2/Indexer/Setupmultipleindexes)

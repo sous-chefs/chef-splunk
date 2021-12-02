@@ -16,6 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+unless license_accepted?
+  Chef::Log.fatal('You did not accept the license (set node["splunk"]["accept_license"] to true)')
+  raise 'Splunk license was not accepted'
+end
+
 node.default['splunk']['is_server'] = true
 
 include_recipe 'chef-splunk::user' unless run_as_root?
@@ -24,7 +29,7 @@ include_recipe 'chef-splunk::service'
 include_recipe 'chef-splunk::setup_auth' if setup_auth?
 
 execute 'update-splunk-mgmt-port' do
-  command splunk_cmd("set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{node.run_state['splunk_auth_info']}'")
+  command splunk_cmd("set splunkd-port #{node['splunk']['mgmt_port']} -auth '#{node.run_state['splunk_auth_info']}' --accept-license")
   sensitive true unless Chef::Log.debug?
   not_if { current_mgmt_port == node['splunk']['mgmt_port'] }
   notifies :restart, 'service[splunk]' unless disabled?
@@ -33,7 +38,7 @@ end
 ruby_block 'enable-splunk-receiver-port' do
   sensitive true unless Chef::Log.debug?
   block do
-    splunk = Mixlib::ShellOut.new(splunk_cmd("enable listen #{node['splunk']['receiver_port']} -auth #{node.run_state['splunk_auth_info']}"))
+    splunk = Mixlib::ShellOut.new(splunk_cmd("enable listen #{node['splunk']['receiver_port']} -auth #{node.run_state['splunk_auth_info']} --accept-license"))
     splunk.run_command
     true if splunk.stderr.include?("Configuration for port #{node['splunk']['receiver_port']} already exists")
   end

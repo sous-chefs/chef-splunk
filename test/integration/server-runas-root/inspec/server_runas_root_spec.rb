@@ -78,8 +78,7 @@ control 'Splunk admin password validation' do
   only_if { os.linux? }
 
   describe file("#{SPLUNK_HOME}/etc/system/local/user-seed.conf") do
-    it { should exist }
-    its('content') { should match /HASHED_PASSWORD/ }
+    it { should_not exist }
   end
 
   describe.one do

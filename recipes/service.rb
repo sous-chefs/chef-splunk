@@ -21,6 +21,8 @@ unless license_accepted?
   raise 'Splunk license was not accepted'
 end
 
+include_recipe 'chef-splunk' unless splunk_installed?
+
 if server?
   directory splunk_dir do
     owner splunk_runas_user
@@ -105,8 +107,9 @@ service 'splunk' do
   status_command svc_command('status')
   timeout 1800
   provider splunk_service_provider
+  only_if { ::File.exist?(node['splunk']['startup_script']) }
   unless disabled?
-    subscribes :restart, 'template[user-seed.conf]', :immediately
+    subscribes :restart, 'file[user-seed.conf]', :immediately
     subscribes :restart, "user[#{node['splunk']['user']['username']}]", :immediately
   end
 end
