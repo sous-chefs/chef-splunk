@@ -80,6 +80,7 @@ control 'Splunk Universal Forwarder' do
 
   describe processes('splunkd') do
     it { should exist }
+    its('users') { should_not include 'root' }
     its('users') { should include 'splunk' }
   end
 

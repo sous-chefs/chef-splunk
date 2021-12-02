@@ -2,8 +2,12 @@ control 'Splunk Cluster Master' do
   title 'Verify cluster master provisioning'
   only_if { os.linux? }
 
-  describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
-    its('users') { should include 'root' }
+  describe 'chef-splunk::server should run as "root" user' do
+    describe processes(/splunkd/) do
+      it { should exist }
+      its('users') { should_not include 'splunk' }
+      its('users') { should include 'root' }
+    end
   end
 
   describe ini('/opt/splunk/etc/system/local/inputs.conf') do
