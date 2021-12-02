@@ -98,7 +98,7 @@ end
 # this effectively waits until the captain is ready before adding members to the cluster
 execute 'initialize search head cluster member' do
   sensitive true unless Chef::Log.debug?
-  command splunk_cmd("init shcluster-config -auth '#{node.run_state['splunk_auth_info']}' " \
+  command splunk_cmd("init shcluster-config -auth \"#{node.run_state['splunk_auth_info']}\" " \
     "-mgmt_uri #{node['splunk']['shclustering']['mgmt_uri']} " \
     "-replication_port #{node['splunk']['shclustering']['replication_port']} " \
     "-replication_factor #{node['splunk']['shclustering']['replication_factor']} " \
