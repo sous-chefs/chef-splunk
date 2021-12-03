@@ -86,8 +86,7 @@ jobs:
             KITCHEN_LOCAL_YAML=kitchen.dokken.yml kitchen exec ${{ matrix.suite }}-${{ matrix.os }} -c "journalctl -l"
 
   final:
-    needs: [dokken]
+    needs: [integration]
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@main
+      - run: echo ${{needs.integration.outputs}}
