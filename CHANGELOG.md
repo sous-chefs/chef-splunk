@@ -7,7 +7,6 @@ This file is used to list changes made in each version of the splunk cookbook.
 - Fixes Issue [#204](https://github.com/sous-chefs/chef-splunk/issues/204)
 - Fixes an issue with the `user-seed.conf` file
 - Ensures that splunk is installed prior to anything in the `chef-splunk::service` recipe executes
-- Removes ec2-tags-ohai-plugin as a cookbook dependency
 
 ## 9.2.0 - *2021-09-24*
 
