@@ -17,4 +17,3 @@ supports 'suse'
 
 # please read the README.md section regarding data bag fallback if you
 # do not use chef-vault
-depends 'ec2-tags-ohai-plugin', '>= 0.2.4'
