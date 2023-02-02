@@ -4,17 +4,16 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
+- Fix CI and MDL issues
+
 ## 9.2.2 - *2022-12-11*
 
-Standardise files with files in sous-chefs/repo-management
-
-Standardise files with files in sous-chefs/repo-management
-
+- Standardise files with files in sous-chefs/repo-management
 - Remove delivery folder
 
 ## 9.2.1 - *2022-02-03*
 
-Standardise files with files in sous-chefs/repo-management
+- Standardise files with files in sous-chefs/repo-management
 
 ## 9.2.0 - *2021-09-24*
 
@@ -95,10 +94,12 @@ Standardise files with files in sous-chefs/repo-management
 ## 6.4.0 (2020-10-19)
 
 - Fixes Issue [#185](https://github.com/chef-cookbooks/chef-splunk/issues/185)
-  - a startup issue was resolved for SplunkForwarder installations with an improved systemd unit file (fix below)
-  - Adds Inspec tests to verify from SplunkForwarder starts (thanks, [@jjm](https://github.com/jjm))
+
+   - a startup issue was resolved for SplunkForwarder installations with an improved systemd unit file (fix below)
+   - Adds Inspec tests to verify from SplunkForwarder starts (thanks, [@jjm](https://github.com/jjm))
 - Fixes Issue [#187](https://github.com/chef-cookbooks/chef-splunk/issues/187)
-  - the systemd unit file is now relegated to the `splunk enable boot-start` command to manage
+
+   - the systemd unit file is now relegated to the `splunk enable boot-start` command to manage
 - Adds Inspec tests and sets the verifier in Test Kitchen for some test suites; some are still in serverspec
 - Render the user-seed.conf with a file resource rather than a template
 - The default recipe no longer includes the disable recipe; to disable splunk, add `recipe[chef-splunk::disabled]` to a run list explicitly
@@ -110,9 +111,10 @@ Standardise files with files in sous-chefs/repo-management
 
 - Fixes Issue [#183](https://github.com/chef-cookbooks/chef-splunk/issues/183): make upgrades idempotent
 - it is no longer necessary to include `chef-splunk::upgrade` to a run list; Instead, set the following:
-  - set `node['splunk']['server']['upgrade']['version']` or `node['splunk']['forwarder']['upgrade']['version']` for the appropriate server type
-  - set `node['splunk']['server']['upgrade']['url']` or `node['splunk']['forwarder']['upgrade']['url']` for the appropriate server type
-  - set `node['splunk']['upgrade_enabled'] = true`
+
+   - set `node['splunk']['server']['upgrade']['version']` or `node['splunk']['forwarder']['upgrade']['version']` for the appropriate server type
+   - set `node['splunk']['server']['upgrade']['url']` or `node['splunk']['forwarder']['upgrade']['url']` for the appropriate server type
+   - set `node['splunk']['upgrade_enabled'] = true`
 
 ## 6.2.11 (2020-10-14)
 
@@ -133,15 +135,17 @@ Standardise files with files in sous-chefs/repo-management
 
 - Thank you, [@doublethink](https://github.com/doublethink), for this submission
 - Resolves issues installing server and client as non-root users:
-  - `chef-splunk::user` recipe will not run if splunkd should be run as a non-root user
-  - systemd and SysV templates correctly run as the specified non-root user
+
+   - `chef-splunk::user` recipe will not run if splunkd should be run as a non-root user
+   - systemd and SysV templates correctly run as the specified non-root user
 - Adds a new helper method: `#run_as_root?`
 
 ## 6.2.7 (2020-06-29)
 
 - Fixes Issue [#168](https://github.com/chef-cookbooks/chef-splunk/issues/168)
-  - uses `node.normal` when `ruby_block[captain elected]` executes to persist that value between chef runs
-  - requires manually updating node data to set `node.normal['splunk']['shclustering']['captain_elected'] = true` if you've already deployed v6.2.6 of this cookbook previously otherwise, skip v6.2.6 and run v6.2.7 directly.
+
+   - uses `node.normal` when `ruby_block[captain elected]` executes to persist that value between chef runs
+   - requires manually updating node data to set `node.normal['splunk']['shclustering']['captain_elected'] = true` if you've already deployed v6.2.6 of this cookbook previously otherwise, skip v6.2.6 and run v6.2.7 directly.
 
 ## 6.2.6 (2020-06-16)
 
@@ -179,18 +183,20 @@ Standardise files with files in sous-chefs/repo-management
 
 - Standardise files with files in chef-cookbooks/repo-management - [@xorimabot](https://github.com/xorimabot)
 - Chef Infra Client 16 compatibility fixes - [@xorimabot](https://github.com/xorimabot)
-  - resolved cookstyle error: resources/splunk_app.rb:19:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
-  - resolved cookstyle error: resources/splunk_index.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
-  - resolved cookstyle error: resources/splunk_installer.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
-  - resolved cookstyle error: resources/splunk_monitor.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+
+   - resolved cookstyle error: resources/splunk_app.rb:19:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+   - resolved cookstyle error: resources/splunk_index.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+   - resolved cookstyle error: resources/splunk_installer.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+   - resolved cookstyle error: resources/splunk_monitor.rb:17:1 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
 
 ## 6.1.8 (2020-05-13)
 
 - gracefully handles return value when splunk hasn't been installed for these helper methods:
-  - `#shcaptain_elected?`
-  - `#ok_to_bootstrap_captain?`
-  - `#ok_to_add_member?`
-  - `#search_heads_peered?`
+
+   - `#shcaptain_elected?`
+   - `#ok_to_bootstrap_captain?`
+   - `#ok_to_add_member?`
+   - `#search_heads_peered?`
 
 ## 6.1.7 (2020-05-13)
 
@@ -203,7 +209,8 @@ Standardise files with files in sous-chefs/repo-management
 ## 6.1.5 (2020-03-30)
 
 - Fixes issues [#158](https://github.com/chef-cookbooks/chef-splunk/issues/158)
-  - Removes default_description as a property field
+
+   - Removes default_description as a property field
 
 ## 6.1.4 (2020-03-26)
 
@@ -224,8 +231,9 @@ Standardise files with files in sous-chefs/repo-management
 ## 6.1.0 (2020-03-11)
 
 - Fixes Issue [#64](https://github.com/chef-cookbooks/chef-splunk/issues/64)
-  - Adds custom resource, `splunk_monitor`
-  - Adds custom resource, `splunk_index`
+
+   - Adds custom resource, `splunk_monitor`
+   - Adds custom resource, `splunk_index`
 - Disables STDOUT/STDERR suppression for execute resources when Chef Infra Client is run in `:debug` mode
 
 ## 6.0.0 (2020-03-07)
@@ -233,12 +241,14 @@ Standardise files with files in sous-chefs/repo-management
 - Changes the restart behavior of `splunk_app` to eliminate sub-resources of the resource from
   initiating restarts of service[splunk]
 - Fixes Issue [#59](https://github.com/chef-cookbooks/chef-splunk/issues/59)
-  - converts `splunk_app` resource to modern style
+
+   - converts `splunk_app` resource to modern style
 
 ## 5.0.4 (2020-03-07)
 
 - Fixes Issue [#152](https://github.com/chef-cookbooks/chef-splunk/issues/152)
-  - Removes `splunk_auth` property from the `splunk_app` resources (no longer required)
+
+   - Removes `splunk_auth` property from the `splunk_app` resources (no longer required)
 
 ## 5.0.3 (2020-03-06)
 
@@ -247,12 +257,13 @@ Standardise files with files in sous-chefs/repo-management
 - fixes the logic that determines when a search head cluster captain can be bootstrapped
 - fixes the logic that determines when a search head cluster member can be added to its cluster
 - adds helper methods:
-  - `#shcluster_member?`
-  - `#shcaptain_elected?`
-  - `#ok_to_bootstrap_captain?`
-  - `#ok_to_add_member?`
-  - `#shcluster_servers_list`
-  - `#hash_password`
+
+   - `#shcluster_member?`
+   - `#shcaptain_elected?`
+   - `#ok_to_bootstrap_captain?`
+   - `#ok_to_add_member?`
+   - `#shcluster_servers_list`
+   - `#hash_password`
 - To prevent overzealous restarts of splunkd, detects when the pass4symmkey has already been encrypted by splunkd
 
 ## 5.0.2 (2020-02-20)
@@ -268,9 +279,10 @@ Standardise files with files in sous-chefs/repo-management
 - `splunk_app` no longer uses the `splunk install app` and `splunk disable app` commands; preference to managing the files in `<splunk_dir>/etc/apps`, or the alternative directories, directly, and restarting/reloading Splunk, as needed.
 - Removes these actions from `splunk_app`: `:disable`, `:enable`, and `:update`
 - `splunk_app` now has two actions only: `:install` (default) and `:remove`
-  - `:install` action will also update app config files, as needed
+
+   - `:install` action will also update app config files, as needed
 - Fixes Issue [#111](https://github.com/chef-cookbooks/chef-splunk/issues/111)
-  - with so many ways to "unpack" a compressed bundle file (e.g., tar.gz, zip, bz2), this feature will not attempt to support any/all of the possibilities. In contrast, this feature will support installing an app from any local source on the chef node and into the /opt/splunk/etc/apps directory, unless otherwise specified by the `app_dir` property.
+   - with so many ways to "unpack" a compressed bundle file (e.g., tar.gz, zip, bz2), this feature will not attempt to support any/all of the possibilities. In contrast, this feature will support installing an app from any local source on the chef node and into the /opt/splunk/etc/apps directory, unless otherwise specified by the `app_dir` property.
 - The `sensitive` property is honored by the `splunk_app` resource.
 
 ## 4.1.0 (2020-02-06)
@@ -280,15 +292,20 @@ Standardise files with files in sous-chefs/repo-management
 - Search Head Captains will initialize as a search head cluster member and then bootstrap themselves
 - Improves idempotent addition of search head cluster members
 - Fixes issue [#137](https://github.com/chef-cookbooks/chef-splunk/issues/137)
-  - Adds logic to skip any initialization or bootstrapping of search head cluster resources.
+
+   - Adds logic to skip any initialization or bootstrapping of search head cluster resources.
 - Fixes issue [#138](https://github.com/chef-cookbooks/chef-splunk/issues/138)
-  - Adds a new property to the `splunk_app` resource, called `template_variables`
+
+   - Adds a new property to the `splunk_app` resource, called `template_variables`
 - Fixes issue [#139](https://github.com/chef-cookbooks/chef-splunk/issues/139)
-  - Adds `cookbook` property to the template declared in the `splunk_app` provider
+
+   - Adds `cookbook` property to the template declared in the `splunk_app` provider
 - Fixes issue [#140](https://github.com/chef-cookbooks/chef-splunk/issues/140)
-  - Adds back resource actions: :enable, :disable, :install, :remove
+
+   - Adds back resource actions: :enable, :disable, :install, :remove
 - Fixes issue [#141](https://github.com/chef-cookbooks/chef-splunk/issues/141)
-  - `app_dir` property was added to the `splunk_app` resource
+
+   - `app_dir` property was added to the `splunk_app` resource
 - Integrates a search head cluster to a single or multisite indexer cluster
 - Adds helper method `#add_shcluster_member?` to indicate whether a search head cluster member needs to be added to the search head cluster
 - Adds support for Hash when providing the `templates` property to the `splunk_app` resource
@@ -371,7 +388,8 @@ Standardise files with files in sous-chefs/repo-management
 - Fixed issue [#118](https://github.com/chef-cookbooks/chef-splunk/issues/118) removed omnios platform tests
 - bumped chef-vault dependency to `>= 3.1.1`
 - moved content from files/default and templates/default in accordance with modern file specificity rules
-  - Require Chef 13.11 or newer
+
+   - Require Chef 13.11 or newer
 - Removed (undocumented) support for Solaris (OmniOS) platform; omnios is not a platform
   that can currently be tested under ChefSpec and Test Kitchen.
 - fixes to ensure splunk run as a non-root user

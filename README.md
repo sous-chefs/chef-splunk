@@ -189,24 +189,26 @@ clustering in the `setup_clustering` recipe:
   to get the value from the cluster master's node data.
 
 - For single-site clustering (`node['splunk']['clustering']['num_sites']` = 1):
-  - `node['splunk']['clustering']['replication_factor']`: The replication factor
-    of the indexer cluster. Defaults to 3, must be a positive integer. Only valid
-    when `node['splunk']['clustering']['mode']='master'` and
-    `node['splunk']['clustering']['num_sites']`=1 (single-site clustering).
-  - `node['splunk']['clustering']['search_factor']`: The search factor
-    of the indexer cluster. Only valid when `node['splunk']['clustering']['mode']='master'` and
-    `node['splunk']['clustering']['num_sites']`=1 (single-site clustering). Defaults to 2, must be a positive integer.
+
+   - `node['splunk']['clustering']['replication_factor']`: The replication factor
+     of the indexer cluster. Defaults to 3, must be a positive integer. Only valid
+     when `node['splunk']['clustering']['mode']='master'` and
+     `node['splunk']['clustering']['num_sites']`=1 (single-site clustering).
+   - `node['splunk']['clustering']['search_factor']`: The search factor
+     of the indexer cluster. Only valid when `node['splunk']['clustering']['mode']='master'` and
+     `node['splunk']['clustering']['num_sites']`=1 (single-site clustering). Defaults to 2, must be a positive integer.
 
 - For multisite clustering (`node['splunk']['clustering']['num_sites']` > 1):
-  - `node['splunk']['clustering']['site']`: The site the node belongs to. Valid values include site1 to site63
-  - `node['splunk']['clustering']['site_replication_factor']`: The per-site replication policy
-    of any given bucket. This is represented as a comma-separated list of per-site entries. Only valid
-    when `node['splunk']['clustering']['mode']='master'` and multisite is true. Defaults to 'origin:2,total:3'.
-    Refer to [Splunk Admin docs](http://docs.splunk.com/Documentation/Splunk/latest/Admin/serverconf) for exact syntax and more details.
-  - `node['splunk']['clustering']['site_search_factor']`: The per-site search policy for searchable copies
-    for any given bucket. This is represented as a comma-separated list of per-site entires. Only valid when
-    `node['splunk']['clustering']['mode']='master'` and multisite is true. Defaults to 'origin:1,total:2'.
-    Refer to [Splunk Admin docs](http://docs.splunk.com/Documentation/Splunk/latest/Admin/serverconf) for exact syntax and more details.
+
+   - `node['splunk']['clustering']['site']`: The site the node belongs to. Valid values include site1 to site63
+   - `node['splunk']['clustering']['site_replication_factor']`: The per-site replication policy
+     of any given bucket. This is represented as a comma-separated list of per-site entries. Only valid
+     when `node['splunk']['clustering']['mode']='master'` and multisite is true. Defaults to 'origin:2,total:3'.
+     Refer to [Splunk Admin docs](http://docs.splunk.com/Documentation/Splunk/latest/Admin/serverconf) for exact syntax and more details.
+   - `node['splunk']['clustering']['site_search_factor']`: The per-site search policy for searchable copies
+     for any given bucket. This is represented as a comma-separated list of per-site entires. Only valid when
+     `node['splunk']['clustering']['mode']='master'` and multisite is true. Defaults to 'origin:1,total:2'.
+     Refer to [Splunk Admin docs](http://docs.splunk.com/Documentation/Splunk/latest/Admin/serverconf) for exact syntax and more details.
 
 The following attributes are related to setting up a Splunk server with search head
 clustering in the `setup_shclustering` recipe:
@@ -415,7 +417,7 @@ As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify r
 
   Install and enable a deployment client configuration that overrides default Splunk Enterprise configurations
 
-  - Given a wrapper cookbook called MyDeploymentClientBase with a folder structure as below:
+   - Given a wrapper cookbook called MyDeploymentClientBase with a folder structure as below:
 
   ```
   MyDeploymentClientBase
