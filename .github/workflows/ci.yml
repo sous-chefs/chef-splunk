@@ -31,29 +31,29 @@ jobs:
           - ubuntu-2004
           - opensuse-leap-15
         suite:
-          - 'client-inputs-outputs'
-          - 'client-resources'
-          - 'client-runas-splunk'
-          - 'client'
-          - 'disabled'
-          - 'server-cluster-master'
-          - 'server-resources'
-          - 'server-runas-root'
-          - 'server-runas-splunk'
-          - 'server-shcluster-member'
-          - 'server-shdeployer'
-          - 'uninstall-forwarder'
-          - 'upgrade-client'
-          - 'upgrade-server'
+          - "client-inputs-outputs"
+          - "client-resources"
+          - "client-runas-splunk"
+          - "client"
+          - "disabled"
+          - "server-cluster-master"
+          - "server-resources"
+          - "server-runas-root"
+          - "server-runas-splunk"
+          - "server-shcluster-member"
+          - "server-shdeployer"
+          - "uninstall-forwarder"
+          - "upgrade-client"
+          - "upgrade-server"
       fail-fast: false
 
     steps:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Install Chef
-        uses: actionshub/chef-install@main
+        uses: actionshub/chef-install@2.0.4
       - name: Dokken
-        uses: actionshub/test-kitchen@main
+        uses: actionshub/test-kitchen@2.1.0
         env:
           CHEF_LICENSE: accept-no-persist
           KITCHEN_LOCAL_YAML: kitchen.dokken.yml
@@ -63,9 +63,9 @@ jobs:
       - name: Print debug output on failure
         if: failure()
         run: |
-            set -x
-            sudo journalctl -l --since today
-            KITCHEN_LOCAL_YAML=kitchen.dokken.yml /usr/bin/kitchen exec ${{ matrix.suite }}-${{ matrix.os }} -c "journalctl -l"
+          set -x
+          sudo journalctl -l --since today
+          KITCHEN_LOCAL_YAML=kitchen.dokken.yml /usr/bin/kitchen exec ${{ matrix.suite }}-${{ matrix.os }} -c "journalctl -l"
 
   integration-amazonlinux:
     needs: lint-unit
@@ -75,29 +75,29 @@ jobs:
         os:
           - amazonlinux-2
         suite:
-          - 'client-inputs-outputs'
-          - 'client-resources'
-          - 'client-runas-splunk'
-          - 'client'
-          - 'disabled'
-          - 'server-cluster-master'
-          - 'server-resources'
-          - 'server-runas-root'
-          - 'server-runas-splunk'
-          - 'server-shcluster-member'
-          - 'server-shdeployer'
-          - 'uninstall-forwarder'
-          - 'upgrade-client'
-          - 'upgrade-server'
+          - "client-inputs-outputs"
+          - "client-resources"
+          - "client-runas-splunk"
+          - "client"
+          - "disabled"
+          - "server-cluster-master"
+          - "server-resources"
+          - "server-runas-root"
+          - "server-runas-splunk"
+          - "server-shcluster-member"
+          - "server-shdeployer"
+          - "uninstall-forwarder"
+          - "upgrade-client"
+          - "upgrade-server"
       fail-fast: false
 
     steps:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Install Chef
-        uses: actionshub/chef-install@main
+        uses: actionshub/chef-install@2.0.4
       - name: Dokken
-        uses: actionshub/test-kitchen@main
+        uses: actionshub/test-kitchen@2.1.0
         env:
           CHEF_LICENSE: accept-no-persist
           KITCHEN_LOCAL_YAML: kitchen.dokken.yml
@@ -107,6 +107,6 @@ jobs:
       - name: Print debug output on failure
         if: failure()
         run: |
-            set -x
-            sudo journalctl -l --since today
-            KITCHEN_LOCAL_YAML=kitchen.dokken.yml /usr/bin/kitchen exec ${{ matrix.suite }}-${{ matrix.os }} -c "journalctl -l"
+          set -x
+          sudo journalctl -l --since today
+          KITCHEN_LOCAL_YAML=kitchen.dokken.yml /usr/bin/kitchen exec ${{ matrix.suite }}-${{ matrix.os }} -c "journalctl -l"
