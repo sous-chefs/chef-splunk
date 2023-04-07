@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
-## Unreleased
+## 9.2.14 - *2023-04-07*
 
 Standardise files with files in sous-chefs/repo-management
 
