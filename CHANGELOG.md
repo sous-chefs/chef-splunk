@@ -2,6 +2,8 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## Unreleased
+
 ## 9.2.16 - *2023-05-17*
 
 ## 9.2.15 - *2023-05-03*
