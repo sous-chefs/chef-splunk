@@ -4,6 +4,10 @@ This file is used to list changes made in each version of the splunk cookbook.
 
 ## Unreleased
 
+Reverse enable and start actions for systemd managed Splunkd.service
+
+## 9.2.2 - *2022-12-11*
+
 ## 9.2.19 - *2023-10-03*
 
 ## 9.2.18 - *2023-09-29*
