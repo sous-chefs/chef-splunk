@@ -38,7 +38,7 @@ be considered as not accepting the Splunk EULA.
 
 For example, these will not accept the Splunk license:
 
-```
+```ruby
 node['splunk']['accept_license'] = false
 node['splunk'] = { 'accept_license' => nil }
 node['splunk']['accept_license'] = ''
@@ -47,7 +47,7 @@ node['splunk']['accept_license'] = 'true'
 
 Only this will accept the license:
 
-```
+```ruby
 node['splunk']['accept_license'] = true
 ```
 
@@ -120,7 +120,7 @@ by default.
   For example, each line below will force the chef-client to install Splunk's Universal Forwarder
   and server from the local package manager:
 
-  ```
+  ```ruby
   node.force_default['splunk']['forwarder']['url'] = ''
   node.force_default['splunk']['server']['url'] = ''
   node.force_default['splunk']['forwarder']['url'] = nil
@@ -183,7 +183,7 @@ clustering in the `setup_clustering` recipe:
 - `node['splunk']['clustering']['replication_port']`: The replication port
   of the cluster peer member. Only valid when `node['splunk']['clustering']['mode']='slave'`.
   Defaults to 9887.
-- [`node['splunk']['clustering']['mgmt_uri']`](Default: https://fqdn:8089)
+- [`node['splunk']['clustering']['mgmt_uri']`](Default: <https://fqdn:8089>)
   This attribute is for the indexer cluster members and cluster master. The cluster master
   will set this node attribute to itself, while all cluster members will perform a chef search
   to get the value from the cluster master's node data.
@@ -258,7 +258,7 @@ default['splunk']['outputs_conf'] = {
 
 This will result in the following being rendered in `outputs.conf`:
 
-```
+```toml
 [tcpout:splunk_indexers_9997]
 server=10.0.2.47:9997
 forwardedindex.0.whitelist = .*
@@ -269,7 +269,7 @@ forwardedindex.filter.disable = false
 
 As an example of `outputs_conf` attribute usage, to add an `sslCertPath` directive, define the attribute in your role or wrapper cookbook as such:
 
-```
+```ruby
 node.default['splunk']['outputs_conf']['sslCertPath'] = '$SPLUNK_HOME/etc/certs/cert.pem'
 ```
 
@@ -279,7 +279,7 @@ The `server` attribute in `tcpout:splunk_indexers_9997` stanza above is populate
 
 For example:
 
-```
+```ruby
 node.default['splunk']['server_list'] = '10.0.2.47:9997, 10.0.2.49:9997'
 ```
 
@@ -291,7 +291,7 @@ node.default['splunk']['server_list'] = '10.0.2.47:9997, 10.0.2.49:9997'
 
 For example:
 
-```
+```ruby
 node.default['splunk']['inputs_conf']['ports'] = [
   {
     port_num => 123123,
@@ -309,11 +309,10 @@ node.default['splunk']['inputs_conf']['inputs'] = [
     }
   }
 ]
-
 ```
 
 The following attributes are related to upgrades in the `upgrade`
-recipe. **Note** The default upgrade version is set to 7.3.2 and should be modified to
+recipe. __Note__ The default upgrade version is set to 7.3.2 and should be modified to
 suit in a role or wrapper, since we don't know what upgrade versions
 may be relevant. Enabling the upgrade and blindly using the default
 URLs may have undesirable consequences, hence this is not enabled, and
@@ -334,7 +333,7 @@ must be set explicitly elsewhere on the node(s).
   For example, each line below will force the chef-client to install Splunk's Universal Forwarder and server
   from the local package manager:
 
-  ```
+  ```ruby
   node.force_default['splunk']['forwarder']['upgrade']['url'] = ''
   node.force_default['splunk']['server']['upgrade']['url'] = ''
   node.force_default['splunk']['forwarder']['upgrade']['url'] = nil
@@ -349,7 +348,7 @@ When wrapping this cookbook, it is often beneficial to run Splunk Enterprise or 
 
 Example:
 
-```
+```ruby
 execute 'set servername' do
   command splunk_cmd(['set', 'servername', node.name, '-auth', node.run_state['splunk_auth_info'])
   sensitive true
@@ -359,7 +358,7 @@ end
 
 another way that will result in the same command:
 
-```
+```ruby
 execute 'set servername' do
   command splunk_cmd("set servname #{node.name} -auth '#{node.run_state['splunk_auth_info']}'")
   sensitive true
@@ -413,13 +412,13 @@ As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify r
   end
   ```
 
-  #### Examples
+#### Examples
 
   Install and enable a deployment client configuration that overrides default Splunk Enterprise configurations
 
    - Given a wrapper cookbook called MyDeploymentClientBase with a folder structure as below:
 
-  ```
+  ```ruby
   MyDeploymentClientBase
       /templates
           /MyDeploymentClientBase
@@ -439,7 +438,7 @@ As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify r
 
   The Splunk Enterprise server will have a filesystem created, as follows:
 
-  ```
+  ```ruby
   /opt/splunk/etc/apps/MyDeploymentClientBase/local/deploymentclient.conf
   ```
 
@@ -588,7 +587,7 @@ updates the outputs.conf server configuration with those key value pairs.
 These key value pairs can be used to setup SSL encryption on messages
 forwarded through this client:
 
-```
+```ruby
 # Note that the ssl CA and certs must exist on the server.
 node['splunk']['outputs_conf'] = {
   'sslCommonNameToCheck' => 'sslCommonName',
@@ -602,13 +601,13 @@ node['splunk']['outputs_conf'] = {
 The inputs.conf file can also be managed through this recipe if you want to
 setup a splunk forwarder just set the  default host:
 
-```
+```ruby
 node['splunk']['inputs_conf']['host'] = 'myhost'
 ```
 
 Then set up the port configuration for each input port:
 
-```
+```ruby
 node['splunk']['inputs_conf']['ports'] =
 [
   {
@@ -790,8 +789,8 @@ named `vault`, with an item `splunk_CHEF-ENVIRONMENT`, where
 Enterprise server will be assigned. If environments are not used, use
 `_default`. For example in a Chef Repository (not in a cookbook):
 
-```
-cat data_bags/vault/splunk__default.json
+```ruby
+# data_bags/vault/splunk__default.json
 {
   "id": "splunk__default",
   "auth": "admin:notarealpassword",
@@ -801,8 +800,8 @@ cat data_bags/vault/splunk__default.json
 
 Or with an environment, '`production`':
 
-```
-cat data_bags/vault/splunk_production.json
+```ruby
+# data_bags/vault/splunk_production.json
 {
   "id": "splunk_production",
   "auth": "admin:notarealpassword",
@@ -814,7 +813,7 @@ Then, upload the data bag item to the Chef Server using the
 `chef-vault` `knife encrypt` plugin (first example, `_default`
 environment):
 
-```
+```shell
 knife encrypt create vault splunk__default \
     --json data_bags/vault/splunk__default.json \
     --search 'splunk:*' --admins 'yourusername' \
@@ -830,7 +829,7 @@ The use of chef-vault is entirely optional. However, this cookbook maintains the
 
 First, chef-vault has a built-in mechanism to fallback to a standard encrypted data bag. So, in order to make use of this, set the following attribute:
 
-```
+```ruby
 node.force_default['chef-vault']['data_bag_fallback'] = true
 ```
 
@@ -844,8 +843,8 @@ Create a data bag named `vault`, with an item `splunk_CHEF-ENVIRONMENT`, where
 Enterprise server will be assigned. If environments are not used, use
 `_default`. For example in a Chef Repository (not in a cookbook):
 
-```
-cat data_bags/vault/splunk__default.json
+```ruby
+# data_bags/vault/splunk__default.json
 {
   "id": "splunk__default",
   "auth": "admin:notarealpassword",
@@ -855,8 +854,8 @@ cat data_bags/vault/splunk__default.json
 
 Or with an environment, '`production`':
 
-```
-cat data_bags/vault/splunk_production.json
+```ruby
+# data_bags/vault/splunk_production.json
 {
   "id": "splunk_production",
   "auth": "admin:notarealpassword",
@@ -866,7 +865,7 @@ cat data_bags/vault/splunk_production.json
 
 Below is an example for a node that is in the `_default` chef environment using the json file above.
 
-```
+```shell
 knife data bag create vault
 knife data bag from file vault data_bags/vault/splunk__default.json --secret-file ~/.chef/your_encrypted_data_bag_secret.key
 ```
@@ -880,8 +879,8 @@ be set up using self-signed SSL certificates, or "real" SSL
 certificates. This loaded via a data bag item with chef-vault. Using
 the defaults from the attributes:
 
-```
-cat data_bags/vault/splunk_certificates.json
+```ruby
+# data_bags/vault/splunk_certificates.json
 {
   "id": "splunk_certificates",
   "data": {
@@ -894,7 +893,7 @@ cat data_bags/vault/splunk_certificates.json
 Like the authentication credentials above, run the `knife encrypt`
 command. Note the search here is for the splunk server only:
 
-```
+```shell
 knife encrypt create vault splunk_certificates \
     --json data_bags/vault/splunk_certificates.json \
     --search 'splunk_is_server:true' --admins 'yourusername' \
