@@ -78,7 +78,7 @@ file '/etc/init.d/splunk' do
 end
 
 execute "splunk #{disabled? ? 'disable' : 'enable'} boot-start" do
-  command boot_start_cmd(disabled? ? true : nil)
+  command boot_start_cmd(disabled? || nil)
   sensitive false
   retries 3
   creates node['splunk']['startup_script']

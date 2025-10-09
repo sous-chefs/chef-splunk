@@ -81,7 +81,7 @@ property :backup, kind_of: [FalseClass, Integer], default: 5, desired_state: fal
 # indexes do start with an underscore
 property :host, kind_of: String, default: nil
 property :index, kind_of: String, default: '_internal', regex: /^[0-9a-z_][0-9a-z_-]+$/,
-                 coerce: proc { |index| index.gsub(/kvstore/, '') }
+                 coerce: proc { |index| index.gsub('kvstore', '') }
 property :sourcetype, kind_of: String, equal_to: pretrained_sourcetypes
 property :queue, kind_of: String, equal_to: %w(parsingQueue indexQueue), default: 'parsingQueue'
 property :_TCP_ROUTING, kind_of: String, default: '*'
