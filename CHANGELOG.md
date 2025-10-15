@@ -2,6 +2,14 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## [9.2.27](https://github.com/sous-chefs/chef-splunk/compare/chef-splunk-v9.2.26...chef-splunk-v9.2.27) (2025-10-15)
+
+
+### Bug Fixes
+
+* **ci:** Update CHANGELOG formatting for release pipeline ([#268](https://github.com/sous-chefs/chef-splunk/issues/268)) ([2e847f5](https://github.com/sous-chefs/chef-splunk/commit/2e847f58fd36680addc504a6ae7c240d94bd62ab))
+* **ci:** Update workflows to use release pipeline ([#266](https://github.com/sous-chefs/chef-splunk/issues/266)) ([9f7c959](https://github.com/sous-chefs/chef-splunk/commit/9f7c959ecc423fbe94f4cf16fc913da876af3de7))
+
 ## 9.2.26 - *2025-09-04*
 
 ## 9.2.25 - *2025-09-04*
