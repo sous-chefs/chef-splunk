@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## Unreleased
+
+Standardise files with files in sous-chefs/repo-management
+
+
 ## [9.2.27](https://github.com/sous-chefs/chef-splunk/compare/chef-splunk-v9.2.26...chef-splunk-v9.2.27) (2025-10-15)
 
 
