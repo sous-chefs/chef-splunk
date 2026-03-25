@@ -11,8 +11,10 @@ pre-commit:
       glob: "**/*.{yml,yaml}"
       run: yamllint {staged_files}
     chefspec:
+      glob: "**/*.rb"
       tags: backend test
       run: chef exec rspec
     cookstyle:
+      glob: "**/*.rb"
       tags: backend style
-      run: cookstyle
+      run: cookstyle {staged_files}
