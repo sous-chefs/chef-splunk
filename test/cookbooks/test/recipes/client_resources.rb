@@ -26,9 +26,8 @@ splunk_app 'chef_splunk_universal_forwarder' do
   action :install
 end
 
-splunk_monitor 'monitor-varlog' do
+splunk_monitor '/var/log' do
   inputs_conf_path '/opt/splunkforwarder/etc/system/local/inputs.conf'
-  input_path '/var/log'
   index 'default'
   sourcetype 'syslog'
 end
