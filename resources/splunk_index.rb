@@ -18,7 +18,6 @@
 #
 provides :splunk_index
 unified_mode true
-resource_name :splunk_index
 
 # User-defined index names must consist of only numbers, lowercase letters,
 # underscores, and hyphens. They cannot begin with an underscore or hyphen,

@@ -18,7 +18,6 @@
 #
 provides :splunk_monitor
 unified_mode true
-resource_name :splunk_monitor
 
 # the dictionary is created from documentation on Splunk's website
 # See https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Listofpretrainedsourcetypes

@@ -283,5 +283,3 @@ module ChefSplunk
     end
   end
 end
-
-::Chef::DSL::Universal.include ::ChefSplunk::Helpers

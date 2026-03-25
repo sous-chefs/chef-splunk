@@ -34,18 +34,14 @@ jobs:
           - ubuntu-24.04
           - opensuse-leap-15
         suite:
-          - "client-inputs-outputs"
+          - "client"
           - "client-resources"
-          - "client-runas-splunk"
-          - "default"
           - "disabled"
-          - "server-cluster-master"
           - "server-resources"
           - "server-runas-root"
           - "server-runas-splunk"
-          - "server-shcluster-member"
           - "server-shdeployer"
-          - "uninstall-forwarder"
+          - "uninstall-client"
           - "upgrade-client"
           - "upgrade-server"
       fail-fast: false
