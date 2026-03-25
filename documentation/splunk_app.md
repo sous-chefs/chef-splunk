@@ -12,6 +12,8 @@ The `splunk_app` resource manages Splunk apps, including installation from cookb
 - `app_name`: The name of the app. Default is the name of the resource.
 - `app_dependencies`: Array of package dependencies for the app.
 - `app_dir`: The directory where the app is installed.
+- `install_dir`: The Splunk installation directory. Default is `'/opt/splunk'`.
+- `runas_user`: The system user that runs Splunk. Default is `'splunk'`.
 - `cookbook`: The cookbook to find files/templates in.
 - `cookbook_file`: The cookbook file to install.
 - `remote_file`: The remote file to install.

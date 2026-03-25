@@ -10,14 +10,14 @@ source_url        'https://github.com/sous-chefs/chef-splunk'
 issues_url        'https://github.com/sous-chefs/chef-splunk/issues'
 chef_version      '>= 17.0'
 
+supports 'almalinux', '>= 8.0'
 supports 'amazon', '>= 2023.0'
-supports 'centos', '>= 8.0'
-supports 'debian', '>= 11.0'
-supports 'redhat', '>= 9.0'
+supports 'centos_stream', '>= 9.0'
+supports 'debian', '>= 12.0'
+supports 'opensuseleap', '>= 15.0'
+supports 'redhat', '>= 8.0'
+supports 'rocky', '>= 8.0'
 supports 'ubuntu', '>= 22.04'
-supports 'suse'
-supports 'rocky'
-supports 'almalinux'
 
 # please read the README.md section regarding data bag fallback if you
 # do not use chef-vault

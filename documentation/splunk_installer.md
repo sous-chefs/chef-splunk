@@ -13,6 +13,7 @@ The `splunk_installer` resource installs or upgrades Splunk Enterprise or Splunk
 - `package_name`: The name of the package to install. Default is the name of the resource.
 - `url`: The URL to download the package from.
 - `version`: The version of Splunk to install.
+- `runas_user`: The system user that runs Splunk. Default is `'splunk'`.
 
 ## Examples
 

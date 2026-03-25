@@ -24,6 +24,8 @@ unified_mode true
 property :app_name, kind_of: String, name_property: true
 property :app_dependencies, kind_of: Array, default: []
 property :app_dir, kind_of: String, default: nil
+property :install_dir, String, default: '/opt/splunk'
+property :runas_user, String, default: 'splunk'
 property :checksum, kind_of: String, default: nil
 property :cookbook, kind_of: String, default: nil
 property :cookbook_file, kind_of: String, default: nil
@@ -48,15 +50,15 @@ action_class do
     directory app_dir do
       recursive true
       mode '755'
-      owner splunk_runas_user
-      group splunk_runas_user
+      owner new_resource.runas_user
+      group new_resource.runas_user
     end
 
     directory "#{app_dir}/local" do
       recursive true
       mode '755'
-      owner splunk_runas_user
-      group splunk_runas_user
+      owner new_resource.runas_user
+      group new_resource.runas_user
     end if new_resource.cookbook_file || new_resource.remote_file
 
     if new_resource.cookbook_file
@@ -68,8 +70,8 @@ action_class do
         source new_resource.cookbook_file
         sensitive new_resource.sensitive
         checksum new_resource.checksum
-        owner splunk_runas_user
-        group splunk_runas_user
+        owner new_resource.runas_user
+        group new_resource.runas_user
         mode new_resource.files_mode unless new_resource.files_mode.nil?
       end
     elsif new_resource.remote_file || new_resource.local_file
@@ -86,17 +88,17 @@ action_class do
         source source
         checksum new_resource.checksum
         sensitive new_resource.sensitive
-        owner splunk_runas_user
-        group splunk_runas_user
+        owner new_resource.runas_user
+        group new_resource.runas_user
       end
     elsif new_resource.remote_directory
       remote_directory app_dir do
         source new_resource.remote_directory
         sensitive new_resource.sensitive
-        owner splunk_runas_user
-        group splunk_runas_user
-        files_owner splunk_runas_user
-        files_group splunk_runas_user
+        owner new_resource.runas_user
+        group new_resource.runas_user
+        files_owner new_resource.runas_user
+        files_group new_resource.runas_user
         files_mode new_resource.files_mode unless new_resource.files_mode.nil?
       end
     end
@@ -111,8 +113,8 @@ action_class do
         directory "#{app_dir}/#{::File.dirname(destination)}" do
           recursive true
           mode '755'
-          owner splunk_runas_user
-          group splunk_runas_user
+          owner new_resource.runas_user
+          group new_resource.runas_user
         end
 
         # TODO: DRY this handling of template_variables with that of lines 134-138
@@ -127,8 +129,8 @@ action_class do
           source source
           variables template_variables
           sensitive new_resource.sensitive
-          owner splunk_runas_user
-          group splunk_runas_user
+          owner new_resource.runas_user
+          group new_resource.runas_user
           mode new_resource.files_mode unless new_resource.files_mode.nil?
         end
       end
@@ -136,8 +138,8 @@ action_class do
       directory "#{app_dir}/local" do
         recursive true
         mode '755'
-        owner splunk_runas_user
-        group splunk_runas_user
+        owner new_resource.runas_user
+        group new_resource.runas_user
       end
 
       new_resource.templates.each do |t|
@@ -153,8 +155,8 @@ action_class do
           source "#{new_resource.app_name}/#{t}.erb"
           variables template_variables
           sensitive new_resource.sensitive
-          owner splunk_runas_user
-          group splunk_runas_user
+          owner new_resource.runas_user
+          group new_resource.runas_user
           mode new_resource.files_mode unless new_resource.files_mode.nil?
         end
       end
@@ -162,7 +164,7 @@ action_class do
   end
 
   def app_dir
-    new_resource.app_dir || "#{splunk_dir}/etc/apps/#{new_resource.app_name}"
+    new_resource.app_dir || "#{new_resource.install_dir}/etc/apps/#{new_resource.app_name}"
   end
 
   def app_installed?

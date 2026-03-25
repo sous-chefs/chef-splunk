@@ -22,10 +22,29 @@ unified_mode true
 property :url, String
 property :package_name, String, name_property: true
 property :version, String
+property :runas_user, String, default: 'splunk'
 
 action_class do
+  def server?
+    new_resource.package_name == 'splunk'
+  end
+
+  def install_dir
+    server? ? '/opt/splunk' : '/opt/splunkforwarder'
+  end
+
+  def splunk_installed?
+    ::File.exist?("#{install_dir}/bin/splunk")
+  end
+
+  def splunk_file(uri)
+    require 'pathname'
+    require 'uri'
+    Pathname.new(URI.parse(uri).path).basename.to_s
+  end
+
   def package_file
-    if new_resource.url.empty? || new_resource.url.nil?
+    if new_resource.url.nil? || new_resource.url.empty?
       "#{new_resource.package_name}-#{new_resource.version}"
     else
       splunk_file(new_resource.url)
@@ -61,21 +80,18 @@ action :run do
       package_name new_resource.package_name
       source cached_package
       version new_resource.version unless ::File.exist?(cached_package)
-      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
   elsif platform_family?('suse')
     rpm_package new_resource.name do
       package_name new_resource.package_name
       source cached_package
       version new_resource.version unless ::File.exist?(cached_package)
-      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
   else
     package new_resource.name do
       package_name new_resource.package_name
       source cached_package
       version package_version unless ::File.exist?(cached_package)
-      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
   end
 end
@@ -91,7 +107,6 @@ action :upgrade do
       package_name new_resource.package_name
       source cached_package
       version new_resource.version unless ::File.exist?(cached_package)
-      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
   elsif platform_family?('suse')
     rpm_package new_resource.name do
@@ -99,7 +114,6 @@ action :upgrade do
       package_name new_resource.package_name
       source cached_package
       version new_resource.version unless ::File.exist?(cached_package)
-      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
   else
     package new_resource.name do
@@ -107,7 +121,6 @@ action :upgrade do
       package_name new_resource.package_name
       source cached_package
       version package_version unless ::File.exist?(cached_package)
-      notifies :start, 'service[splunk]' unless node['splunk'].attribute?('disabled') && node['splunk']['disabled'] == true
     end
   end
 end
@@ -127,15 +140,15 @@ action :remove do
     action :remove
   end
 
-  user node['splunk']['user']['username'] do
+  user new_resource.runas_user do
     action :remove
   end
 
-  group node['splunk']['user']['username'] do
+  group new_resource.runas_user do
     action :remove
   end
 
-  directory splunk_dir do
+  directory install_dir do
     recursive true
     action :delete
   end

@@ -5,5 +5,3 @@ maintainer: Sous Chefs
 license: Apache-2.0
 summary: Verify Splunk Universal Forwarder installation
 version: 1.0.0
-supports:
-  platform: os
