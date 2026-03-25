@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: disabled
@@ -16,6 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 return unless splunk_installed?
 
 unless disabled?

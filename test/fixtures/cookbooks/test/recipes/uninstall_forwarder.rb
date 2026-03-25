@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 return if server?
 
 include_recipe 'chef-splunk::install_forwarder'

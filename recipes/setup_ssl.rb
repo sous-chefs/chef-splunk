@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: setup_ssl2
@@ -16,6 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 unless node['splunk']['ssl_options']['enable_ssl']
   Chef::Log.debug('The chef-splunk::setup_ssl recipe was added to the node,')
   Chef::Log.debug('but the attribute to enable SSL was not set.')

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Author: Dang H. Nguyen <dang.nguyen@disney.com>
 # Copyright:: 2019-2020
@@ -119,7 +121,7 @@ action :remove do
 
   service 'Splunk' do
     service_name server? ? 'Splunkd' : 'SplunkForwarder'
-    action systemd? ? %i(stop disable) : :stop
+    action %i(stop disable)
   end
 
   package new_resource.name do
@@ -139,18 +141,16 @@ action :remove do
     action :delete
   end
 
-  startup_files = if server? && systemd?
+  startup_files = if server?
                     [
                       '/etc/systemd/system/splunk.service',
                       '/etc/systemd/system/Splunkd.service',
                     ]
-                  elsif systemd?
+                  else
                     [
                       '/etc/systemd/system/splunk.service',
                       '/etc/systemd/system/SplunkForwarder.service',
                     ]
-                  else
-                    [ '/etc/init.d/splunk' ]
                   end
 
   (startup_files << cached_package).each do |f|

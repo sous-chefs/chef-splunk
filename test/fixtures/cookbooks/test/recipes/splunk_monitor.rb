@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # this recipe tests the `splunk_monitor` resource in Test Kitchen
 directory '/var/log/httpd'
 

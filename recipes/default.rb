@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: default
@@ -17,6 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 # We can rely on loading the chef_vault_item here into the run_state so other
 # recipes don't have to keep going back to the chef server to access the vault/data bag item
 vault_item = chef_vault_item(node['splunk']['data_bag'], "splunk_#{node.chef_environment}")

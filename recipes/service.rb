@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: service
@@ -16,6 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 unless license_accepted?
   Chef::Log.fatal('You did not accept the license (set node["splunk"]["accept_license"] to true)')
   raise 'Splunk license was not accepted'
@@ -72,13 +75,8 @@ execute 'splunk stop' do
   subscribes :run, 'execute[splunk enable boot-start]', :before
 end
 
-file '/etc/init.d/splunk' do
-  action :delete
-  only_if { systemd? }
-end
-
 execute "splunk #{disabled? ? 'disable' : 'enable'} boot-start" do
-  command boot_start_cmd(disabled? ? true : nil)
+  command boot_start_cmd(disabled? || nil)
   sensitive false
   retries 3
   creates node['splunk']['startup_script']
@@ -87,15 +85,12 @@ end
 
 link '/etc/systemd/system/splunk.service' do
   to server? ? '/etc/systemd/system/Splunkd.service' : '/etc/systemd/system/SplunkForwarder.service'
-  only_if { systemd? }
 end
 
 default_service_action = if node['splunk']['disabled'] == true
                            :stop
-                         elsif systemd?
-                           %i(enable start)
                          else
-                           :start
+                           %i(enable start)
                          end
 
 service 'splunk' do
@@ -104,7 +99,7 @@ service 'splunk' do
   supports status: true, restart: true
   status_command svc_command('status')
   timeout 1800
-  provider splunk_service_provider
+  provider Chef::Provider::Service::Systemd
   unless disabled?
     subscribes :restart, 'template[user-seed.conf]', :immediately
     subscribes :restart, "user[#{node['splunk']['user']['username']}]", :immediately

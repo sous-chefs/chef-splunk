@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: user
@@ -16,6 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 group node['splunk']['user']['username'] do
   action :nothing
   gid node['splunk']['user']['uid'].to_i # CHEF-4927

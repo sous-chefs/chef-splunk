@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: server
@@ -16,6 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 node.default['splunk']['is_server'] = true
 
 include_recipe 'chef-splunk::user' unless run_as_root?

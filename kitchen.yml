@@ -22,17 +22,19 @@ provisioner:
 verifier: inspec
 
 platforms:
-  - name: amazonlinux-2
-  - name: centos-7
-  - name: centos-stream-8
-  - name: debian-9
-  - name: debian-10
-  - name: ubuntu-18.04
-  - name: ubuntu-20.04
+  - name: amazonlinux-2023
+  - name: rockylinux-8
+  - name: rockylinux-9
+  - name: almalinux-8
+  - name: almalinux-9
+  - name: debian-11
+  - name: debian-12
+  - name: ubuntu-22.04
+  - name: ubuntu-24.04
   - name: opensuse-leap-15
 
 suites:
-  - name: client
+  - name: default
     run_list:
       - recipe[test::file_locking_check]
       - recipe[chef-splunk::default]

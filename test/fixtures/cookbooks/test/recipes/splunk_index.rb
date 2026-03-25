@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # this recipe tests the `splunk_index` resource in Test Kitchen
 indexes_dir = "#{splunk_dir}/etc/apps/chef_splunk_indexes"
 

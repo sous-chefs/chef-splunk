@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: setup_auth
@@ -16,6 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 unless setup_auth?
   log 'setup_auth is disabled' do
     message 'The chef-splunk::setup_auth recipe was added to the node, ' \

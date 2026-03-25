@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: install_server
@@ -16,8 +18,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-node.default['splunk']['service_name'] = 'Splunkd' if systemd?
-node.default['splunk']['startup_script'] = '/etc/systemd/system/Splunkd.service' if systemd?
+
+node.default['splunk']['service_name'] = 'Splunkd'
+node.default['splunk']['startup_script'] = '/etc/systemd/system/Splunkd.service'
 
 splunk_installer 'splunk' do
   if upgrade_enabled?

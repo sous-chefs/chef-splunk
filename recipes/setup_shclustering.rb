@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: splunk
 # Recipe:: setup_shclustering
@@ -18,6 +20,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 unless enable_shclustering?
   Chef::Log.debug('The chef-splunk::setup_shclustering recipe was added to the node,')
   Chef::Log.debug('but the attribute to enable search head clustering was not set.')

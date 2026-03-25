@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Libraries:: helpers
@@ -27,15 +29,13 @@ module ChefSplunk
     @shcluster_server_size = nil
 
     def boot_start_cmd(disable = nil)
-      systemd_managed = systemd? ? 1 : 0
-
       # this command modifies the systemd unit file, so must be run as root
       if disable.nil? && run_as_root?
-        "#{splunk_dir}/bin/splunk enable boot-start -systemd-managed #{systemd_managed} --accept-license"
+        "#{splunk_dir}/bin/splunk enable boot-start -systemd-managed 1 --accept-license"
       elsif disable.nil?
-        "#{splunk_dir}/bin/splunk enable boot-start  -user #{splunk_runas_user} -systemd-managed #{systemd_managed} --accept-license"
+        "#{splunk_dir}/bin/splunk enable boot-start -user #{splunk_runas_user} -systemd-managed 1 --accept-license"
       else
-        "#{splunk_dir}/bin/splunk disable boot-start -systemd-managed #{systemd_managed} --accept-license"
+        "#{splunk_dir}/bin/splunk disable boot-start -systemd-managed 1 --accept-license"
       end
     end
 
@@ -91,6 +91,28 @@ module ChefSplunk
       forwarderpath
     end
 
+    def splunk_arch
+      case node['kernel']['machine']
+      when 'x86_64', 'amd64'
+        'amd64'
+      when 'aarch64', 'arm64'
+        'arm64'
+      else
+        'amd64' # fallback
+      end
+    end
+
+    def splunk_arch_rpm
+      case node['kernel']['machine']
+      when 'x86_64', 'amd64'
+        'x86_64'
+      when 'aarch64', 'arm64'
+        'arm64'
+      else
+        'x86_64' # fallback
+      end
+    end
+
     def splunk_auth(auth)
       # if auth is a string, we assume it's correctly
       # defined as a splunk authentication string, like:
@@ -121,14 +143,6 @@ module ChefSplunk
     def splunk_runas_user
       return 'root' if node['splunk']['server']['runasroot'] == true
       node['splunk']['user']['username']
-    end
-
-    def splunk_service_provider
-      if systemd?
-        Chef::Provider::Service::Systemd
-      else
-        Chef::Provider::Service::Init
-      end
     end
 
     # a splunkd instance is either a splunk client (runs universal forwarder only) or a complete server

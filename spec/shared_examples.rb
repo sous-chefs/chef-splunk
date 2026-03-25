@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_examples 'a search head cluster member' do
   it 'executes initialize shcluster member command' do
     expect(chef_run).to_not run_execute('initialize search head cluster member')

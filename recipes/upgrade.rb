@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: upgrade
@@ -16,6 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 if node['splunk'].attribute?('upgrade') && node['splunk']['upgrade'].attribute?('server_url')
   msg = "DEPRECATED: node['splunk']['upgrade']['server_url'] was found. This attribute will be removed in a future version. " \
         "Please use node['splunk']['server']['upgrade']['url'] instead"

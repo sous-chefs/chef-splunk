@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Author: Dang H. Nguyen <dang.nguyen@disney.com>
 # Copyright:: 2019-2020

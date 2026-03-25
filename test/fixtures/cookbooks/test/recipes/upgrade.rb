@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if server?
   splunk_installer 'splunk 8.0.1' do
     url value_for_platform_family(

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Disable file locking check by Splunk as it fails on unsupported file systems
 # used in some Docker hosts (e.g. on Mac)
 append_if_no_line 'Disable file locking check by Splunk startup' do

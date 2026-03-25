@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: install_forwarder
@@ -16,10 +18,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 include_recipe 'chef-splunk::user'
 
-node.default['splunk']['service_name'] = 'SplunkForwarder' if systemd?
-node.default['splunk']['startup_script'] = '/etc/systemd/system/SplunkForwarder.service' if systemd?
+node.default['splunk']['service_name'] = 'SplunkForwarder'
+node.default['splunk']['startup_script'] = '/etc/systemd/system/SplunkForwarder.service'
 
 splunk_installer 'splunkforwarder' do
   if upgrade_enabled?

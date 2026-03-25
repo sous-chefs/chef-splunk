@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_context 'command stubs' do
   before(:each) do
     stubs_for_resource('execute[initialize search head cluster member]') do |resource|

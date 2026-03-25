@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Recipe:: client
@@ -16,6 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 # This recipe encapsulates a completely configured "client" - a
 # Universal Forwarder configured to talk to a node that is the splunk
 # server (with node['splunk']['is_server'] true). The recipes can be
