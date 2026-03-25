@@ -7,6 +7,7 @@ This cookbook manages Splunk Enterprise and Splunk Universal Forwarder.
 Based on Splunk 9.4.0 vendor documentation, the following platforms are supported:
 
 ### Linux x86_64 / ARM64 (AArch64)
+
 - **Ubuntu**: 22.04, 24.04
 - **Debian**: 11, 12
 - **RHEL / Rocky Linux / AlmaLinux**: 8, 9
