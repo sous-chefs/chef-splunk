@@ -13,6 +13,7 @@ splunk_service 'splunk' do
   install_dir '/opt/splunkforwarder'
   service_name 'SplunkForwarder'
   runas_user 'splunk'
+  admin_password 'notarealpassword'
 end
 
 splunk_installer 'splunkforwarder' do

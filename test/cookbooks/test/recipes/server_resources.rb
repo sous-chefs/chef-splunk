@@ -18,6 +18,7 @@ splunk_service 'splunk' do
   install_dir '/opt/splunk'
   service_name 'Splunkd'
   runas_user 'splunk'
+  admin_password 'notarealpassword'
 end
 
 splunk_app 'chef_splunk_universal_forwarder' do

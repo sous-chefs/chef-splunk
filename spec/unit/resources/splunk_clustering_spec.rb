@@ -17,7 +17,7 @@ describe 'splunk_clustering' do
       end
     end
 
-    it { is_expected.to run_execute('setup-indexer-cluster') }
+    it { is_expected.to run_execute('setup-indexer-cluster').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
     it { is_expected.to nothing_file('/opt/splunk/etc/.setup_clustering') }
   end
 
@@ -32,7 +32,7 @@ describe 'splunk_clustering' do
       end
     end
 
-    it { is_expected.to run_execute('setup-indexer-cluster') }
+    it { is_expected.to run_execute('setup-indexer-cluster').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
   end
 
   context 'action :create in master mode with multisite' do
@@ -48,6 +48,6 @@ describe 'splunk_clustering' do
       end
     end
 
-    it { is_expected.to run_execute('setup-indexer-cluster') }
+    it { is_expected.to run_execute('setup-indexer-cluster').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
   end
 end

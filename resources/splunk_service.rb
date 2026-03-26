@@ -8,6 +8,8 @@ property :install_dir, String, default: '/opt/splunkforwarder'
 property :runas_user, String, default: 'splunk'
 property :service_name, String, default: 'SplunkForwarder'
 property :accept_license, [true, false], default: true
+property :admin_user, String, default: 'admin'
+property :admin_password, String, sensitive: true
 
 action :start do
   directory new_resource.install_dir do
@@ -27,7 +29,11 @@ action :start do
 
   execute 'splunk enable boot-start' do
     command boot_start_command
-    sensitive false
+    sensitive true
+    environment(
+      'SPLUNK_USER' => new_resource.admin_user,
+      'SPLUNK_PASSWORD' => new_resource.admin_password
+    ) if new_resource.admin_password
     retries 3
     creates "/etc/systemd/system/#{new_resource.service_name}.service"
   end

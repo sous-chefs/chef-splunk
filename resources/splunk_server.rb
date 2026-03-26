@@ -23,11 +23,19 @@ action :install do
   execute 'update-splunk-mgmt-port' do
     command mgmt_port_command
     sensitive true
+    environment(
+      'SPLUNK_USER' => auth_user,
+      'SPLUNK_PASSWORD' => auth_password
+    )
   end
 
   execute 'update-splunk-receiver-port' do
     command receiver_port_command
     sensitive true
+    environment(
+      'SPLUNK_USER' => auth_user,
+      'SPLUNK_PASSWORD' => auth_password
+    )
   end
 end
 
@@ -40,6 +48,14 @@ action :remove do
 end
 
 action_class do
+  def auth_user
+    new_resource.splunk_auth.split(':')[0]
+  end
+
+  def auth_password
+    new_resource.splunk_auth.split(':')[1]
+  end
+
   def splunk_cmd(args)
     cmd = "#{new_resource.install_dir}/bin/splunk #{args}"
     return cmd if new_resource.runas_user == 'root'

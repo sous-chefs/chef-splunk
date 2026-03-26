@@ -32,6 +32,10 @@ action :create do
   execute 'setup-indexer-cluster' do
     command cluster_command(cmd_params)
     sensitive true
+    environment(
+      'SPLUNK_USER' => auth_user,
+      'SPLUNK_PASSWORD' => auth_password
+    )
     retries 5
     retry_delay 60
     not_if { ::File.exist?("#{new_resource.install_dir}/etc/.setup_clustering") }
@@ -39,6 +43,14 @@ action :create do
 end
 
 action_class do
+  def auth_user
+    new_resource.splunk_auth.split(':')[0]
+  end
+
+  def auth_password
+    new_resource.splunk_auth.split(':')[1]
+  end
+
   def multisite?
     new_resource.num_sites > 1
   end

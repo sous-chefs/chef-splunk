@@ -58,6 +58,10 @@ action_class do
     execute 'initialize search head cluster member' do
       sensitive true
       command init_shcluster_command
+      environment(
+        'SPLUNK_USER' => auth_user,
+        'SPLUNK_PASSWORD' => auth_password
+      ) if new_resource.splunk_auth
       not_if { ::File.exist?("#{new_resource.install_dir}/etc/.setup_shclustering") }
     end
 
@@ -68,6 +72,14 @@ action_class do
       mode '600'
       subscribes :touch, 'execute[initialize search head cluster member]'
     end
+  end
+
+  def auth_user
+    new_resource.splunk_auth&.split(':')&.first
+  end
+
+  def auth_password
+    new_resource.splunk_auth&.split(':')&.last
   end
 
   def init_shcluster_command

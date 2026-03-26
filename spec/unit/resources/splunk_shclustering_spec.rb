@@ -38,6 +38,6 @@ describe 'splunk_shclustering' do
       end
     end
 
-    it { is_expected.to run_execute('initialize search head cluster member') }
+    it { is_expected.to run_execute('initialize search head cluster member').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
   end
 end
