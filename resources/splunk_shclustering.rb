@@ -26,6 +26,8 @@ action :create do
 end
 
 action_class do
+  use 'splunk_auth_helpers'
+
   def setup_deployer
     directory new_resource.app_dir do
       owner new_resource.runas_user
@@ -71,14 +73,6 @@ action_class do
       mode '600'
       subscribes :touch, 'execute[initialize search head cluster member]'
     end
-  end
-
-  def auth_user
-    new_resource.splunk_auth&.split(':')&.first
-  end
-
-  def auth_password
-    new_resource.splunk_auth&.split(':')&.last
   end
 
   def init_shcluster_command

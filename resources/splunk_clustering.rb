@@ -42,13 +42,7 @@ action :create do
 end
 
 action_class do
-  def auth_user
-    new_resource.splunk_auth.split(':').first
-  end
-
-  def auth_password
-    new_resource.splunk_auth.split(':')[1]
-  end
+  use 'splunk_auth_helpers'
 
   def multisite?
     new_resource.num_sites > 1
