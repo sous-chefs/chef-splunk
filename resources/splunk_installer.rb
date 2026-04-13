@@ -59,6 +59,10 @@ action_class do
     "#{Chef::Config[:file_cache_path]}/#{package_file}"
   end
 
+  def tgz_package?
+    package_file.end_with?('.tgz') || package_file.end_with?('.tar.gz')
+  end
+
   def download_package
     remote_file package_file do
       backup false
@@ -68,6 +72,17 @@ action_class do
       action :create
     end
   end
+
+  def install_tgz
+    execute "extract #{package_file}" do
+      command "tar -xzf #{cached_package} -C /opt"
+      creates install_dir
+    end
+
+    execute "chown #{install_dir}" do
+      command "chown -R #{new_resource.runas_user}:#{new_resource.runas_user} #{install_dir}"
+    end
+  end
 end
 
 action :run do
@@ -75,7 +90,9 @@ action :run do
 
   download_package
 
-  if platform_family?('debian')
+  if tgz_package?
+    install_tgz
+  elsif platform_family?('debian')
     dpkg_package new_resource.name do
       package_name new_resource.package_name
       source cached_package
@@ -101,7 +118,9 @@ action :upgrade do
 
   download_package
 
-  if platform_family?('debian')
+  if tgz_package?
+    install_tgz
+  elsif platform_family?('debian')
     dpkg_package new_resource.name do
       action :upgrade
       package_name new_resource.package_name
@@ -136,8 +155,10 @@ action :remove do
     action %i(stop disable)
   end
 
-  package new_resource.name do
-    action :remove
+  unless tgz_package?
+    package new_resource.name do
+      action :remove
+    end
   end
 
   user new_resource.runas_user do
