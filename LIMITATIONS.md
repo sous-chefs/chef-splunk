@@ -20,4 +20,4 @@ This cookbook exclusively supports `systemd` init systems. Legacy `sysvinit` and
 
 ## Chef Version Requirement
 
-- **Chef Infra Client**: 17.0 or newer (required for `unified_mode` support and modern resources)
+- **Chef Infra Client**: 16.0 or newer (required for `unified_mode` and resource partials)

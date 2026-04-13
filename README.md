@@ -26,7 +26,7 @@ This cookbook is maintained by the Sous Chefs. The Sous Chefs are a community of
 
 ## Requirements
 
-Chef 17.0 or newer (required for `unified_mode` and resource partials)
+Chef 16.0 or newer (required for `unified_mode` and resource partials)
 
 ## License Acceptance
 

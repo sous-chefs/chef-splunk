@@ -8,7 +8,7 @@ description       'Manage Splunk Enterprise or Splunk Universal Forwarder'
 version           '10.0.0'
 source_url        'https://github.com/sous-chefs/chef-splunk'
 issues_url        'https://github.com/sous-chefs/chef-splunk/issues'
-chef_version      '>= 17.0'
+chef_version      '>= 16.0'
 
 supports 'almalinux', '>= 9.0'
 supports 'amazon', '>= 2023.0'
