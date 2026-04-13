@@ -26,7 +26,7 @@ This cookbook is maintained by the Sous Chefs. The Sous Chefs are a community of
 
 ## Requirements
 
-Chef 15.5 or newer
+Chef 17.0 or newer (required for `unified_mode` and resource partials)
 
 ## License Acceptance
 
@@ -58,10 +58,10 @@ post-convergence tests. The tested platforms are considered supported.
 This cookbook may work on other platforms or platform versions with or
 without modification.
 
-- Debian 9, 10
-- Ubuntu 18.04, 20.04
-- CentOS 7, 8
-- Redhat 7, 8
+- Debian 12
+- Ubuntu 22.04, 24.04
+- RHEL / AlmaLinux / Rocky 9
+- Amazon Linux 2023
 - openSUSE Leap 15
 
 By default, only 64-bit Splunk server and Splunk Universal Forwarder will be installed or upgraded by this cookbook.
@@ -444,7 +444,7 @@ As of v6.0.0, sub-resources of the `splunk_app` provider will no longer notify r
 
 ### splunk_index
 
-This resource helps manage Splunk indexes that are defined in an `indexes.conf` file in a "chef way" using standard Chef DSL vernacular. For information and specifications about Splunk indexes, please review and understand [https://docs.splunk.com/Documentation/Splunk/8.0.2/Admin/Indexesconf](https://docs.splunk.com/Documentation/Splunk/8.0.2/Admin/Indexesconf).
+This resource helps manage Splunk indexes that are defined in an `indexes.conf` file in a "chef way" using standard Chef DSL vernacular. For information and specifications about Splunk indexes, please review and understand [https://docs.splunk.com/Documentation/Splunk/latest/Admin/Indexesconf](https://docs.splunk.com/Documentation/Splunk/latest/Admin/Indexesconf).
 
 Upon convergence, this resource will add a new stanza to the `indexes.conf` file, as needed, and modify or add new lines to the section based on properties given to the resource. If the current stanza in the `indexes.conf` file has any extra lines that are not listed as a valid property in this resource, those lines are automatically removed.
 
@@ -469,7 +469,7 @@ A test recipe is embedded in this cookbook. Please look at `test/fixtures/cookbo
 
 ### splunk_monitor
 
-Adds a Splunk monitor stanza into a designated `inputs.conf` file in a "chef-erized" way using standard Chef DSL vernacular. This resource also validates supported monitors and index names as documented by Splunk. The dictionary is created from documentation on [Splunk's website](https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Listofpretrainedsourcetypes).
+Adds a Splunk monitor stanza into a designated `inputs.conf` file in a "chef-erized" way using standard Chef DSL vernacular. This resource also validates supported monitors and index names as documented by Splunk. The dictionary is created from documentation on [Splunk's website](https://docs.splunk.com/Documentation/Splunk/latest/Data/Listofpretrainedsourcetypes).
 
 Upon convergence, this resource will add a new stanza to the inputs.conf file, as needed, and modify or add new lines to the section based on properties given to the resource. If the current stanza in the inputs.conf file has any extra lines that are not listed as a valid property in this resource, those lines are automatically removed.
 
@@ -486,7 +486,7 @@ These properties are specific to this resource:
 - `inputs_conf_path` - this is the target path and filename to the `inputs.conf`
 - `backup` - similar to the backup property of other file/template resources in chef, this specifies a number of backup files to retain or false to disable (Default: 5)
 
-These resource properties are drawn from Splunk's @documentation. Refer to [https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Monitorfilesanddirectorieswithinputs.conf](https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Monitorfilesanddirectorieswithinputs.conf) for more detailed description of these properties.
+These resource properties are drawn from Splunk's documentation. Refer to [https://docs.splunk.com/Documentation/Splunk/latest/Data/Monitorfilesanddirectorieswithinputs.conf](https://docs.splunk.com/Documentation/Splunk/latest/Data/Monitorfilesanddirectorieswithinputs.conf) for more detailed description of these properties.
 
 - `host`
 - `index`
