@@ -9,12 +9,12 @@ Based on Splunk 9.4.0 vendor documentation, the following platforms are supporte
 ### Linux x86_64 / ARM64 (AArch64)
 
 - **Ubuntu**: 22.04, 24.04
-- **Debian**: 12
-- **AlmaLinux**: 9
-- **Rocky Linux**: 9
-- **RHEL**: 9
+- **Debian**: 12, 13
+- **AlmaLinux**: 9, 10
+- **Rocky Linux**: 9, 10
+- **RHEL**: 9, 10
 - **Amazon Linux**: 2023
-- **openSUSE**: Leap 15
+- **openSUSE**: Leap 15, 16
 
 ## Systemd Requirement
 

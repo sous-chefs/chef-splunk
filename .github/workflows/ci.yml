@@ -24,12 +24,16 @@ jobs:
       matrix:
         os:
           - almalinux-9
+          - almalinux-10
           - amazonlinux-2023
           - debian-12
+          - debian-13
           - rocky-9
+          - rocky-10
           - ubuntu-2204
           - ubuntu-2404
           - opensuse-leap-15
+          - opensuse-leap-16
         suite:
           - "default"
           - "client"

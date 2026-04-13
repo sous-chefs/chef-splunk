@@ -16,9 +16,13 @@ verifier:
 
 platforms:
   - name: almalinux-9
+  - name: almalinux-10
   - name: amazonlinux-2023
   - name: debian-12
+  - name: debian-13
   - name: rocky-9
+  - name: rocky-10
   - name: ubuntu-2204
   - name: ubuntu-2404
   - name: opensuse-leap-15
+  - name: opensuse-leap-16
