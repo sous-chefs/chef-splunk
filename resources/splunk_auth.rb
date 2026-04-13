@@ -3,7 +3,7 @@
 provides :splunk_auth
 unified_mode true
 
-property :instance_name, String, name_property: true
+use 'splunk_instance'
 property :install_dir, String, default: '/opt/splunk'
 property :admin_user, String, default: 'admin'
 property :admin_password, String, sensitive: true, required: true

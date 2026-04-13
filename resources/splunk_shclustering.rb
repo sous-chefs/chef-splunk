@@ -3,7 +3,7 @@
 provides :splunk_shclustering
 unified_mode true
 
-property :instance_name, String, name_property: true
+use 'splunk_instance'
 property :install_dir, String, default: '/opt/splunk'
 property :mode, String, required: true, equal_to: %w(deployer member captain)
 property :label, String, required: true
@@ -13,7 +13,6 @@ property :mgmt_uri, String
 property :deployer_url, String
 property :secret, String, sensitive: true
 property :splunk_auth, String, sensitive: true
-property :runas_user, String, default: 'splunk'
 property :app_dir, String, default: lazy { "#{install_dir}/etc/apps/0_PC_shcluster_config" }
 property :shcluster_members, Array, default: []
 

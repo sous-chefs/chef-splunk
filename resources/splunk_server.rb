@@ -3,7 +3,7 @@
 provides :splunk_server
 unified_mode true
 
-property :instance_name, String, name_property: true
+use 'splunk_instance'
 property :install_dir, String, default: '/opt/splunk'
 property :package_name, String, default: 'splunk'
 property :url, String, required: true
@@ -11,7 +11,6 @@ property :version, String
 property :mgmt_port, Integer, default: 8089
 property :receiver_port, Integer, default: 9997
 property :web_port, Integer, default: 443
-property :runas_user, String, default: 'splunk'
 property :splunk_auth, String, sensitive: true, required: true
 
 action :install do

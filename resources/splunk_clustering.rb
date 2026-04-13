@@ -3,7 +3,7 @@
 provides :splunk_clustering
 unified_mode true
 
-property :instance_name, String, name_property: true
+use 'splunk_instance'
 property :install_dir, String, default: '/opt/splunk'
 property :mode, String, required: true, equal_to: %w(master slave searchhead)
 property :replication_factor, Integer, default: 3
@@ -16,7 +16,6 @@ property :site_replication_factor, String
 property :site_search_factor, String
 property :splunk_auth, String, sensitive: true, required: true
 property :secret, String, sensitive: true
-property :runas_user, String, default: 'splunk'
 
 action :create do
   cmd_params = build_cluster_params

@@ -3,9 +3,8 @@
 provides :splunk_service
 unified_mode true
 
-property :instance_name, String, name_property: true
+use 'splunk_instance'
 property :install_dir, String, default: '/opt/splunkforwarder'
-property :runas_user, String, default: 'splunk'
 property :service_name, String, default: 'SplunkForwarder'
 property :accept_license, [true, false], default: true
 property :admin_user, String, default: 'admin'

@@ -3,14 +3,13 @@
 provides :splunk_client
 unified_mode true
 
-property :instance_name, String, name_property: true
+use 'splunk_instance'
 property :install_dir, String, default: '/opt/splunkforwarder'
 property :package_name, String, default: 'splunkforwarder'
 property :url, String, required: true
 property :version, String
 property :server_list, String, required: true
 property :receiver_port, Integer, default: 9997
-property :runas_user, String, default: 'splunk'
 property :outputs_conf, Hash, default: {}
 
 action :install do
