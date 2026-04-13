@@ -44,7 +44,7 @@ end
 
 action_class do
   def auth_user
-    new_resource.splunk_auth.split(':')[0]
+    new_resource.splunk_auth.split(':').first
   end
 
   def auth_password

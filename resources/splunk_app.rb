@@ -21,26 +21,26 @@ require 'pathname'
 provides :splunk_app
 unified_mode true
 
-property :app_name, kind_of: String, name_property: true
-property :app_dependencies, kind_of: Array, default: []
-property :app_dir, kind_of: String, default: nil
+property :app_name, String, name_property: true
+property :app_dependencies, Array, default: []
+property :app_dir, String
 property :install_dir, String, default: '/opt/splunk'
 property :runas_user, String, default: 'splunk'
-property :checksum, kind_of: String, default: nil
-property :cookbook, kind_of: String, default: nil
-property :cookbook_file, kind_of: String, default: nil
-property :installed, kind_of: [TrueClass, FalseClass, NilClass], default: false
-property :local_file, kind_of: String, default: nil
-property :remote_file, kind_of: String, default: nil
-property :remote_directory, kind_of: String, default: nil
-property :templates, kind_of: [Array, Hash], default: []
+property :checksum, String
+property :cookbook, String
+property :cookbook_file, String
+property :installed, [TrueClass, FalseClass, NilClass], default: false
+property :local_file, String
+property :remote_file, String
+property :remote_directory, String
+property :templates, [Array, Hash], default: []
 property :files_mode, [String, Integer, nil],
           description: "The octal mode for a file.\n UNIX- and Linux-based systems: A quoted 3-5 character string that defines the octal mode that is passed to chmod. For example: '755', '0755', or 00755. If the value is specified as a quoted string, it works exactly as if the chmod command was passed. If the value is specified as an integer, prepend a zero (0) to the value to ensure that it is interpreted as an octal number. For example, to assign read, write, and execute rights for all users, use '0777' or '777'; for the same rights, plus the sticky bit, use 01777 or '1777'.\n Microsoft Windows: A quoted 3-5 character string that defines the octal mode that is translated into rights for Microsoft Windows security. For example: '755', '0755', or 00755. Values up to '0777' are allowed (no sticky bits) and mean the same in Microsoft Windows as they do in UNIX, where 4 equals GENERIC_READ, 2 equals GENERIC_WRITE, and 1 equals GENERIC_EXECUTE. This property cannot be used to set :full_control. This property has no effect if not specified, but when it and rights are both specified, the effects are cumulative.",
           regex: /^\d{3,4}$/, default: nil
 # template_variables is a Hash referencing
 # each template named in the templates property, above, with each template having its
 # unique set of variables and values
-property :template_variables, kind_of: Hash, default: { 'default' => {} }
+property :template_variables, Hash, default: { 'default' => {} }
 
 action_class do
   def setup_app_dir

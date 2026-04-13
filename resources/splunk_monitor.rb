@@ -68,10 +68,10 @@ dictionary = {
 pretrained_sourcetypes = dictionary.values.flatten.sort.uniq
 
 # these properties are specific to this resource
-property :monitor_name, kind_of: String, name_property: true, regex: %r{^monitor:///.*},
-                        coerce: proc { |m| "monitor://#{m}" }
-property :inputs_conf_path, kind_of: String, regex: %r{^/.*}, desired_state: false, required: true
-property :backup, kind_of: [FalseClass, Integer], default: 5, desired_state: false
+property :monitor_name, String, name_property: true, regex: %r{^monitor:///.*},
+                                coerce: proc { |m| "monitor://#{m}" }
+property :inputs_conf_path, String, regex: %r{^/.*}, desired_state: false, required: true
+property :backup, [FalseClass, Integer], default: 5, desired_state: false
 
 # These resource properties are drawn from Splunk's @documentation.
 # Refer to https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Monitorfilesanddirectorieswithinputs.conf
@@ -80,26 +80,26 @@ property :backup, kind_of: [FalseClass, Integer], default: 5, desired_state: fal
 # Refer to https://docs.splunk.com/Documentation/Splunk/latest/Indexer/Setupmultipleindexes
 # for user-defined index name requirements--note that Splunk-standard internal
 # indexes do start with an underscore
-property :host, kind_of: String, default: nil
-property :index, kind_of: String, default: '_internal', regex: /^[0-9a-z_][0-9a-z_-]+$/,
-                 coerce: proc { |index| index.gsub('kvstore', '') }
-property :sourcetype, kind_of: String, equal_to: pretrained_sourcetypes
-property :queue, kind_of: String, equal_to: %w(parsingQueue indexQueue), default: 'parsingQueue'
-property :_TCP_ROUTING, kind_of: String, default: '*'
-property :host_regex, kind_of: String, default: nil
-property :host_segment, kind_of: Integer, default: nil
+property :host, String
+property :index, String, default: '_internal', regex: /^[0-9a-z_][0-9a-z_-]+$/,
+                         coerce: proc { |index| index.gsub('kvstore', '') }
+property :sourcetype, String, equal_to: pretrained_sourcetypes
+property :queue, String, equal_to: %w(parsingQueue indexQueue), default: 'parsingQueue'
+property :_TCP_ROUTING, String, default: '*'
+property :host_regex, String
+property :host_segment, [Integer, nil], default: nil
 
 # The following are additional settings you can use when defining `monitor` input stanzas
-property :source, kind_of: String, default: nil
-property :crcSalt, kind_of: String, default: '<SOURCE>'
-property :ignoreOlderThan, kind_of: String, default: nil, regex: [ /^(0|[1-9]+[dhms])$/ ]
-property :followTail, kind_of: Integer, default: 0, equal_to: [0, 1]
-property :whitelist, kind_of: String, default: nil
-property :blacklist, kind_of: String, default: nil
-property :alwaysOpenFile, kind_of: Integer, default: 0, equal_to: [0, 1]
-property :recursive, kind_of: [TrueClass, FalseClass], default: true
-property :time_before_close, kind_of: Integer, default: 3
-property :followSymlink, kind_of: [TrueClass, FalseClass], default: true
+property :source, String
+property :crcSalt, String, default: '<SOURCE>'
+property :ignoreOlderThan, String, regex: [ /^(0|[1-9]+[dhms])$/ ]
+property :followTail, Integer, default: 0, equal_to: [0, 1]
+property :whitelist, String
+property :blacklist, String
+property :alwaysOpenFile, Integer, default: 0, equal_to: [0, 1]
+property :recursive, [true, false], default: true
+property :time_before_close, Integer, default: 3
+property :followSymlink, [true, false], default: true
 
 @document = nil
 @stanza_title = nil
