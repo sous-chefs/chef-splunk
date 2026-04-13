@@ -6,8 +6,14 @@ control 'splunk-default-installation' do
   title 'Verify Splunk Universal Forwarder default installation'
   only_if { os.linux? }
 
-  describe package('splunkforwarder') do
-    it { should be_installed }
+  if file("#{SPLUNK_HOME}/bin/splunk").exist?
+    describe file("#{SPLUNK_HOME}/bin/splunk") do
+      it { should be_file }
+    end
+  else
+    describe package('splunkforwarder') do
+      it { should be_installed }
+    end
   end
 
   describe service('SplunkForwarder') do

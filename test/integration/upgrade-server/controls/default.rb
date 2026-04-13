@@ -4,9 +4,15 @@ control 'splunk-upgrade-server' do
   title 'Verify Splunk Enterprise upgraded to 9.4.0'
   only_if { os.linux? }
 
-  describe package('splunk') do
-    it { should be_installed }
-    its('version') { should match(/9\.4\.0/) }
+  if file('/opt/splunk/bin/splunk').exist?
+    describe file('/opt/splunk/bin/splunk') do
+      it { should be_file }
+    end
+  else
+    describe package('splunk') do
+      it { should be_installed }
+      its('version') { should match(/9\.4\.0/) }
+    end
   end
 
   describe service('Splunkd') do

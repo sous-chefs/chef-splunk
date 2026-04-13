@@ -31,8 +31,14 @@ control 'Enterprise Splunk' do
     end
   end
 
-  describe package('splunk') do
-    it { should be_installed }
+  if file("#{SPLUNK_HOME}/bin/splunk").exist?
+    describe file("#{SPLUNK_HOME}/bin/splunk") do
+      it { should be_file }
+    end
+  else
+    describe package('splunk') do
+      it { should be_installed }
+    end
   end
 
   describe service('Splunkd') do

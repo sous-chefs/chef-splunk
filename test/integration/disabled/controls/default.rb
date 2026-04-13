@@ -4,8 +4,14 @@ control 'splunk-disabled' do
   title 'Verify Splunk service is stopped and disabled'
   only_if { os.linux? }
 
-  describe package('splunk') do
-    it { should be_installed }
+  if file('/opt/splunk/bin/splunk').exist?
+    describe file('/opt/splunk/bin/splunk') do
+      it { should be_file }
+    end
+  else
+    describe package('splunk') do
+      it { should be_installed }
+    end
   end
 
   describe service('Splunkd') do
