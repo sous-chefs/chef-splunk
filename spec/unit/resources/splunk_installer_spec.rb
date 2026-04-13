@@ -59,6 +59,8 @@ describe 'splunk_installer' do
     it { is_expected.to run_splunk_installer('splunkforwarder') }
     it { is_expected.to create_remote_file('splunkforwarder-9.4.0-6b4ebe426ca6-linux-arm64.tgz') }
     it { is_expected.to run_execute('extract splunkforwarder-9.4.0-6b4ebe426ca6-linux-arm64.tgz') }
+    it { is_expected.to run_execute('splunk init splunkforwarder-9.4.0-6b4ebe426ca6-linux-arm64.tgz') }
+    it { is_expected.to run_execute('splunk stop after init splunkforwarder-9.4.0-6b4ebe426ca6-linux-arm64.tgz') }
   end
 
   context 'action :upgrade with tgz (ARM64)' do
@@ -76,6 +78,8 @@ describe 'splunk_installer' do
 
     it { is_expected.to upgrade_splunk_installer('splunkforwarder') }
     it { is_expected.to run_execute('extract splunkforwarder-9.4.0-6b4ebe426ca6-linux-arm64.tgz') }
+    it { is_expected.to run_execute('splunk init splunkforwarder-9.4.0-6b4ebe426ca6-linux-arm64.tgz') }
+    it { is_expected.to run_execute('splunk stop after init splunkforwarder-9.4.0-6b4ebe426ca6-linux-arm64.tgz') }
   end
 
   context 'action :remove with tgz (ARM64)' do
