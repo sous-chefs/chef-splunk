@@ -3,6 +3,7 @@
 require 'spec_helper'
 
 describe 'splunk_app' do
+  step_into :splunk_app
   platform 'ubuntu', '24.04'
 
   context 'action :install with cookbook_file' do

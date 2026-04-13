@@ -3,6 +3,7 @@
 require 'spec_helper'
 
 describe 'splunk_installer' do
+  step_into :splunk_installer
   platform 'ubuntu', '24.04'
 
   context 'action :run' do
