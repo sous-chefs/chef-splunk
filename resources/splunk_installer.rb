@@ -82,24 +82,6 @@ action_class do
     execute "chown #{install_dir}" do
       command "chown -R #{new_resource.runas_user}:#{new_resource.runas_user} #{install_dir}"
     end
-
-    execute "splunk init #{package_file}" do
-      command "#{install_dir}/bin/splunk start --accept-license --no-prompt --answer-yes"
-      user new_resource.runas_user
-      environment(
-        'LD_LIBRARY_PATH' => "#{install_dir}/lib",
-        'TMPDIR' => '/tmp'
-      )
-      creates "#{install_dir}/etc/.init_ok"
-    end
-
-    execute "splunk stop after init #{package_file}" do
-      command "#{install_dir}/bin/splunk stop"
-      user new_resource.runas_user
-      environment(
-        'LD_LIBRARY_PATH' => "#{install_dir}/lib"
-      )
-    end
   end
 end
 
