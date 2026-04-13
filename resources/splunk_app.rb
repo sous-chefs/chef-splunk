@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-require 'pathname'
 
 provides :splunk_app
 unified_mode true

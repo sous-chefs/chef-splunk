@@ -28,9 +28,6 @@ property :indexes_conf_path, String, regex: %r{^/.*/indexes\.conf$}, desired_sta
 property :backup, [FalseClass, Integer], default: 5, desired_state: false
 property :options, Hash, default: {}
 
-@document = nil
-@stanza_title = nil
-
 action_class do
   include Splunk::Resources::Helpers
 

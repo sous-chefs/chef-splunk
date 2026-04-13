@@ -20,7 +20,7 @@ provides :splunk_monitor
 unified_mode true
 
 # the dictionary is created from documentation on Splunk's website
-# See https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Listofpretrainedsourcetypes
+# See https://docs.splunk.com/Documentation/Splunk/latest/Data/Listofpretrainedsourcetypes
 dictionary = {
   'Application Servers' => %w(
     log4j log4php weblogic_stdout websphere_activity websphere_core
@@ -74,7 +74,7 @@ property :inputs_conf_path, String, regex: %r{^/.*}, desired_state: false, requi
 property :backup, [FalseClass, Integer], default: 5, desired_state: false
 
 # These resource properties are drawn from Splunk's @documentation.
-# Refer to https://docs.splunk.com/@documentation/Splunk/8.0.2/Data/Monitorfilesanddirectorieswithinputs.conf
+# Refer to https://docs.splunk.com/Documentation/Splunk/latest/Data/Monitorfilesanddirectorieswithinputs.conf
 # for more detailed description of these properties
 #
 # Refer to https://docs.splunk.com/Documentation/Splunk/latest/Indexer/Setupmultipleindexes
@@ -100,9 +100,6 @@ property :alwaysOpenFile, Integer, default: 0, equal_to: [0, 1]
 property :recursive, [true, false], default: true
 property :time_before_close, Integer, default: 3
 property :followSymlink, [true, false], default: true
-
-@document = nil
-@stanza_title = nil
 
 action_class do
   include Splunk::Resources::Helpers
