@@ -58,10 +58,11 @@ post-convergence tests. The tested platforms are considered supported.
 This cookbook may work on other platforms or platform versions with or
 without modification.
 
-- Debian 12
-- Ubuntu 22.04, 24.04
-- RHEL / AlmaLinux / Rocky 9
+- AlmaLinux 9
 - Amazon Linux 2023
+- Debian 12
+- Rocky 9
+- Ubuntu 22.04, 24.04
 - openSUSE Leap 15
 
 By default, only 64-bit Splunk server and Splunk Universal Forwarder will be installed or upgraded by this cookbook.
