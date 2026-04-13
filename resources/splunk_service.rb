@@ -45,7 +45,6 @@ action :start do
     service_name new_resource.service_name
     action [:enable, :start]
     supports status: true, restart: true
-    provider Chef::Provider::Service::Systemd
   end
 end
 
@@ -54,7 +53,6 @@ action :stop do
     service_name new_resource.service_name
     action [:stop, :disable]
     supports status: true, restart: true
-    provider Chef::Provider::Service::Systemd
   end
 end
 
@@ -63,7 +61,6 @@ action :restart do
     service_name new_resource.service_name
     action :restart
     supports status: true, restart: true
-    provider Chef::Provider::Service::Systemd
   end
 end
 
