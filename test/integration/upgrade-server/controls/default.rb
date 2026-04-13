@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 control 'splunk-upgrade-server' do
-  title 'Verify Splunk Enterprise upgraded to 9.4.0'
+  title 'Verify Splunk Enterprise upgraded to 10.0.5'
   only_if { os.linux? }
 
   if file('/opt/splunk/bin/splunk').exist?
@@ -11,7 +11,7 @@ control 'splunk-upgrade-server' do
   else
     describe package('splunk') do
       it { should be_installed }
-      its('version') { should match(/9\.4\.0/) }
+      its('version') { should match(/10\.0\.5/) }
     end
   end
 

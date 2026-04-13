@@ -9,7 +9,7 @@ describe 'splunk_server' do
   context 'action :install with defaults' do
     recipe do
       splunk_server 'default' do
-        url 'https://download.splunk.com/products/splunk/releases/9.4.0/linux/splunk-9.4.0-linux-2.6-amd64.deb'
+        url 'https://download.splunk.com/products/splunk/releases/10.0.5/linux/splunk-10.0.5-3d2e2618f448-linux-amd64.deb'
         splunk_auth 'admin:notarealpassword'
       end
     end
@@ -22,7 +22,7 @@ describe 'splunk_server' do
   context 'action :install with custom ports' do
     recipe do
       splunk_server 'custom' do
-        url 'https://download.splunk.com/products/splunk/releases/9.4.0/linux/splunk-9.4.0-linux-2.6-amd64.deb'
+        url 'https://download.splunk.com/products/splunk/releases/10.0.5/linux/splunk-10.0.5-3d2e2618f448-linux-amd64.deb'
         mgmt_port 9089
         receiver_port 19997
         splunk_auth 'admin:notarealpassword'
@@ -37,7 +37,7 @@ describe 'splunk_server' do
   context 'action :remove' do
     recipe do
       splunk_server 'default' do
-        url 'https://download.splunk.com/products/splunk/releases/9.4.0/linux/splunk-9.4.0-linux-2.6-amd64.deb'
+        url 'https://download.splunk.com/products/splunk/releases/10.0.5/linux/splunk-10.0.5-3d2e2618f448-linux-amd64.deb'
         splunk_auth 'admin:notarealpassword'
         action :remove
       end

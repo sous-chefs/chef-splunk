@@ -21,7 +21,7 @@ describe 'splunk_service' do
     it { is_expected.to create_directory('/opt/splunk/var').with(owner: 'splunk', group: 'splunk', mode: '711') }
     it { is_expected.to create_directory('/opt/splunk/var/log').with(owner: 'splunk', group: 'splunk', mode: '711') }
     it { is_expected.to create_directory('/opt/splunk/var/log/splunk').with(owner: 'splunk', group: 'splunk', mode: '700') }
-    it { is_expected.to run_execute('splunk first run').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
+    it { is_expected.to run_execute('splunk first run').with(creates: '/opt/splunk/etc/.init_ok', environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
     it { is_expected.to run_execute('splunk enable boot-start').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
     it { is_expected.to create_link('/etc/systemd/system/splunk.service') }
     it { is_expected.to enable_service('splunk') }

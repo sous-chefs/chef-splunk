@@ -19,7 +19,7 @@ The `splunk_installer` resource installs or upgrades Splunk Enterprise or Splunk
 
 ```ruby
 splunk_installer 'splunkforwarder' do
-  url 'https://download.splunk.com/products/universalforwarder/releases/9.4.0/linux/splunkforwarder-9.4.0-6b4ebe426ca6-linux-arm64.deb'
-  version '9.4.0'
+  url 'https://download.splunk.com/products/universalforwarder/releases/10.0.5/linux/splunkforwarder-10.0.5-3d2e2618f448-linux-arm64.deb'
+  version '10.0.5'
 end
 ```

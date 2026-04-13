@@ -27,7 +27,7 @@ action :start do
   end
 
   execute 'splunk first run' do
-    command first_run_command
+    command "#{first_run_command} && touch #{new_resource.install_dir}/etc/.init_ok"
     sensitive true
     environment(
       'SPLUNK_USER' => new_resource.admin_user,

@@ -9,7 +9,7 @@ describe 'splunk_client' do
   context 'action :install with defaults' do
     recipe do
       splunk_client 'default' do
-        url 'https://download.splunk.com/products/universalforwarder/releases/9.4.0/linux/splunkforwarder-9.4.0-linux-2.6-amd64.deb'
+        url 'https://download.splunk.com/products/universalforwarder/releases/10.0.5/linux/splunkforwarder-10.0.5-3d2e2618f448-linux-amd64.deb'
         server_list 'splunkserver1:9997, splunkserver2:9997'
       end
     end
@@ -23,7 +23,7 @@ describe 'splunk_client' do
     recipe do
       splunk_client 'custom' do
         install_dir '/opt/splunkforwarder'
-        url 'https://download.splunk.com/products/universalforwarder/releases/9.4.0/linux/splunkforwarder-9.4.0-linux-2.6-amd64.deb'
+        url 'https://download.splunk.com/products/universalforwarder/releases/10.0.5/linux/splunkforwarder-10.0.5-3d2e2618f448-linux-amd64.deb'
         server_list 'splunkserver1:9997'
         receiver_port 9998
         runas_user 'root'
@@ -37,7 +37,7 @@ describe 'splunk_client' do
   context 'action :remove' do
     recipe do
       splunk_client 'default' do
-        url 'https://download.splunk.com/products/universalforwarder/releases/9.4.0/linux/splunkforwarder-9.4.0-linux-2.6-amd64.deb'
+        url 'https://download.splunk.com/products/universalforwarder/releases/10.0.5/linux/splunkforwarder-10.0.5-3d2e2618f448-linux-amd64.deb'
         server_list 'splunkserver1:9997'
         action :remove
       end

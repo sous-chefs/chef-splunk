@@ -4,7 +4,7 @@ This cookbook manages Splunk Enterprise and Splunk Universal Forwarder.
 
 ## Supported Platforms and Architectures
 
-Based on Splunk 9.4.0 vendor documentation, the following platforms are supported:
+Based on Splunk 10.0 vendor documentation, the following platforms are supported:
 
 ### Linux x86_64 / ARM64 (AArch64)
 
