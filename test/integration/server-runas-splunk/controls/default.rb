@@ -59,7 +59,7 @@ control 'Enterprise Splunk' do
     end
   end
 
-  describe file('/etc/systemd/system/Splunkd.service') do
+  describe file('/usr/lib/systemd/system/Splunkd.service') do
     it { should exist }
     it { should be_file }
   end

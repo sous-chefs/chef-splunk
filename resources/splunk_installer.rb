@@ -150,8 +150,7 @@ action :remove do
     not_if { splunk_installed? }
   end
 
-  service 'Splunk' do
-    service_name server? ? 'Splunkd' : 'SplunkForwarder'
+  service server? ? 'Splunkd' : 'SplunkForwarder' do
     action %i(stop disable)
   end
 
@@ -176,13 +175,15 @@ action :remove do
 
   startup_files = if server?
                     [
-                      '/etc/systemd/system/splunk.service',
+                      '/usr/lib/systemd/system/Splunkd.service',
                       '/etc/systemd/system/Splunkd.service',
+                      '/etc/systemd/system/splunk.service',
                     ]
                   else
                     [
-                      '/etc/systemd/system/splunk.service',
+                      '/usr/lib/systemd/system/SplunkForwarder.service',
                       '/etc/systemd/system/SplunkForwarder.service',
+                      '/etc/systemd/system/splunk.service',
                     ]
                   end
 

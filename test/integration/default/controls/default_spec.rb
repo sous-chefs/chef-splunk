@@ -22,7 +22,7 @@ control 'splunk-default-installation' do
     it { should be_running }
   end
 
-  describe file('/etc/systemd/system/SplunkForwarder.service') do
+  describe file('/usr/lib/systemd/system/SplunkForwarder.service') do
     it { should exist }
     it { should be_file }
   end

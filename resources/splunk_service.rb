@@ -44,31 +44,36 @@ action :start do
       'SPLUNK_PASSWORD' => new_resource.admin_password
     ) if new_resource.admin_password
     retries 3
-    creates "/etc/systemd/system/#{new_resource.service_name}.service"
+    creates "/usr/lib/systemd/system/#{new_resource.service_name}.service"
   end
 
-  link '/etc/systemd/system/splunk.service' do
-    to "/etc/systemd/system/#{new_resource.service_name}.service"
+  # Splunk 10.x creates a symlink in /etc/systemd/system/ pointing to the
+  # real unit file in /usr/lib/systemd/system/. systemd refuses to enable
+  # or operate on alias/linked unit files, so remove the symlink.
+  file "/etc/systemd/system/#{new_resource.service_name}.service" do
+    action :delete
+    notifies :run, 'execute[systemctl daemon-reload]', :immediately
   end
 
-  service 'splunk' do
-    service_name new_resource.service_name
+  execute 'systemctl daemon-reload' do
+    action :nothing
+  end
+
+  service new_resource.service_name do
     action [:enable, :start]
     supports status: true, restart: true
   end
 end
 
 action :stop do
-  service 'splunk' do
-    service_name new_resource.service_name
+  service new_resource.service_name do
     action [:stop, :disable]
     supports status: true, restart: true
   end
 end
 
 action :restart do
-  service 'splunk' do
-    service_name new_resource.service_name
+  service new_resource.service_name do
     action :restart
     supports status: true, restart: true
   end
