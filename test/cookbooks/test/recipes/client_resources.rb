@@ -17,6 +17,7 @@ splunk_service 'splunk' do
 end
 
 splunk_app 'chef_splunk_universal_forwarder' do
+  install_dir '/opt/splunkforwarder'
   remote_directory 'chef_splunk_universal_forwarder'
   templates %w(limits.conf.erb)
   template_variables(
@@ -25,6 +26,13 @@ splunk_app 'chef_splunk_universal_forwarder' do
     }
   )
   action :install
+end
+
+file '/opt/splunkforwarder/etc/system/local/inputs.conf' do
+  owner 'splunk'
+  group 'splunk'
+  mode '644'
+  action :create_if_missing
 end
 
 splunk_monitor '/var/log' do
