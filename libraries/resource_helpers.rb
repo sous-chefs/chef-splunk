@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook:: chef-splunk
 # Libraries:: helpers
@@ -17,6 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 module Splunk
   module Resources
     module Helpers

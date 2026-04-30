@@ -1,0 +1,7 @@
+---
+name: uninstall-client
+title: Splunk Forwarder Uninstall
+maintainer: Sous Chefs
+license: Apache-2.0
+summary: Verify Splunk Universal Forwarder has been removed
+version: 1.0.0

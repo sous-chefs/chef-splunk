@@ -1,0 +1,20 @@
+# Lefthook configuration for chef-splunk
+# https://github.com/evilmartians/lefthook
+
+pre-commit:
+  parallel: true
+  commands:
+    markdownlint:
+      glob: "**/*.md"
+      run: npx markdownlint-cli2 {staged_files}
+    yamllint:
+      glob: "**/*.{yml,yaml}"
+      run: yamllint {staged_files}
+    chefspec:
+      glob: "**/*.rb"
+      tags: backend test
+      run: chef exec rspec
+    cookstyle:
+      glob: "**/*.rb"
+      tags: backend style
+      run: cookstyle {staged_files}

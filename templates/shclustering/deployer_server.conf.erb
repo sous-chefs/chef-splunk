@@ -1,0 +1,7 @@
+# Managed by Chef. Changes will be reverted
+
+[shclustering]
+shcluster_label = <%= @label %>
+<% unless @secret.nil? -%>
+pass4SymmKey = <%= @secret %>
+<% end -%>
