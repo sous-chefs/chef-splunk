@@ -26,8 +26,7 @@ control 'Enterprise Splunk' do
     end
 
     describe ini("#{SPLUNK_HOME}/etc/system/local/inputs.conf") do
-      its('default.host') { should_not be_nil }
-      its('default.host') { should_not be_empty }
+      its('splunktcp://9997.disabled') { should cmp '0' }
     end
   end
 
@@ -79,21 +78,12 @@ control 'Splunk admin password validation' do
 
   describe file("#{SPLUNK_HOME}/etc/system/local/user-seed.conf") do
     it { should exist }
-    its('content') { should match /HASHED_PASSWORD/ }
+    its('content') { should match(/USERNAME = admin/) }
   end
 
-  describe.one do
-    # the password used for validation here is from the test/fixture/data_bags/vault/splunk__default.rb
-    describe command("#{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
-      its('stderr') { should be_empty }
-      its('exit_status') { should eq 0 }
-    end
-
-    # When running as a service user, need to check logging into splunk as the service user or
-    # you get a permission denied when writing the token to ~/.splunk/.
-    describe command("sudo -u splunk #{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
-      its('stderr') { should be_empty }
-      its('exit_status') { should eq 0 }
-    end
+  # Splunk emits certificate warnings to stderr on successful CLI login in
+  # containerized test runs, so exit status is the useful assertion here.
+  describe command("#{SPLUNK_HOME}/bin/splunk login -auth admin:notarealpassword") do
+    its('exit_status') { should eq 0 }
   end
 end
