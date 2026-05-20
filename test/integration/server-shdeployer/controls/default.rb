@@ -4,9 +4,9 @@ control 'Splunk Search Head Deployer' do
   title 'Verify search head deployer provisioning'
   only_if { os.linux? }
 
-  describe 'chef-splunk::server should run as "root" user' do
+  describe 'chef-splunk::server should run as "splunk" user' do
     describe processes(/splunkd.*-p 8089 _internal_launch_under_systemd/) do
-      its('users') { should include 'root' }
+      its('users') { should include 'splunk' }
     end
   end
 

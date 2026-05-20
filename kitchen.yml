@@ -44,6 +44,9 @@ suites:
       - recipe[test::server]
 
   - name: server-shdeployer
+    lifecycle:
+      post_converge:
+        - local: sleep 120
     run_list:
       - recipe[test::server_shdeployer]
 
