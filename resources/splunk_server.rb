@@ -51,6 +51,7 @@ action :install do
       'SPLUNK_USER' => auth_user,
       'SPLUNK_PASSWORD' => auth_password
     )
+    not_if { receiver_port_configured? }
   end
 end
 
@@ -77,5 +78,12 @@ action_class do
 
   def receiver_port_command
     splunk_cmd("enable listen #{new_resource.receiver_port} -auth '#{new_resource.splunk_auth}'")
+  end
+
+  def receiver_port_configured?
+    inputs_conf = "#{new_resource.install_dir}/etc/system/local/inputs.conf"
+    return false unless ::File.exist?(inputs_conf)
+
+    ::File.readlines(inputs_conf).any? { |line| line.strip == "[splunktcp://#{new_resource.receiver_port}]" }
   end
 end
