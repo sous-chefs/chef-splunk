@@ -12,6 +12,7 @@ property :mgmt_port, Integer, default: 8089
 property :receiver_port, Integer, default: 9997
 property :web_port, Integer, default: 443
 property :splunk_auth, String, sensitive: true, required: true
+property :optimistic_file_locking, [true, false], default: false
 
 action :install do
   splunk_installer new_resource.package_name do
@@ -31,6 +32,7 @@ action :install do
     runas_user new_resource.runas_user
     admin_user auth_user
     admin_password auth_password
+    optimistic_file_locking new_resource.optimistic_file_locking
   end
 
   execute 'update-splunk-mgmt-port' do

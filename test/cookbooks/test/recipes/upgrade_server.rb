@@ -13,6 +13,7 @@ end
 splunk_server 'default' do
   url node['test']['server_url']
   splunk_auth 'admin:notarealpassword'
+  optimistic_file_locking true
 end
 
 splunk_auth 'admin' do

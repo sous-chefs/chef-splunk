@@ -38,6 +38,18 @@ describe 'splunk_server' do
     it { is_expected.to run_execute('update-splunk-receiver-port').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
   end
 
+  context 'action :install with optimistic file locking' do
+    recipe do
+      splunk_server 'default' do
+        url 'https://download.splunk.com/products/splunk/releases/10.0.5/linux/splunk-10.0.5-3d2e2618f448-linux-amd64.deb'
+        splunk_auth 'admin:notarealpassword'
+        optimistic_file_locking true
+      end
+    end
+
+    it { is_expected.to start_splunk_service('splunk').with(optimistic_file_locking: true) }
+  end
+
   context 'action :remove' do
     recipe do
       splunk_server 'default' do

@@ -9,6 +9,7 @@ property :service_name, String, default: 'SplunkForwarder'
 property :accept_license, [true, false], default: true
 property :admin_user, String, default: 'admin'
 property :admin_password, String, sensitive: true
+property :optimistic_file_locking, [true, false], default: false
 
 action :start do
   directory new_resource.install_dir do
@@ -30,6 +31,17 @@ action :start do
       group new_resource.runas_user
       mode dir_mode
     end
+  end
+
+  ruby_block 'enable optimistic file locking' do
+    block do
+      launch_conf = "#{new_resource.install_dir}/etc/splunk-launch.conf"
+      line = 'OPTIMISTIC_ABOUT_FILE_LOCKING=1'
+      content = ::File.exist?(launch_conf) ? ::File.read(launch_conf) : ''
+
+      ::File.open(launch_conf, 'a') { |file| file.puts line } unless content.lines.any? { |entry| entry.strip == line }
+    end
+    only_if { new_resource.optimistic_file_locking }
   end
 
   execute 'splunk enable boot-start' do
@@ -92,7 +104,7 @@ action_class do
     seed_password = new_resource.admin_password ? ' --seed-passwd "$SPLUNK_PASSWORD" --answer-yes --no-prompt' : ''
 
     if new_resource.runas_user == 'root'
-      "#{new_resource.install_dir}/bin/splunk enable boot-start -systemd-managed 1 --accept-license#{seed_password}"
+      "#{new_resource.install_dir}/bin/splunk enable boot-start -user root -systemd-managed 1 --accept-license#{seed_password}"
     else
       "#{new_resource.install_dir}/bin/splunk enable boot-start -user #{new_resource.runas_user} -systemd-managed 1 --accept-license#{seed_password}"
     end
