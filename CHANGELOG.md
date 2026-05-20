@@ -2,6 +2,17 @@
 
 This file is used to list changes made in each version of the splunk cookbook.
 
+## [10.0.0](https://github.com/sous-chefs/chef-splunk/compare/chef-splunk-v9.2.28...chef-splunk-v10.0.0) (2026-05-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate chef-splunk to custom resources ([#277](https://github.com/sous-chefs/chef-splunk/issues/277))
+
+### Features
+
+* migrate chef-splunk to custom resources ([#277](https://github.com/sous-chefs/chef-splunk/issues/277)) ([a62cbf3](https://github.com/sous-chefs/chef-splunk/commit/a62cbf3fea945048097dc3f56b82808160987159))
+
 ## [9.2.28](https://github.com/sous-chefs/chef-splunk/compare/chef-splunk-v9.2.27...chef-splunk-v9.2.28) (2025-11-20)
 
 
