@@ -23,6 +23,8 @@ property :url, String
 property :package_name, String, name_property: true
 property :version, String
 property :runas_user, String, default: 'splunk'
+property :download_retries, Integer, default: 3
+property :download_retry_delay, Integer, default: 5
 
 action_class do
   def server?
@@ -69,6 +71,8 @@ action_class do
       mode '644'
       path cached_package
       source new_resource.url
+      retries new_resource.download_retries
+      retry_delay new_resource.download_retry_delay
       action :create
     end
   end

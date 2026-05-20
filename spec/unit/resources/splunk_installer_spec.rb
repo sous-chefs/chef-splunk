@@ -16,6 +16,21 @@ describe 'splunk_installer' do
     it { is_expected.to run_splunk_installer('splunkforwarder') }
   end
 
+  context 'action :run with custom download retry policy' do
+    recipe do
+      splunk_installer 'splunkforwarder' do
+        url 'https://download.splunk.com/products/universalforwarder/releases/10.0.5/linux/splunkforwarder-10.0.5-3d2e2618f448-linux-amd64.deb'
+        download_retries 5
+        download_retry_delay 10
+      end
+    end
+
+    it do
+      expect(chef_run).to create_remote_file('splunkforwarder-10.0.5-3d2e2618f448-linux-amd64.deb')
+        .with(retries: 5, retry_delay: 10)
+    end
+  end
+
   context 'action :run with version' do
     recipe do
       splunk_installer 'splunkforwarder' do
