@@ -3,7 +3,7 @@
 provides :splunk_client
 unified_mode true
 
-use 'splunk_instance'
+use '_partial/_splunk_instance'
 property :install_dir, String, default: '/opt/splunkforwarder'
 property :package_name, String, default: 'splunkforwarder'
 property :url, String, required: true

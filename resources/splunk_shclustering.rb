@@ -3,7 +3,7 @@
 provides :splunk_shclustering
 unified_mode true
 
-use 'splunk_instance'
+use '_partial/_splunk_instance'
 property :install_dir, String, default: '/opt/splunk'
 property :mode, String, required: true, equal_to: %w(deployer member captain)
 property :label, String, required: true
@@ -26,7 +26,7 @@ action :create do
 end
 
 action_class do
-  use 'splunk_auth_helpers'
+  include Splunk::Resources::AuthHelpers
 
   def setup_deployer
     directory new_resource.app_dir do

@@ -3,7 +3,7 @@
 provides :splunk_service
 unified_mode true
 
-use 'splunk_instance'
+use '_partial/_splunk_instance'
 property :install_dir, String, default: '/opt/splunkforwarder'
 property :service_name, String, default: 'SplunkForwarder'
 property :accept_license, [true, false], default: true

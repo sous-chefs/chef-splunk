@@ -18,6 +18,7 @@ end
 
 splunk_app 'chef_splunk_universal_forwarder' do
   install_dir '/opt/splunkforwarder'
+  cookbook 'test'
   remote_directory 'chef_splunk_universal_forwarder'
   templates %w(limits.conf.erb)
   template_variables(

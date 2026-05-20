@@ -3,7 +3,7 @@
 provides :splunk_clustering
 unified_mode true
 
-use 'splunk_instance'
+use '_partial/_splunk_instance'
 property :install_dir, String, default: '/opt/splunk'
 property :mode, String, required: true, equal_to: %w(master slave searchhead)
 property :replication_factor, Integer, default: 3
@@ -42,7 +42,7 @@ action :create do
 end
 
 action_class do
-  use 'splunk_auth_helpers'
+  include Splunk::Resources::AuthHelpers
 
   def multisite?
     new_resource.num_sites > 1

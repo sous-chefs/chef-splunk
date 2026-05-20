@@ -23,6 +23,7 @@ splunk_service 'splunk' do
 end
 
 splunk_app 'chef_splunk_universal_forwarder' do
+  cookbook 'test'
   remote_directory 'chef_splunk_universal_forwarder'
   templates %w(limits.conf.erb)
   template_variables(

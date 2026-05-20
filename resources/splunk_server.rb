@@ -3,7 +3,7 @@
 provides :splunk_server
 unified_mode true
 
-use 'splunk_instance'
+use '_partial/_splunk_instance'
 property :install_dir, String, default: '/opt/splunk'
 property :package_name, String, default: 'splunk'
 property :url, String, required: true
@@ -65,7 +65,7 @@ action :remove do
 end
 
 action_class do
-  use 'splunk_auth_helpers'
+  include Splunk::Resources::AuthHelpers
 
   def splunk_cmd(args)
     cmd = "#{new_resource.install_dir}/bin/splunk #{args}"
