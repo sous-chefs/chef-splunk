@@ -7,6 +7,17 @@ describe 'splunk_service' do
   platform 'ubuntu', '24.04'
 
   context 'action :start for a server' do
+    before do
+      allow(Etc).to receive(:getpwnam).and_call_original
+      allow(Etc).to receive(:getpwnam).with('splunk').and_return(double(uid: 1234))
+      allow(File).to receive(:exist?).and_call_original
+      allow(File).to receive(:exist?).with('/opt/splunk').and_return(true)
+      allow(File).to receive(:exist?).with('/opt/splunk/bin/splunk').and_return(true)
+      allow(File).to receive(:stat).and_call_original
+      allow(File).to receive(:stat).with('/opt/splunk').and_return(double(uid: 0))
+      allow(File).to receive(:stat).with('/opt/splunk/bin/splunk').and_return(double(uid: 0))
+    end
+
     recipe do
       splunk_service 'splunk' do
         install_dir '/opt/splunk'
@@ -18,6 +29,7 @@ describe 'splunk_service' do
     end
 
     it { is_expected.to create_directory('/opt/splunk').with(owner: 'splunk', group: 'splunk', mode: '755') }
+    it { is_expected.to run_execute('chown /opt/splunk').with(command: 'chown -R splunk:splunk /opt/splunk') }
     it { is_expected.to create_directory('/opt/splunk/var').with(owner: 'splunk', group: 'splunk', mode: '711') }
     it { is_expected.to create_directory('/opt/splunk/var/log').with(owner: 'splunk', group: 'splunk', mode: '711') }
     it { is_expected.to create_directory('/opt/splunk/var/log/splunk').with(owner: 'splunk', group: 'splunk', mode: '700') }

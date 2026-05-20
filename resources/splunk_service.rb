@@ -17,6 +17,12 @@ action :start do
     mode '755'
   end
 
+  execute "chown #{new_resource.install_dir}" do
+    command "chown -R #{new_resource.runas_user}:#{new_resource.runas_user} #{new_resource.install_dir}"
+    only_if { new_resource.runas_user != 'root' && ::File.exist?("#{new_resource.install_dir}/bin/splunk") }
+    not_if { install_owned_by_runas_user? }
+  end
+
   %w(var var/log var/log/splunk).each do |subdir|
     dir_mode = subdir == 'var/log/splunk' ? '700' : '711'
     directory "#{new_resource.install_dir}/#{subdir}" do
@@ -81,6 +87,17 @@ action :restart do
 end
 
 action_class do
+  def install_owned_by_runas_user?
+    require 'etc'
+
+    uid = Etc.getpwnam(new_resource.runas_user).uid
+    [new_resource.install_dir, "#{new_resource.install_dir}/bin/splunk"].all? do |path|
+      ::File.exist?(path) && ::File.stat(path).uid == uid
+    end
+  rescue ArgumentError
+    false
+  end
+
   def first_run_command
     if new_resource.runas_user == 'root'
       "#{new_resource.install_dir}/bin/splunk start --accept-license --no-prompt --answer-yes"
