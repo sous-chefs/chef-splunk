@@ -45,6 +45,36 @@ describe 'splunk_service' do
     it { is_expected.to start_service('Splunkd') }
   end
 
+  context 'action :start with optimistic file locking' do
+    before do
+      allow(Etc).to receive(:getpwnam).and_call_original
+      allow(Etc).to receive(:getpwnam).with('splunk').and_return(double(uid: 1234))
+      allow(File).to receive(:exist?).and_call_original
+      allow(File).to receive(:exist?).with('/opt/splunk').and_return(true)
+      allow(File).to receive(:exist?).with('/opt/splunk/bin/splunk').and_return(true)
+      allow(File).to receive(:stat).and_call_original
+      allow(File).to receive(:stat).with('/opt/splunk').and_return(double(uid: 1234))
+      allow(File).to receive(:stat).with('/opt/splunk/bin/splunk').and_return(double(uid: 1234))
+    end
+
+    recipe do
+      splunk_service 'splunk' do
+        install_dir '/opt/splunk'
+        runas_user 'splunk'
+        service_name 'Splunkd'
+        optimistic_file_locking true
+        action :start
+      end
+    end
+
+    it { is_expected.to run_ruby_block('enable optimistic file locking') }
+    it { is_expected.to create_directory('/etc/systemd/system/Splunkd.service.d').with(mode: '755') }
+    it do
+      is_expected.to create_file('/etc/systemd/system/Splunkd.service.d/chef-splunk.conf')
+        .with(content: "[Service]\nEnvironment=OPTIMISTIC_ABOUT_FILE_LOCKING=1\n", mode: '644')
+    end
+  end
+
   context 'action :stop' do
     recipe do
       splunk_service 'splunk' do

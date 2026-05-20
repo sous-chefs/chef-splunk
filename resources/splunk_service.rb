@@ -33,17 +33,6 @@ action :start do
     end
   end
 
-  ruby_block 'enable optimistic file locking' do
-    block do
-      launch_conf = "#{new_resource.install_dir}/etc/splunk-launch.conf"
-      line = 'OPTIMISTIC_ABOUT_FILE_LOCKING = 1'
-      content = ::File.exist?(launch_conf) ? ::File.read(launch_conf) : ''
-
-      ::File.open(launch_conf, 'a') { |file| file.puts line } unless content.lines.any? { |entry| entry.strip == line }
-    end
-    only_if { new_resource.optimistic_file_locking }
-  end
-
   execute 'splunk enable boot-start' do
     command boot_start_command
     sensitive true
@@ -55,6 +44,33 @@ action :start do
     not_if { ::File.exist?("/usr/lib/systemd/system/#{new_resource.service_name}.service") || ::File.exist?("/etc/systemd/system/#{new_resource.service_name}.service") }
   end
 
+  execute 'systemctl daemon-reload' do
+    action :nothing
+  end
+
+  ruby_block 'enable optimistic file locking' do
+    block do
+      launch_conf = "#{new_resource.install_dir}/etc/splunk-launch.conf"
+      line = 'OPTIMISTIC_ABOUT_FILE_LOCKING=1'
+      content = ::File.exist?(launch_conf) ? ::File.read(launch_conf) : ''
+
+      ::File.open(launch_conf, 'a') { |file| file.puts line } unless content.lines.any? { |entry| entry.strip == line }
+    end
+    only_if { new_resource.optimistic_file_locking }
+  end
+
+  directory "/etc/systemd/system/#{new_resource.service_name}.service.d" do
+    mode '755'
+    only_if { new_resource.optimistic_file_locking }
+  end
+
+  file "/etc/systemd/system/#{new_resource.service_name}.service.d/chef-splunk.conf" do
+    content "[Service]\nEnvironment=OPTIMISTIC_ABOUT_FILE_LOCKING=1\n"
+    mode '644'
+    only_if { new_resource.optimistic_file_locking }
+    notifies :run, 'execute[systemctl daemon-reload]', :immediately
+  end
+
   # Splunk 10.x places the real unit file in /usr/lib/systemd/system/ and
   # creates a symlink in /etc/systemd/system/. systemd refuses to enable
   # alias/linked unit files, so remove the symlink (but only if it is a symlink).
@@ -62,10 +78,6 @@ action :start do
     action :delete
     only_if { ::File.symlink?("/etc/systemd/system/#{new_resource.service_name}.service") }
     notifies :run, 'execute[systemctl daemon-reload]', :immediately
-  end
-
-  execute 'systemctl daemon-reload' do
-    action :nothing
   end
 
   service new_resource.service_name do
