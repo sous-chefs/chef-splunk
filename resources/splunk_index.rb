@@ -31,6 +31,19 @@ property :options, Hash, default: {}
 action_class do
   include Splunk::Resources::Helpers
 
+  def indexes_document(create: false)
+    path = new_resource.indexes_conf_path
+
+    if create
+      require 'fileutils'
+
+      ::FileUtils.mkdir_p(::File.dirname(path))
+      ::FileUtils.touch(path) unless ::File.exist?(path)
+    end
+
+    IniParse.parse(::File.exist?(path) ? ::File.read(path) : '')
+  end
+
   def new_value_to_option(option)
     value = new_resource.options[option]
     @document[@stanza_title][option] = value
@@ -78,13 +91,13 @@ action_class do
 end
 
 action :create do
-  @document ||= IniParse.parse(::File.read(new_resource.indexes_conf_path))
+  @document ||= indexes_document(create: true)
   @stanza_title = new_resource.index_name
   save_doc(new_resource.indexes_conf_path) if do_create
 end
 
 action :remove do
-  @document ||= IniParse.parse(::File.read(new_resource.indexes_conf_path))
+  @document ||= indexes_document
   @stanza_title = new_resource.index_name.to_s
   save_doc(new_resource.indexes_conf_path) if do_remove
 end

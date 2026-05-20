@@ -36,7 +36,7 @@ action :start do
   ruby_block 'enable optimistic file locking' do
     block do
       launch_conf = "#{new_resource.install_dir}/etc/splunk-launch.conf"
-      line = 'OPTIMISTIC_ABOUT_FILE_LOCKING=1'
+      line = 'OPTIMISTIC_ABOUT_FILE_LOCKING = 1'
       content = ::File.exist?(launch_conf) ? ::File.read(launch_conf) : ''
 
       ::File.open(launch_conf, 'a') { |file| file.puts line } unless content.lines.any? { |entry| entry.strip == line }
