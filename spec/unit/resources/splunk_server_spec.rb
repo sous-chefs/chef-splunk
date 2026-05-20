@@ -15,6 +15,8 @@ describe 'splunk_server' do
     end
 
     it { is_expected.to run_splunk_installer('splunk') }
+    it { is_expected.to create_splunk_auth('admin').with(admin_password: 'notarealpassword') }
+    it { is_expected.to start_splunk_service('splunk').with(admin_password: 'notarealpassword') }
     it { is_expected.to run_execute('update-splunk-mgmt-port').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
     it { is_expected.to run_execute('update-splunk-receiver-port').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
   end
@@ -30,6 +32,8 @@ describe 'splunk_server' do
     end
 
     it { is_expected.to run_splunk_installer('splunk') }
+    it { is_expected.to create_splunk_auth('admin').with(admin_password: 'notarealpassword') }
+    it { is_expected.to start_splunk_service('splunk').with(admin_password: 'notarealpassword') }
     it { is_expected.to run_execute('update-splunk-mgmt-port').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
     it { is_expected.to run_execute('update-splunk-receiver-port').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
   end

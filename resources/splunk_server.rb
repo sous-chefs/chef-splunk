@@ -19,6 +19,20 @@ action :install do
     version new_resource.version if new_resource.version
   end
 
+  splunk_auth auth_user do
+    install_dir new_resource.install_dir
+    admin_user auth_user
+    admin_password auth_password
+  end
+
+  splunk_service 'splunk' do
+    install_dir new_resource.install_dir
+    service_name 'Splunkd'
+    runas_user new_resource.runas_user
+    admin_user auth_user
+    admin_password auth_password
+  end
+
   execute 'update-splunk-mgmt-port' do
     command mgmt_port_command
     sensitive true

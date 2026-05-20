@@ -15,7 +15,7 @@ action :create do
 
   file 'user-seed.conf' do
     path "#{new_resource.install_dir}/etc/system/local/user-seed.conf"
-    content "[user_info]\nUSERNAME = #{new_resource.admin_user}\nHASHED_PASSWORD = #{new_resource.admin_password}\n"
+    content "[user_info]\nUSERNAME = #{new_resource.admin_user}\nPASSWORD = #{new_resource.admin_password}\n"
     sensitive true
   end
 end

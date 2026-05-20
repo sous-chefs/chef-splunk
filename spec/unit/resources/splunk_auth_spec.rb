@@ -15,7 +15,10 @@ describe 'splunk_auth' do
     end
 
     it { is_expected.to create_directory('/opt/splunk/etc/system/local') }
-    it { is_expected.to create_file('user-seed.conf') }
+    it do
+      expect(chef_run).to create_file('user-seed.conf')
+        .with(content: "[user_info]\nUSERNAME = admin\nPASSWORD = notarealpassword\n")
+    end
   end
 
   context 'action :create with custom user' do
@@ -27,6 +30,9 @@ describe 'splunk_auth' do
       end
     end
 
-    it { is_expected.to create_file('user-seed.conf') }
+    it do
+      expect(chef_run).to create_file('user-seed.conf')
+        .with(content: "[user_info]\nUSERNAME = myadmin\nPASSWORD = secretpass\n")
+    end
   end
 end
