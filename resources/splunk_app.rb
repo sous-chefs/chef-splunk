@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Author: Dang H. Nguyen <dang.nguyen@disney.com>
 # Copyright:: 2019-2020
@@ -14,30 +16,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-require 'pathname'
 
 provides :splunk_app
 unified_mode true
-resource_name :splunk_app
 
-property :app_name, kind_of: String, name_property: true
-property :app_dependencies, kind_of: Array, default: []
-property :app_dir, kind_of: String, default: nil
-property :checksum, kind_of: String, default: nil
-property :cookbook, kind_of: String, default: nil
-property :cookbook_file, kind_of: String, default: nil
-property :installed, kind_of: [TrueClass, FalseClass, NilClass], default: false
-property :local_file, kind_of: String, default: nil
-property :remote_file, kind_of: String, default: nil
-property :remote_directory, kind_of: String, default: nil
-property :templates, kind_of: [Array, Hash], default: []
+property :app_name, String, name_property: true
+property :app_dependencies, Array, default: []
+property :app_dir, String
+property :install_dir, String, default: '/opt/splunk'
+property :runas_user, String, default: 'splunk'
+property :checksum, String
+property :cookbook, String
+property :cookbook_file, String
+property :installed, [TrueClass, FalseClass, NilClass], default: false
+property :local_file, String
+property :remote_file, String
+property :remote_directory, String
+property :templates, [Array, Hash], default: []
 property :files_mode, [String, Integer, nil],
           description: "The octal mode for a file.\n UNIX- and Linux-based systems: A quoted 3-5 character string that defines the octal mode that is passed to chmod. For example: '755', '0755', or 00755. If the value is specified as a quoted string, it works exactly as if the chmod command was passed. If the value is specified as an integer, prepend a zero (0) to the value to ensure that it is interpreted as an octal number. For example, to assign read, write, and execute rights for all users, use '0777' or '777'; for the same rights, plus the sticky bit, use 01777 or '1777'.\n Microsoft Windows: A quoted 3-5 character string that defines the octal mode that is translated into rights for Microsoft Windows security. For example: '755', '0755', or 00755. Values up to '0777' are allowed (no sticky bits) and mean the same in Microsoft Windows as they do in UNIX, where 4 equals GENERIC_READ, 2 equals GENERIC_WRITE, and 1 equals GENERIC_EXECUTE. This property cannot be used to set :full_control. This property has no effect if not specified, but when it and rights are both specified, the effects are cumulative.",
           regex: /^\d{3,4}$/, default: nil
 # template_variables is a Hash referencing
 # each template named in the templates property, above, with each template having its
 # unique set of variables and values
-property :template_variables, kind_of: Hash, default: { 'default' => {} }
+property :template_variables, Hash, default: { 'default' => {} }
 
 action_class do
   def setup_app_dir
@@ -47,15 +49,15 @@ action_class do
     directory app_dir do
       recursive true
       mode '755'
-      owner splunk_runas_user
-      group splunk_runas_user
+      owner new_resource.runas_user
+      group new_resource.runas_user
     end
 
     directory "#{app_dir}/local" do
       recursive true
       mode '755'
-      owner splunk_runas_user
-      group splunk_runas_user
+      owner new_resource.runas_user
+      group new_resource.runas_user
     end if new_resource.cookbook_file || new_resource.remote_file
 
     if new_resource.cookbook_file
@@ -67,8 +69,8 @@ action_class do
         source new_resource.cookbook_file
         sensitive new_resource.sensitive
         checksum new_resource.checksum
-        owner splunk_runas_user
-        group splunk_runas_user
+        owner new_resource.runas_user
+        group new_resource.runas_user
         mode new_resource.files_mode unless new_resource.files_mode.nil?
       end
     elsif new_resource.remote_file || new_resource.local_file
@@ -85,17 +87,17 @@ action_class do
         source source
         checksum new_resource.checksum
         sensitive new_resource.sensitive
-        owner splunk_runas_user
-        group splunk_runas_user
+        owner new_resource.runas_user
+        group new_resource.runas_user
       end
     elsif new_resource.remote_directory
       remote_directory app_dir do
         source new_resource.remote_directory
         sensitive new_resource.sensitive
-        owner splunk_runas_user
-        group splunk_runas_user
-        files_owner splunk_runas_user
-        files_group splunk_runas_user
+        owner new_resource.runas_user
+        group new_resource.runas_user
+        files_owner new_resource.runas_user
+        files_group new_resource.runas_user
         files_mode new_resource.files_mode unless new_resource.files_mode.nil?
       end
     end
@@ -110,8 +112,8 @@ action_class do
         directory "#{app_dir}/#{::File.dirname(destination)}" do
           recursive true
           mode '755'
-          owner splunk_runas_user
-          group splunk_runas_user
+          owner new_resource.runas_user
+          group new_resource.runas_user
         end
 
         # TODO: DRY this handling of template_variables with that of lines 134-138
@@ -126,8 +128,8 @@ action_class do
           source source
           variables template_variables
           sensitive new_resource.sensitive
-          owner splunk_runas_user
-          group splunk_runas_user
+          owner new_resource.runas_user
+          group new_resource.runas_user
           mode new_resource.files_mode unless new_resource.files_mode.nil?
         end
       end
@@ -135,8 +137,8 @@ action_class do
       directory "#{app_dir}/local" do
         recursive true
         mode '755'
-        owner splunk_runas_user
-        group splunk_runas_user
+        owner new_resource.runas_user
+        group new_resource.runas_user
       end
 
       new_resource.templates.each do |t|
@@ -152,8 +154,8 @@ action_class do
           source "#{new_resource.app_name}/#{t}.erb"
           variables template_variables
           sensitive new_resource.sensitive
-          owner splunk_runas_user
-          group splunk_runas_user
+          owner new_resource.runas_user
+          group new_resource.runas_user
           mode new_resource.files_mode unless new_resource.files_mode.nil?
         end
       end
@@ -161,7 +163,7 @@ action_class do
   end
 
   def app_dir
-    new_resource.app_dir || "#{splunk_dir}/etc/apps/#{new_resource.app_name}"
+    new_resource.app_dir || "#{new_resource.install_dir}/etc/apps/#{new_resource.app_name}"
   end
 
   def app_installed?

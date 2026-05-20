@@ -1,0 +1,9 @@
+[tcpout]
+defaultGroup = splunk_indexers_<%= @receiver_port %>
+disabled = false
+
+[tcpout:splunk_indexers_<%= @receiver_port %>]
+server = <%= @server_list %>
+<% @outputs_conf.each_pair do |name, value| -%>
+<%= name %> = <%= value %>
+<% end -%>
