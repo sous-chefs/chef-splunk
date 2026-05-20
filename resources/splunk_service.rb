@@ -32,16 +32,6 @@ action :start do
     end
   end
 
-  execute 'splunk first run' do
-    command "#{first_run_command} && touch #{new_resource.install_dir}/etc/.init_ok"
-    sensitive true
-    environment(
-      'SPLUNK_USER' => new_resource.admin_user,
-      'SPLUNK_PASSWORD' => new_resource.admin_password
-    ) if new_resource.admin_password
-    creates "#{new_resource.install_dir}/etc/.init_ok"
-  end
-
   execute 'splunk enable boot-start' do
     command boot_start_command
     sensitive true
@@ -98,19 +88,13 @@ action_class do
     false
   end
 
-  def first_run_command
-    if new_resource.runas_user == 'root'
-      "#{new_resource.install_dir}/bin/splunk start --accept-license --no-prompt --answer-yes"
-    else
-      "#{new_resource.install_dir}/bin/splunk start --accept-license --no-prompt --answer-yes -user #{new_resource.runas_user}"
-    end
-  end
-
   def boot_start_command
+    seed_password = new_resource.admin_password ? ' --seed-passwd "$SPLUNK_PASSWORD" --answer-yes --no-prompt' : ''
+
     if new_resource.runas_user == 'root'
-      "#{new_resource.install_dir}/bin/splunk enable boot-start -systemd-managed 1 --accept-license"
+      "#{new_resource.install_dir}/bin/splunk enable boot-start -systemd-managed 1 --accept-license#{seed_password}"
     else
-      "#{new_resource.install_dir}/bin/splunk enable boot-start -user #{new_resource.runas_user} -systemd-managed 1 --accept-license"
+      "#{new_resource.install_dir}/bin/splunk enable boot-start -user #{new_resource.runas_user} -systemd-managed 1 --accept-license#{seed_password}"
     end
   end
 end
