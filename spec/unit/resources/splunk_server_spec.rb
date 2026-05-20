@@ -18,7 +18,8 @@ describe 'splunk_server' do
     it { is_expected.to create_splunk_auth('admin').with(admin_password: 'notarealpassword') }
     it { is_expected.to start_splunk_service('splunk').with(admin_password: 'notarealpassword') }
     it { is_expected.to run_execute('update-splunk-mgmt-port').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
-    it { is_expected.to run_execute('update-splunk-receiver-port').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
+    it { is_expected.to run_ruby_block('update-splunk-receiver-port') }
+    it { is_expected.to create_file('/opt/splunk/etc/system/local/inputs.conf').with(owner: 'splunk', group: 'splunk', mode: '600') }
   end
 
   context 'action :install with custom ports' do
@@ -35,7 +36,8 @@ describe 'splunk_server' do
     it { is_expected.to create_splunk_auth('admin').with(admin_password: 'notarealpassword') }
     it { is_expected.to start_splunk_service('splunk').with(admin_password: 'notarealpassword') }
     it { is_expected.to run_execute('update-splunk-mgmt-port').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
-    it { is_expected.to run_execute('update-splunk-receiver-port').with(environment: { 'SPLUNK_USER' => 'admin', 'SPLUNK_PASSWORD' => 'notarealpassword' }) }
+    it { is_expected.to run_ruby_block('update-splunk-receiver-port') }
+    it { is_expected.to create_file('/opt/splunk/etc/system/local/inputs.conf').with(owner: 'splunk', group: 'splunk', mode: '600') }
   end
 
   context 'action :install with optimistic file locking' do

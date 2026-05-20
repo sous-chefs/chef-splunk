@@ -44,14 +44,15 @@ action :install do
     )
   end
 
-  execute 'update-splunk-receiver-port' do
-    command receiver_port_command
-    sensitive true
-    environment(
-      'SPLUNK_USER' => auth_user,
-      'SPLUNK_PASSWORD' => auth_password
-    )
+  ruby_block 'update-splunk-receiver-port' do
+    block { write_receiver_port_config }
     not_if { receiver_port_configured? }
+  end
+
+  file receiver_inputs_conf_path do
+    owner new_resource.runas_user
+    group new_resource.runas_user
+    mode '600'
   end
 end
 
@@ -76,14 +77,30 @@ action_class do
     splunk_cmd("set splunkd-port #{new_resource.mgmt_port} -auth '#{new_resource.splunk_auth}'")
   end
 
-  def receiver_port_command
-    splunk_cmd("enable listen #{new_resource.receiver_port} -auth '#{new_resource.splunk_auth}'")
+  def receiver_port_configured?
+    require 'iniparse'
+
+    return false unless ::File.exist?(receiver_inputs_conf_path)
+
+    document = IniParse.parse(::File.read(receiver_inputs_conf_path))
+    document.has_section?(receiver_stanza)
   end
 
-  def receiver_port_configured?
-    inputs_conf = "#{new_resource.install_dir}/etc/system/local/inputs.conf"
-    return false unless ::File.exist?(inputs_conf)
+  def write_receiver_port_config
+    require 'fileutils'
+    require 'iniparse'
 
-    ::File.readlines(inputs_conf).any? { |line| line.strip == "[splunktcp://#{new_resource.receiver_port}]" }
+    ::FileUtils.mkdir_p(::File.dirname(receiver_inputs_conf_path))
+    document = IniParse.parse(::File.exist?(receiver_inputs_conf_path) ? ::File.read(receiver_inputs_conf_path) : '')
+    document.section(receiver_stanza)['disabled'] = '0' unless document.has_section?(receiver_stanza)
+    document.save(receiver_inputs_conf_path)
+  end
+
+  def receiver_inputs_conf_path
+    "#{new_resource.install_dir}/etc/system/local/inputs.conf"
+  end
+
+  def receiver_stanza
+    "splunktcp://#{new_resource.receiver_port}"
   end
 end
