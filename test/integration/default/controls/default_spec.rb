@@ -27,11 +27,11 @@ control 'splunk-default-installation' do
     it { should be_file }
   end
 
-  describe user('splunk') do
+  describe user('splunkfwd') do
     it { should exist }
   end
 
-  describe group('splunk') do
+  describe group('splunkfwd') do
     it { should exist }
   end
 end

@@ -8,7 +8,7 @@ name: ci
 
 jobs:
   lint-unit:
-    uses: sous-chefs/.github/.github/workflows/lint-unit.yml@5.0.3
+    uses: sous-chefs/.github/.github/workflows/lint-unit.yml@6.0.0
     permissions:
       actions: write
       checks: write
@@ -32,7 +32,6 @@ jobs:
           - rocky-10
           - ubuntu-2204
           - ubuntu-2404
-          - opensuse-leap-15
           - opensuse-leap-16
         suite:
           - "default"
@@ -52,7 +51,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v5
       - name: Install Chef
-        uses: actionshub/chef-install@main
+        uses: sous-chefs/.github/.github/actions/install-workstation@6.0.0
       - name: Dokken
         uses: actionshub/test-kitchen@main
         env:

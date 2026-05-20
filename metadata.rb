@@ -13,11 +13,7 @@ chef_version      '>= 16.0'
 supports 'almalinux', '>= 9.0'
 supports 'amazon', '>= 2023.0'
 supports 'debian', '>= 12.0'
-supports 'opensuseleap', '>= 15.0'
+supports 'opensuseleap', '>= 16.0'
 supports 'redhat', '>= 9.0'
 supports 'rocky', '>= 9.0'
 supports 'ubuntu', '>= 22.04'
-
-# please read the README.md section regarding data bag fallback if you
-# do not use chef-vault
-depends 'ec2-tags-ohai-plugin', '>= 0.2.4'

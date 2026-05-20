@@ -83,9 +83,9 @@ end
 action_class do
   def first_run_command
     if new_resource.runas_user == 'root'
-      "#{new_resource.install_dir}/bin/splunk start --accept-license --no-prompt --answer-yes && #{new_resource.install_dir}/bin/splunk stop"
+      "#{new_resource.install_dir}/bin/splunk start --accept-license --no-prompt --answer-yes"
     else
-      "#{new_resource.install_dir}/bin/splunk start --accept-license --no-prompt --answer-yes -user #{new_resource.runas_user} && #{new_resource.install_dir}/bin/splunk stop"
+      "#{new_resource.install_dir}/bin/splunk start --accept-license --no-prompt --answer-yes -user #{new_resource.runas_user}"
     end
   end
 

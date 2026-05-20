@@ -24,5 +24,4 @@ platforms:
   - name: rocky-10
   - name: ubuntu-2204
   - name: ubuntu-2404
-  - name: opensuse-leap-15
   - name: opensuse-leap-16

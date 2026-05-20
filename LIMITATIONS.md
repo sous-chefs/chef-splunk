@@ -14,7 +14,7 @@ Based on Splunk 10.0 vendor documentation, the following platforms are supported
 - **Rocky Linux**: 9, 10
 - **RHEL**: 9, 10
 - **Amazon Linux**: 2023
-- **openSUSE**: Leap 15, 16
+- **openSUSE**: Leap 16
 
 ## Systemd Requirement
 
