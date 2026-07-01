@@ -3,7 +3,6 @@ provisioner:
   multiple_converge: 2
   chef_license: accept
   client_rb:
-    environment: _default
     log_level: :debug
 
 verifier: inspec
@@ -22,14 +21,20 @@ platforms:
 
 suites:
   - name: default
+    provisioner:
+      named_run_list: default
     run_list:
       - recipe[test::default]
 
   - name: client
+    provisioner:
+      named_run_list: client
     run_list:
       - recipe[test::client]
 
   - name: server-runas-root
+    provisioner:
+      named_run_list: server_runas_root
     lifecycle:
       post_converge:
         - local: sleep 120
@@ -37,6 +42,8 @@ suites:
       - recipe[test::server_runas_root]
 
   - name: server-runas-splunk
+    provisioner:
+      named_run_list: server
     lifecycle:
       post_converge:
         - local: sleep 120
@@ -44,6 +51,8 @@ suites:
       - recipe[test::server]
 
   - name: server-shdeployer
+    provisioner:
+      named_run_list: server_shdeployer
     lifecycle:
       post_converge:
         - local: sleep 120
@@ -51,25 +60,37 @@ suites:
       - recipe[test::server_shdeployer]
 
   - name: disabled
+    provisioner:
+      named_run_list: disabled
     run_list:
       - recipe[test::disabled]
 
   - name: upgrade-server
+    provisioner:
+      named_run_list: upgrade_server
     run_list:
       - recipe[test::upgrade_server]
 
   - name: upgrade-client
+    provisioner:
+      named_run_list: upgrade_client
     run_list:
       - recipe[test::upgrade_client]
 
   - name: server-resources
+    provisioner:
+      named_run_list: server_resources
     run_list:
       - recipe[test::server_resources]
 
   - name: client-resources
+    provisioner:
+      named_run_list: client_resources
     run_list:
       - recipe[test::client_resources]
 
   - name: uninstall-client
+    provisioner:
+      named_run_list: uninstall_client
     run_list:
       - recipe[test::uninstall_client]
