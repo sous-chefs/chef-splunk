@@ -26,7 +26,7 @@ The supported platform list follows Splunk 10.0 package availability and this co
 * Ubuntu 22.04, 24.04
 * openSUSE Leap 16
 
-See [LIMITATIONS.md](LIMITATIONS.md) for platform and architecture notes.
+See [AGENTS.md](AGENTS.md) for platform and architecture notes.
 
 ## Resources
 
